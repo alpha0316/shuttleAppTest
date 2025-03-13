@@ -23,7 +23,7 @@ function BusStopDetails() {
   
   // console.log('Bus Stop ID:', id);
 
-  interface Location {
+  interface locations {
     id: string;
     name: string;
     description: string;
