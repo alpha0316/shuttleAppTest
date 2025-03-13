@@ -24,7 +24,7 @@ function BusStopDetails() {
   
   // console.log('Bus Stop ID:', id);
 
-  interface locations {
+  interface Location {
     id: string;
     name: string;
     description: string;
@@ -39,7 +39,7 @@ function BusStopDetails() {
     longitude: number;
   }
 
-  const locations = [
+  const locations: Location[]  = [
     { id: '1', name: 'Main Library', description: 'On Campus', latitude: 6.675033566213408, longitude: -1.5723546778455368,
       dropPoints: [ 
         { name: 'Brunei', latitude: 6.670465091472612, longitude: -1.5741574445526254 },
@@ -139,8 +139,9 @@ function BusStopDetails() {
     },
   ];
 
-  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
 
+  
   useEffect(() => {
     const selectedBusStop = locations.find((location) => location.id === id);
   
