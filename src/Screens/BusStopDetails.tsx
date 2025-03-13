@@ -13,7 +13,8 @@ function BusStopDetails() {
   const { state } = useLocation();
   const { pickUp, dropOff } = state || {};
 
-  const [busStop, setBusStop] = useState(null)
+  const [busStop, setBusStop] = useState<Location | null>(null);
+
   // const [filteredDropPoints, setFilteredDropPoints] = useState<DropPoint[]>([]); // Filtered drop points
   // const [unfilteredDropPoints, setUnfilteredDropPoints] = useState<DropPoint[]>([]); 
   
@@ -27,6 +28,13 @@ function BusStopDetails() {
     id: string;
     name: string;
     description: string;
+    latitude: number;
+    longitude: number;
+    dropPoints: DropPoint[];
+  }
+
+  interface DropPoint {
+    name: string;
     latitude: number;
     longitude: number;
   }
@@ -328,9 +336,8 @@ function BusStopDetails() {
   
   
   const filteredDropPointsForUI = selectedLocation?.dropPoints?.filter(
-    (dropPoint) => dropPoint.name !== 'Paa Joe Round About'
+    (dropPoint: DropPoint) => dropPoint.name !== 'Paa Joe Round About'
   );
-
 
 
   return (
@@ -486,7 +493,7 @@ function BusStopDetails() {
                 flexDirection: 'column',
                 gap: 8
               }}>
-              {filteredDropPointsForUI?.map((dropPoint, index) => (
+              {filteredDropPointsForUI?.map((dropPoint: DropPoint, index: number) => (
                 <div key={dropPoint.name}>
                   <div style={{
                     display: 'flex',
