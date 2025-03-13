@@ -495,7 +495,7 @@ const handleStartPointClick = (location: Location) => {
                 <input
                   type="text"
                   placeholder="Select Pickup Point"
-                  value={pickUp}
+                  value={pickUp?.name || ''}
                   onChange={handleSearch}
                    onFocus={handleInputFocus}
                     onBlur={handleInputBlur}
@@ -585,7 +585,7 @@ const handleStartPointClick = (location: Location) => {
                 <input
                   type="text"
                   placeholder="Select Drop Off Point"
-                  value={dropOff}
+                  value={dropOff?.name || ''}
                   onChange={handleSearch}
                   style={{
                     flex: 1,
@@ -623,12 +623,14 @@ const handleStartPointClick = (location: Location) => {
           </div>
         </div>
 
-        <MapGl isHomepage={true} selectedLocation={selectedLocation} dropPoints={selectedLocation?.dropPoints || []} /> 
-        {/* <MapGL
-  selectedLocation={selectedLocation}
-  dropPoints={[]} // No drop points needed on the homepage
-  isHomepage={true} // Enable homepage behavior
-/>   */} 
+        <MapGl
+          isHomepage={true}
+          selectedLocation={selectedLocation}
+          dropPoints={selectedLocation?.dropPoints || []}
+          dropOffLocation={dropOff}
+          pickUpLocation={pickUp}
+        />
+        
      </div>
     </div>
   );
