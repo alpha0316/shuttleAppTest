@@ -3,7 +3,7 @@ import MapGl from '../components/MapGL';
 // import { FlyToInterpolator } from 'react-map-gl';
 import useMediaQuery from '../components/useMediaQuery';
 import { useNavigate } from 'react-router-dom';
-import useGeolocation from '../../hooks/useGeolocation'
+// import useGeolocation from '../../hooks/useGeolocation'
 
 interface DropPoint {
   name: string;
@@ -181,15 +181,15 @@ function Home() {
   const [dropOff, setDropOff] =  useState<Location | null>(null)
   const [isSelectingDropOff, setIsSelectingDropOff] = useState(false)
   const [pickUpDetails, setpickUpDetail] =  useState<Location | null>(null)
-  const [dropOffDetail, setDropOffDetail] =  useState<Location | null>(null)
+  // const [dropOffDetail, setDropOffDetail] =  useState<Location | null>(null)
   const [inputFocused, setInputFocused] = useState(false);
   const [pickUpCoordinates, setPickUpCoordinates] = useState<Coordinates | null>(null);
 
 
-  const drawerHeaderHeight = -300
-  const [drawerPosition, setDrawerPosition] = useState(drawerHeaderHeight)
-  const [isDragging, setIsDragging] = useState(false)
-  const [isExpanded, setIsExpanded] = useState(false);
+  // const drawerHeaderHeight = -300
+  // const [drawerPosition, setDrawerPosition] = useState(drawerHeaderHeight)
+  // const [isDragging, setIsDragging] = useState(false)
+  // const [isExpanded, setIsExpanded] = useState(false);
  
 
 
@@ -244,12 +244,12 @@ const handleStartPointClick = (location: Location) => {
     setPickUpCoordinates(null);
   };
 
-  const handleClearDropOff = () => {
-    setpickUp("null")
-    setpickUpDetail(null)
-    setFilteredLocations(locations)
-    searchQuery('')
-  }
+  // const handleClearDropOff = () => {
+  //   setpickUp("null")
+  //   setpickUpDetail(null)
+  //   setFilteredLocations(locations)
+  //   searchQuery('')
+  // }
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value;
