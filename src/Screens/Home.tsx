@@ -70,7 +70,7 @@ function Home() {
   //   longitude: number;
   // }
 
-  const locations = [
+  const locations: Location[] = [
     { id: '1', name: 'Main Library', description: 'On Campus', latitude: 6.675033566213408, longitude: -1.5723546778455368,
       dropPoints: [ 
         { name: 'Brunei', latitude: 6.670465091472612, longitude: -1.5741574445526254 },
@@ -177,8 +177,8 @@ function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredLocations, setFilteredLocations] = useState<Location[]>(locations);
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null)
-  const [pickUp, setpickUp] = useState<string>("");
-  const [dropOff, setDropOff] =  useState<Location | null>(null)
+  const [pickUp, setpickUp] = useState<Location | null>(null);
+  const [dropOff, setDropOff] = useState<Location | null>(null);
   const [isSelectingDropOff, setIsSelectingDropOff] = useState(false)
   const [pickUpDetails, setpickUpDetail] =  useState<Location | null>(null)
   // const [dropOffDetail, setDropOffDetail] =  useState<Location | null>(null)
@@ -286,24 +286,8 @@ const handleStartPointClick = (location: Location) => {
   };
 
 
-//   if (isSelectingDropOff && pickUp) {
-//     // When selecting drop-off point, filter from valid drop-off points
-//     const startLocation = locations.find(loc => loc.name === pickUp);
-//     const filteredDropOffs = locations.filter((location) => 
-//       location.name.toLowerCase().includes(query.toLowerCase()) &&
-//       startLocation?.dropPoints.some(dp => dp.name === location.name)
-//     );
-//     setFilteredLocations(filteredDropOffs);
-//   } else {
-//     // When selecting start point, filter from all locations
-//     const filterData = locations.filter((location) =>
-//       location.name.toLowerCase().includes(query.toLowerCase())
-//     );
-//     setFilteredLocations(filterData);
-//   }
-// };
 
-  const LocationList: React.FC<{ searchQuery: string; selectedLocation: Location | null }> = ({ searchQuery, selectedLocation }) => {
+  const LocationList: React.FC<{  selectedLocation: Location | null }> = ({  selectedLocation }) => {
     return (
       <div style={{
         borderRadius: 8,
