@@ -5,13 +5,33 @@ import useMediaQuery from '../components/useMediaQuery';
 import { useNavigate } from 'react-router-dom';
 import useGeolocation from '../../hooks/useGeolocation'
 
+interface DropPoint {
+  name: string;
+  latitude: number;
+  longitude: number;
+}
+
+interface Location {
+  id: string;
+  name: string;
+  description: string;
+  latitude: number;
+  longitude: number;
+  dropPoints: DropPoint[];
+}
+
+interface Coordinates {
+  latitude: number;
+  longitude: number;
+}
+
+
 
 function Home() {
 
   const BASE_CUSTOMER_URL = "http://shuttle-backend-0.onrender.com/api/v1";
 
-  const { loaded, coordinates, error } = useGeolocation();
-
+  // const { coordinates } = useGeolocation(); // Only destructure what you need
   // console.log('so', coordinates)
   useEffect(() => {
     const fetchDrivers = async () => {
@@ -37,18 +57,18 @@ function Home() {
   const isMobile = useMediaQuery('(max-width: 768px)');
   const navigate = useNavigate();
 
-  interface Location {
-    id: string;
-    name: string;
-    description: string;
-    latitude: number;
-    longitude: number;
-    dropPoints: dropPoints[];
-  }
-  interface Coordinates {
-    latitude: number;
-    longitude: number;
-  }
+  // interface Location {
+  //   id: string;
+  //   name: string;
+  //   description: string;
+  //   latitude: number;
+  //   longitude: number;
+  //   dropPoints: dropPoints[];
+  // }
+  // interface Coordinates {
+  //   latitude: number;
+  //   longitude: number;
+  // }
 
   const locations = [
     { id: '1', name: 'Main Library', description: 'On Campus', latitude: 6.675033566213408, longitude: -1.5723546778455368,
@@ -157,13 +177,13 @@ function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredLocations, setFilteredLocations] = useState<Location[]>(locations);
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null)
-  const [pickUp, setpickUp] =  useState("")
+  const [pickUp, setpickUp] = useState<string>("");
   const [dropOff, setDropOff] =  useState<Location | null>(null)
   const [isSelectingDropOff, setIsSelectingDropOff] = useState(false)
   const [pickUpDetails, setpickUpDetail] =  useState<Location | null>(null)
   const [dropOffDetail, setDropOffDetail] =  useState<Location | null>(null)
   const [inputFocused, setInputFocused] = useState(false);
-  const [pickUpCoordinates, setPickUpCoordinates] = useState([]);
+  const [pickUpCoordinates, setPickUpCoordinates] = useState<Coordinates | null>(null);
 
 
   const drawerHeaderHeight = -300
@@ -215,14 +235,14 @@ const handleStartPointClick = (location: Location) => {
   }
 
   const handleClearPickUp = () => {
-    setpickUp(null);
+    setpickUp(""); // Use an empty string instead of null
     setpickUpDetail(null);
     setFilteredLocations(locations);
     setSearchQuery('');
     setIsSelectingDropOff(false);
     setSelectedLocation(null);
     setPickUpCoordinates(null);
-  }
+  };
 
   const handleClearDropOff = () => {
     setpickUp("null")

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Map, { Marker, Source, Layer, GeolocateControl } from 'react-map-gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { solveTSP } from './../components/solveTSP'; // Custom TSP solver (see below)
@@ -28,7 +28,6 @@ interface MapGLProps {
   selectedLocation: Coordinates | null;
   dropOffLocation: Coordinates | null;
   isHomepage?: boolean;
-  pickUp: Coordinates | null;
   pickUpLocation: Coordinates | null;
   dropPoints?: DropPoint[];
 }
@@ -37,7 +36,6 @@ function MapGL({
   selectedLocation,
   dropOffLocation,
   isHomepage = false,
-  pickUp,
   pickUpLocation,
   dropPoints = [],
 }: MapGLProps) {
@@ -48,9 +46,6 @@ function MapGL({
   });
 
   const [route, setRoute] = useState<Route | null>(null);
-  const [userLocation, setUserLocation] = useState<Coordinates | null>(null);
-
-  // Ref to access the GeolocateControl instance
   const geolocateControlRef = useRef<any>(null);
 
   useEffect(() => {
@@ -278,12 +273,6 @@ function MapGL({
         trackUserLocation={true}
         showAccuracyCircle={true}
         showUserLocation={true}
-        onGeolocate={(position) => {
-          setUserLocation({
-            longitude: position.coords.longitude,
-            latitude: position.coords.latitude,
-          });
-        }}
         style={{ display: 'none' }} // Hide the default button
       />
 
