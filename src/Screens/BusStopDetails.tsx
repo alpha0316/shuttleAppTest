@@ -14,8 +14,8 @@ function BusStopDetails() {
   const { pickUp, dropOff } = state || {};
 
   const [busStop, setBusStop] = useState(null)
-  const [filteredDropPoints, setFilteredDropPoints] = useState<DropPoint[]>([]); // Filtered drop points
-  const [unfilteredDropPoints, setUnfilteredDropPoints] = useState<DropPoint[]>([]); 
+  // const [filteredDropPoints, setFilteredDropPoints] = useState<DropPoint[]>([]); // Filtered drop points
+  // const [unfilteredDropPoints, setUnfilteredDropPoints] = useState<DropPoint[]>([]); 
   
 
 
