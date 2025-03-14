@@ -453,7 +453,7 @@ const LocationList: React.FC<LocationListProps> = ({
           border: '1px solid rgba(0,0,0,0.1)',
           margin: isMobile ? '16px auto' : '16px 16px 16px 0',
           position : 'fixed',
-          bottom: isMobile ? (inputFocused ? '-50%' : '-90%') : '',
+          bottom: isMobile ? (inputFocused ? '-30%' : '-90%') : '',
           transition: 'bottom 0.3s ease-in-out',
           // transition: isDragging ? 'none' : 'bottom 0.3s ease-in-out',
           // bottom: isMobile ? `${drawerPosition}px` : '' 
