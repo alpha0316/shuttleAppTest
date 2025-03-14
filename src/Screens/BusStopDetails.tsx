@@ -507,11 +507,9 @@ function BusStopDetails() {
                   }}>
                       <div style={{
                             display: 'flex',
-                            flexDirection: 'column',
+                            // flexDirection: 'column',
                             gap: 8,
-                            overflow : 'hidden',
-                            overflowY : 'auto',
-                            maxHeight : isMobile ? 100  : 'calc(70vh - 220px)',
+                            
                             paddingRight: 8,
                             // backgroundColor : 'red'
                           }}>
