@@ -192,7 +192,7 @@ function Home() {
   // const [isExpanded, setIsExpanded] = useState(false);
  
   const keyboardHeight = 300; // Example: Get actual keyboard height
-  const bottomPosition = inputFocused ? `calc(100% - ${keyboardHeight}px)` : '-60%';
+  const bottomPosition = inputFocused ? `calc(100% - ${keyboardHeight}px)` : '20%';
 
 
 
