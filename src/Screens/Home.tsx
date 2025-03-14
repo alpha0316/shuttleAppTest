@@ -315,7 +315,7 @@ const handleStartPointClick = (location: Location) => {
         borderWidth: 1,
         flexDirection : 'column',
         overflowY : 'auto',
-        maxHeight : isMobile ? 400 : 'calc(70vh - 220px)',
+        maxHeight : isMobile ? 700 : 'calc(70vh - 220px)',
         width : '330',
         justifyContent : 'flex-start' ,
         
@@ -429,7 +429,7 @@ const handleStartPointClick = (location: Location) => {
           border: '1px solid rgba(0,0,0,0.1)',
           margin: isMobile ? '16px auto' : '16px 16px 16px 0',
           position : 'fixed',
-          bottom: isMobile ? (inputFocused ? '0%' : '-40%') : '',
+          bottom: isMobile ? (inputFocused ? '0%' : '-70%') : '',
           transition: 'bottom 0.3s ease-in-out',
           // transition: isDragging ? 'none' : 'bottom 0.3s ease-in-out',
           // bottom: isMobile ? `${drawerPosition}px` : '' 
