@@ -408,10 +408,10 @@ const handleStartPointClick = (location: Location) => {
           display: 'flex',
           paddingInline: 16,
           paddingBlock: 16,
-          backgroundColor: 'red',
+          backgroundColor: 'white',
           marginLeft: 12,
           borderRadius: 24,
-          gap: 16,
+          gap: 8,
           flexDirection: 'column',
           width: isMobile ? '90%' : 340,
           minHeight: isMobile ? 'auto' : 'auto',
@@ -421,8 +421,8 @@ const handleStartPointClick = (location: Location) => {
           border: '1px solid rgba(0,0,0,0.1)',
           margin: isMobile ? '16px auto' : '16px 16px 16px 0',
           position : 'fixed',
-          // bottom: isMobile ? (pickUp ? '40%' : '-40%') : '',
-          bottom: isMobile ? -140 : '',
+          bottom: isMobile ? (pickUp ? '-10%' : '-85%') : '',
+          // bottom: isMobile ? -240 : '',
 
           transition: 'bottom 0.3s ease-in-out',
           // transition: isDragging ? 'none' : 'bottom 0.3s ease-in-out',
@@ -433,10 +433,10 @@ const handleStartPointClick = (location: Location) => {
             <div style={{ width: '40px', height: '4px', backgroundColor: '#ccc', borderRadius: '2px', margin: '0 auto' }}></div>
          </div> */}
           <p style={{ fontSize: 20, fontWeight: '700', margin: 0 }}>
-            Welcome to KNUST <br />
+            Welcome to KNUST 
             
             
-            <span style={{ fontSize: 20, color: '#34A853', fontWeight: '400' }}>Shuttle<span style={{ fontWeight: '400', color: '#FFCE31' }}>App</span></span>
+            <span style={{ fontSize: 20, color: '#34A853', fontWeight: '700' }}> Shuttle<span style={{ fontWeight: '400', color: '#FFCE31' }}>App</span></span>
           </p>
 
           <div style={{
