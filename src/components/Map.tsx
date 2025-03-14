@@ -1,5 +1,5 @@
 // Map.jsx or Map.tsx
-import React from 'react';
+// import React from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 
 const Map = () => {

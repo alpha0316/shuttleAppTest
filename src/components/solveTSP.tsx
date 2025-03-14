@@ -1,5 +1,5 @@
 // tspSolver.ts
-import { Coordinates } from './types'; // Adjust the path as needed
+import { Coordinates } from './../components/types'; 
 
 export function solveTSP(waypoints: Coordinates[]): Coordinates[] {
   if (waypoints.length <= 1) return waypoints;

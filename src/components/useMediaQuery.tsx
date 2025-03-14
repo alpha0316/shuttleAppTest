@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-function useMediaQuery(query) {
+function useMediaQuery(query : any) {
   const [matches, setMatches] = useState(window.matchMedia(query).matches);
 
   useEffect(() => {

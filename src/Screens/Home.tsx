@@ -299,7 +299,7 @@ const handleStartPointClick = (location: Location) => {
     
   
     selectedLocation,
-    locations,
+    // locations,
     isSelectingDropOff,
     handleDropOffPointClick,
     handleStartPointClick,
