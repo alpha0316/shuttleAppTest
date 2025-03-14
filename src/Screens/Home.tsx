@@ -316,7 +316,7 @@ const handleStartPointClick = (location: Location) => {
         borderWidth: 1,
         flexDirection : 'column',
         overflowY : 'auto',
-        maxHeight : isMobile ? 500 : 'calc(70vh - 220px)',
+        maxHeight : isMobile ? 500 : 'calc(70vh - 220px)' ,
         width : '330',
         justifyContent : 'flex-start' ,
         
