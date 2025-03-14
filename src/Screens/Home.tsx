@@ -666,12 +666,14 @@ const LocationList: React.FC<LocationListProps> = ({
           </div>
         </div>
 
-        <MapGl isHomepage={true} selectedLocation={selectedLocation} dropPoints={selectedLocation?.dropPoints || []} /> 
-        {/* <MapGL
+        <MapGl 
+  isHomepage={true}
   selectedLocation={selectedLocation}
-  dropPoints={[]} // No drop points needed on the homepage
-  isHomepage={true} // Enable homepage behavior
-/>   */} 
+  dropPoints={selectedLocation?.dropPoints || []}
+  pickUpLocation={pickUpDetails}  // Add this
+  dropOffLocation={dropOff}       // Add this
+/>
+
      </div>
     </div>
   );
