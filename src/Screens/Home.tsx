@@ -184,31 +184,15 @@ function Home() {
   // const [dropOffDetail, setDropOffDetail] =  useState<Location | null>(null)
   const [inputFocused, setInputFocused] = useState(false);
   const [pickUpCoordinates, setPickUpCoordinates] = useState<Coordinates | null>(null);
-  const [keyboardHeight, setKeyboardHeight] = useState(0);
 
 
   // const drawerHeaderHeight = -300
   // const [drawerPosition, setDrawerPosition] = useState(drawerHeaderHeight)
   // const [isDragging, setIsDragging] = useState(false)
   // const [isExpanded, setIsExpanded] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => {
-      const viewportHeight = window.innerHeight
-      const bodyHeight = document.body.clientHeight
-      const calculatedKeyboardHeight = viewportHeight - bodyHeight
-
-      if (calculatedKeyboardHeight > 0){
-        setKeyboardHeight(calculatedKeyboardHeight)
-      }
-    }
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize) 
-
-  }, [])
  
-  // const keyboardHeight = 300; // Example: Get actual keyboard height
-  const bottomPosition = inputFocused ? `calc(100% - ${keyboardHeight}px)` : '-70%';
+  const keyboardHeight = 300; // Example: Get actual keyboard height
+  const bottomPosition = inputFocused ? `calc(100% - ${keyboardHeight}px)` : '-60%';
 
 
 
@@ -437,7 +421,8 @@ const handleStartPointClick = (location: Location) => {
           border: '1px solid rgba(0,0,0,0.1)',
           margin: isMobile ? '16px auto' : '16px 16px 16px 0',
           position : 'fixed',
-          bottom: bottomPosition,
+          bottom: isMobile ? (inputFocused ? '40%' : '-60%') : '',
+
           transition: 'bottom 0.3s ease-in-out',
           // transition: isDragging ? 'none' : 'bottom 0.3s ease-in-out',
           // bottom: isMobile ? `${drawerPosition}px` : '' 
