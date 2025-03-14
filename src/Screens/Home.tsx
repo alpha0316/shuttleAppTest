@@ -3,14 +3,29 @@ import MapGl from '../components/MapGL';
 // import { FlyToInterpolator } from 'react-map-gl';
 import useMediaQuery from '../components/useMediaQuery';
 import { useNavigate } from 'react-router-dom';
-import useGeolocation from '../../hooks/useGeolocation'
+// import useGeolocation from '../../hooks/useGeolocation'
+
+interface DropPoint {
+  name: string;
+  latitude: number;
+  longitude: number;
+}
+
+interface Location {
+  id: string;
+  name: string;
+  description: string;
+  latitude: number;
+  longitude: number;
+  dropPoints: DropPoint[]; // Define dropPoints as an array of DropPoint
+}
 
 
 function Home() {
 
   const BASE_CUSTOMER_URL = "http://shuttle-backend-0.onrender.com/api/v1";
 
-  const { loaded, coordinates, error } = useGeolocation();
+  // const { loaded, coordinates, error } = useGeolocation();
 
   // console.log('so', coordinates)
   useEffect(() => {
@@ -162,15 +177,15 @@ function Home() {
   const [dropOff, setDropOff] =  useState<Location | null>(null)
   const [isSelectingDropOff, setIsSelectingDropOff] = useState(false)
   const [pickUpDetails, setpickUpDetail] =  useState<Location | null>(null)
-  const [dropOffDetail, setDropOffDetail] =  useState<Location | null>(null)
+  // const [dropOffDetail, setDropOffDetail] =  useState<Location | null>(null)
   const [inputFocused, setInputFocused] = useState(false);
-  const [pickUpCoordinates, setPickUpCoordinates] = useState([]);
+  const [pickUpCoordinates, setPickUpCoordinates] = useState<{ latitude: number; longitude: number } | null>(null);
 
 
-  const drawerHeaderHeight = -300
-  const [drawerPosition, setDrawerPosition] = useState(drawerHeaderHeight)
-  const [isDragging, setIsDragging] = useState(false)
-  const [isExpanded, setIsExpanded] = useState(false);
+  // const drawerHeaderHeight = -300
+  // const [drawerPosition, setDrawerPosition] = useState(drawerHeaderHeight)
+  // const [isDragging, setIsDragging] = useState(false)
+  // const [isExpanded, setIsExpanded] = useState(false);
  
 
 
@@ -190,16 +205,16 @@ const handleStartPointClick = (location: Location) => {
   setDropOff(null);
   setSearchQuery('');
 
-  setPickUpCoordinates({
-    latitude: location.latitude,
-    longitude: location.longitude,
-  });
-  console.log(pickUpCoordinates)  
+  // setPickUpCoordinates({
+  //   latitude: location.latitude,
+  //   longitude: location.longitude,
+  // });
+  // console.log(pickUpCoordinates)  
 };
 
   const handleDropOffPointClick = (location: Location) => {
     setSelectedLocation(location);
-    setDropOff(location.name);
+    setDropOff(location);
     setIsSelectingDropOff(false);
     
     
@@ -216,7 +231,7 @@ const handleStartPointClick = (location: Location) => {
   }
 
   const handleClearPickUp = () => {
-    setpickUp(null);
+    setpickUp('');
     setpickUpDetail(null);
     setFilteredLocations(locations);
     setSearchQuery('');
@@ -225,12 +240,12 @@ const handleStartPointClick = (location: Location) => {
     setPickUpCoordinates(null);
   }
 
-  const handleClearDropOff = () => {
-    setpickUp("null")
-    setpickUpDetail(null)
-    setFilteredLocations(locations)
-    searchQuery('')
-  }
+  // const handleClearDropOff = () => {
+  //   setpickUp("null")
+  //   setpickUpDetail(null)
+  //   setFilteredLocations(locations)
+  //   searchQuery('')
+  // }
 
   const handleSearch = (event) => {
     const query = event.target.value;
@@ -300,7 +315,7 @@ const handleStartPointClick = (location: Location) => {
         borderWidth: 1,
         flexDirection : 'column',
         overflowY : 'auto',
-        maxHeight : isMobile && inputFocused ? 550  : 'calc(70vh - 220px)',
+        maxHeight : isMobile ? 550  : 'calc(70vh - 220px)',
         width : '330',
         justifyContent : 'flex-start' ,
         
@@ -414,7 +429,7 @@ const handleStartPointClick = (location: Location) => {
           border: '1px solid rgba(0,0,0,0.1)',
           margin: isMobile ? '16px auto' : '16px 16px 16px 0',
           position : 'fixed',
-          bottom: isMobile ? (pickUp ? '5%' : '-45%') : '',
+          bottom: isMobile ? (pickUp ? '0%' : '-95%') : '',
           transition: 'bottom 0.3s ease-in-out',
           // transition: isDragging ? 'none' : 'bottom 0.3s ease-in-out',
           // bottom: isMobile ? `${drawerPosition}px` : '' 
