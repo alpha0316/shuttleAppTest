@@ -398,16 +398,7 @@ const handleStartPointClick = (location: Location) => {
       
     }}>
      
-      <div style={{
-        display: 'flex',
-        // width: '100%',
-        borderRadius: 24,
-        height: 'auto',
-        overflow: 'hidden',
-        // flexDirection: isMobile ? 'column' : 'row',
-        backgroundColor : 'red',
-        margin : 0
-      }}>
+ 
         <div
           // onTouchStart={handleTouchStart}
           // onTouchMove={handleTouchMove}
@@ -429,7 +420,7 @@ const handleStartPointClick = (location: Location) => {
           border: '1px solid rgba(0,0,0,0.1)',
           margin: isMobile ? '16px auto' : '16px 16px 16px 0',
           position : 'fixed',
-          bottom: isMobile ? (inputFocused ? '0%' : '-80%') : '',
+          bottom: isMobile ? (inputFocused ? '0%' : '-180%') : '',
           transition: 'bottom 0.3s ease-in-out',
           // transition: isDragging ? 'none' : 'bottom 0.3s ease-in-out',
           // bottom: isMobile ? `${drawerPosition}px` : '' 
@@ -648,7 +639,7 @@ const handleStartPointClick = (location: Location) => {
           pickUpLocation={pickUp}
         />
         
-     </div>
+   
     </div>
   );
 }
