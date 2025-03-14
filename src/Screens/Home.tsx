@@ -184,15 +184,31 @@ function Home() {
   // const [dropOffDetail, setDropOffDetail] =  useState<Location | null>(null)
   const [inputFocused, setInputFocused] = useState(false);
   const [pickUpCoordinates, setPickUpCoordinates] = useState<Coordinates | null>(null);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
 
 
   // const drawerHeaderHeight = -300
   // const [drawerPosition, setDrawerPosition] = useState(drawerHeaderHeight)
   // const [isDragging, setIsDragging] = useState(false)
   // const [isExpanded, setIsExpanded] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const viewportHeight = window.innerHeight
+      const bodyHeight = document.body.clientHeight
+      const calculatedKeyboardHeight = viewportHeight - bodyHeight
+
+      if (calculatedKeyboardHeight > 0){
+        setKeyboardHeight(calculatedKeyboardHeight)
+      }
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize) 
+
+  }, [])
  
-  const keyboardHeight = 300; // Example: Get actual keyboard height
-  const bottomPosition = inputFocused ? `calc(100% - ${keyboardHeight}px)` : '-110%';
+  // const keyboardHeight = 300; // Example: Get actual keyboard height
+  const bottomPosition = inputFocused ? `calc(100% - ${keyboardHeight}px)` : '30%';
 
 
 
@@ -408,7 +424,7 @@ const handleStartPointClick = (location: Location) => {
           display: 'flex',
           paddingInline: 16,
           paddingBlock: 16,
-          backgroundColor: 'red',
+          backgroundColor: 'white',
           marginLeft: 12,
           borderRadius: 24,
           gap: 16,
