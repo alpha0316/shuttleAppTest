@@ -421,7 +421,7 @@ const handleStartPointClick = (location: Location) => {
           border: '1px solid rgba(0,0,0,0.1)',
           margin: isMobile ? '16px auto' : '16px 16px 16px 0',
           position : 'fixed',
-          bottom: isMobile ? (inputFocused ? '40%' : '-60%') : '',
+          bottom: isMobile ? (inputFocused ? '40%' : '-40%') : '',
 
           transition: 'bottom 0.3s ease-in-out',
           // transition: isDragging ? 'none' : 'bottom 0.3s ease-in-out',
