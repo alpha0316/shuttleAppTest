@@ -198,7 +198,7 @@ function Home() {
 const handleStartPointClick = (location: Location) => {
   setSelectedLocation(location);
   setpickUpDetail(location);
-  setpickUp(location.name);
+  setpickUp(location);
   setIsSelectingDropOff(true);
   console.log(pickUp)
 
@@ -218,7 +218,7 @@ const handleStartPointClick = (location: Location) => {
 
   const handleDropOffPointClick = (location: Location) => {
     setSelectedLocation(location);
-    setDropOff(location.name);
+    setDropOff(location);
     setIsSelectingDropOff(false);
     
     
@@ -235,7 +235,7 @@ const handleStartPointClick = (location: Location) => {
   }
 
   const handleClearPickUp = () => {
-    setpickUp(""); // Use an empty string instead of null
+    setpickUp(null) // Use an empty string instead of null
     setpickUpDetail(null);
     setFilteredLocations(locations);
     setSearchQuery('');
@@ -285,9 +285,26 @@ const handleStartPointClick = (location: Location) => {
     }
   };
 
+  interface LocationListProps {
+    searchQuery: string;
+    selectedLocation: Location | null;
+    locations: Location[];
+    isSelectingDropOff: boolean;
+    handleDropOffPointClick: (location: Location) => void;
+    handleStartPointClick: (location: Location) => void;
+    isMobile: boolean;
+  }
 
-
-  const LocationList: React.FC<{  selectedLocation: Location | null }> = ({  selectedLocation }) => {
+  const LocationList: React.FC<LocationListProps> = ({
+    
+  
+    selectedLocation,
+    locations,
+    isSelectingDropOff,
+    handleDropOffPointClick,
+    handleStartPointClick,
+  
+  }) => {
     return (
       <div style={{
         borderRadius: 8,
