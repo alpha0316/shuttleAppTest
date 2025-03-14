@@ -3,35 +3,15 @@ import MapGl from '../components/MapGL';
 // import { FlyToInterpolator } from 'react-map-gl';
 import useMediaQuery from '../components/useMediaQuery';
 import { useNavigate } from 'react-router-dom';
-// import useGeolocation from '../../hooks/useGeolocation'
-
-interface DropPoint {
-  name: string;
-  latitude: number;
-  longitude: number;
-}
-
-interface Location {
-  id: string;
-  name: string;
-  description: string;
-  latitude: number;
-  longitude: number;
-  dropPoints: DropPoint[];
-}
-
-interface Coordinates {
-  latitude: number;
-  longitude: number;
-}
-
+import useGeolocation from '../../hooks/useGeolocation'
 
 
 function Home() {
 
   const BASE_CUSTOMER_URL = "http://shuttle-backend-0.onrender.com/api/v1";
 
-  // const { coordinates } = useGeolocation(); // Only destructure what you need
+  const { loaded, coordinates, error } = useGeolocation();
+
   // console.log('so', coordinates)
   useEffect(() => {
     const fetchDrivers = async () => {
@@ -57,20 +37,20 @@ function Home() {
   const isMobile = useMediaQuery('(max-width: 768px)');
   const navigate = useNavigate();
 
-  // interface Location {
-  //   id: string;
-  //   name: string;
-  //   description: string;
-  //   latitude: number;
-  //   longitude: number;
-  //   dropPoints: dropPoints[];
-  // }
-  // interface Coordinates {
-  //   latitude: number;
-  //   longitude: number;
-  // }
+  interface Location {
+    id: string;
+    name: string;
+    description: string;
+    latitude: number;
+    longitude: number;
+    dropPoints: dropPoints[];
+  }
+  interface Coordinates {
+    latitude: number;
+    longitude: number;
+  }
 
-  const locations: Location[] = [
+  const locations = [
     { id: '1', name: 'Main Library', description: 'On Campus', latitude: 6.675033566213408, longitude: -1.5723546778455368,
       dropPoints: [ 
         { name: 'Brunei', latitude: 6.670465091472612, longitude: -1.5741574445526254 },
@@ -91,10 +71,11 @@ function Home() {
     },
     { id: '3', name: 'Commercial Area', description: 'On Campus', latitude: 6.682751297721754, longitude: -1.5769726260262382,
       dropPoints: [ 
+        { name: 'Hall 7', latitude: 6.679295619563862, longitude: -1.572807677030472 },
         { name: 'Pentecost Busstop', latitude: 6.674545299373284, longitude: -1.5675650457295751 },
         { name: 'KSB', latitude: 6.669314250173885, longitude: -1.567181795001016 },
-        { name: 'SRC Busstop', latitude: 6.675223889340042, longitude: -1.5678831412482812 },
-        { name: 'Conti Busstop', latitude: 6.679644223364716, longitude: -1.572967657880401 },
+        // { name: 'SRC Busstop', latitude: 6.675223889340042, longitude: -1.5678831412482812 },
+        // { name: 'Conti Busstop', latitude: 6.679644223364716, longitude: -1.572967657880401 },
         { name: 'Commerical Area', latitude: 6.682751297721754, longitude: -1.5769726260262382, },
       ]
     },
@@ -177,29 +158,28 @@ function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredLocations, setFilteredLocations] = useState<Location[]>(locations);
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null)
-  const [pickUp, setpickUp] = useState<Location | null>(null);
-  const [dropOff, setDropOff] = useState<Location | null>(null);
+  const [pickUp, setpickUp] =  useState("")
+  const [dropOff, setDropOff] =  useState<Location | null>(null)
   const [isSelectingDropOff, setIsSelectingDropOff] = useState(false)
   const [pickUpDetails, setpickUpDetail] =  useState<Location | null>(null)
-  // const [dropOffDetail, setDropOffDetail] =  useState<Location | null>(null)
+  const [dropOffDetail, setDropOffDetail] =  useState<Location | null>(null)
   const [inputFocused, setInputFocused] = useState(false);
-  const [pickUpCoordinates, setPickUpCoordinates] = useState<Coordinates | null>(null);
+  const [pickUpCoordinates, setPickUpCoordinates] = useState([]);
 
 
-  // const drawerHeaderHeight = -300
-  // const [drawerPosition, setDrawerPosition] = useState(drawerHeaderHeight)
-  // const [isDragging, setIsDragging] = useState(false)
-  // const [isExpanded, setIsExpanded] = useState(false);
+  const drawerHeaderHeight = -300
+  const [drawerPosition, setDrawerPosition] = useState(drawerHeaderHeight)
+  const [isDragging, setIsDragging] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(false);
  
-  const keyboardHeight = 300; // Example: Get actual keyboard height
-  const bottomPosition = inputFocused ? `calc(100% - ${keyboardHeight}px)` : '-60%';
+
 
 
 
 const handleStartPointClick = (location: Location) => {
   setSelectedLocation(location);
   setpickUpDetail(location);
-  setpickUp(location);
+  setpickUp(location.name);
   setIsSelectingDropOff(true);
   console.log(pickUp)
 
@@ -219,7 +199,7 @@ const handleStartPointClick = (location: Location) => {
 
   const handleDropOffPointClick = (location: Location) => {
     setSelectedLocation(location);
-    setDropOff(location);
+    setDropOff(location.name);
     setIsSelectingDropOff(false);
     
     
@@ -236,41 +216,40 @@ const handleStartPointClick = (location: Location) => {
   }
 
   const handleClearPickUp = () => {
-    setpickUp(null) // Use an empty string instead of null
+    setpickUp(null);
     setpickUpDetail(null);
     setFilteredLocations(locations);
     setSearchQuery('');
     setIsSelectingDropOff(false);
     setSelectedLocation(null);
     setPickUpCoordinates(null);
-  };
+  }
 
-  // const handleClearDropOff = () => {
-  //   setpickUp("null")
-  //   setpickUpDetail(null)
-  //   setFilteredLocations(locations)
-  //   searchQuery('')
-  // }
+  const handleClearDropOff = () => {
+    setpickUp("null")
+    setpickUpDetail(null)
+    setFilteredLocations(locations)
+    searchQuery('')
+  }
 
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearch = (event) => {
     const query = event.target.value;
     setSearchQuery(query);
 
     if (query === '') {
       setFilteredLocations(locations);
-    }  
-    
-    if (isSelectingDropOff && pickUp) {
-      // If pickup is selected, filter drop-off points
-      const validDropOffPoints  = locations.filter((location) => 
+    } else if (isSelectingDropOff && pickUp) {
+      const validDropOffPoints = locations.filter((location) =>
         location.name.toLowerCase().includes(query.toLowerCase()) &&
-        pickUp.dropPoints.some(dp => dp.name === location.name)
+        pickUpDetails.dropPoints.some(dp => dp.name === location.name)
       );
       setFilteredLocations(validDropOffPoints);
-    }  else {
-      setFilteredLocations(locations);
+    } else {
+      const filterData = locations.filter((location) =>
+        location.name.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredLocations(filterData);
     }
-    // return
   };
 
   const handleInputFocus = () => {   
@@ -286,26 +265,31 @@ const handleStartPointClick = (location: Location) => {
     }
   };
 
-  interface LocationListProps {
-    searchQuery: string;
-    selectedLocation: Location | null;
-    locations: Location[];
-    isSelectingDropOff: boolean;
-    handleDropOffPointClick: (location: Location) => void;
-    handleStartPointClick: (location: Location) => void;
-    isMobile: boolean;
-  }
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      setInputFocused(false);
+    }
+  };
 
-  const LocationList: React.FC<LocationListProps> = ({
-    
-  
-    selectedLocation,
-    // locations,
-    isSelectingDropOff,
-    handleDropOffPointClick,
-    handleStartPointClick,
-  
-  }) => {
+
+//   if (isSelectingDropOff && pickUp) {
+//     // When selecting drop-off point, filter from valid drop-off points
+//     const startLocation = locations.find(loc => loc.name === pickUp);
+//     const filteredDropOffs = locations.filter((location) => 
+//       location.name.toLowerCase().includes(query.toLowerCase()) &&
+//       startLocation?.dropPoints.some(dp => dp.name === location.name)
+//     );
+//     setFilteredLocations(filteredDropOffs);
+//   } else {
+//     // When selecting start point, filter from all locations
+//     const filterData = locations.filter((location) =>
+//       location.name.toLowerCase().includes(query.toLowerCase())
+//     );
+//     setFilteredLocations(filterData);
+//   }
+// };
+
+  const LocationList: React.FC<{ searchQuery: string; selectedLocation: Location | null }> = ({ searchQuery, selectedLocation }) => {
     return (
       <div style={{
         borderRadius: 8,
@@ -316,7 +300,7 @@ const handleStartPointClick = (location: Location) => {
         borderWidth: 1,
         flexDirection : 'column',
         overflowY : 'auto',
-        maxHeight : isMobile ? 500 : 'calc(70vh - 220px)' ,
+        maxHeight : isMobile && inputFocused ? 550  : 'calc(70vh - 220px)',
         width : '330',
         justifyContent : 'flex-start' ,
         
@@ -399,7 +383,16 @@ const handleStartPointClick = (location: Location) => {
       
     }}>
      
- 
+      <div style={{
+        display: 'flex',
+        // width: '100%',
+        borderRadius: 24,
+        height: 'auto',
+        overflow: 'hidden',
+        // flexDirection: isMobile ? 'column' : 'row',
+        backgroundColor : 'red',
+        margin : 0
+      }}>
         <div
           // onTouchStart={handleTouchStart}
           // onTouchMove={handleTouchMove}
@@ -421,9 +414,7 @@ const handleStartPointClick = (location: Location) => {
           border: '1px solid rgba(0,0,0,0.1)',
           margin: isMobile ? '16px auto' : '16px 16px 16px 0',
           position : 'fixed',
-          bottom: isMobile ? (pickUp ? '-10%' : '-85%') : '',
-          // bottom: isMobile ? -240 : '',
-
+          bottom: isMobile ? (pickUp ? '5%' : '-45%') : '',
           transition: 'bottom 0.3s ease-in-out',
           // transition: isDragging ? 'none' : 'bottom 0.3s ease-in-out',
           // bottom: isMobile ? `${drawerPosition}px` : '' 
@@ -504,12 +495,13 @@ const handleStartPointClick = (location: Location) => {
                   <path d="M20.031 20.79C20.491 21.25 21.201 20.54 20.741 20.09L16.991 16.33C18.3064 14.8745 19.0336 12.9818 19.031 11.02C19.031 6.63 15.461 3.06 11.071 3.06C6.681 3.06 3.111 6.63 3.111 11.02C3.111 15.41 6.681 18.98 11.071 18.98C13.051 18.98 14.881 18.25 16.281 17.04L20.031 20.79ZM4.11 11.02C4.11 7.18 7.24 4.06 11.07 4.06C14.91 4.06 18.03 7.18 18.03 11.02C18.03 14.86 14.91 17.98 11.07 17.98C7.24 17.98 4.11 14.86 4.11 11.02Z" fill= "black" fillOpacity="0.6" />
                 </svg>
                 <input
-                  type="text"
-                  placeholder="Select Pickup Point"
-                  value={pickUp?.name || ''}
-                  onChange={handleSearch}
+                   type="text"
+                   placeholder="Select Pickup Point"
+                   value={pickUp}
+                   onChange={handleSearch}
                    onFocus={handleInputFocus}
-                    onBlur={handleInputBlur}
+                   onBlur={handleInputBlur}
+                   onKeyPress={handleKeyPress}
                   style={{
                     flex: 1,
                     border: 'none',
@@ -543,6 +535,7 @@ const handleStartPointClick = (location: Location) => {
             border : pickUp? '1px dashed rgba(0,0,0,1)' : '1px dashed rgba(0,0,0,0.2)',
             position : 'relative',
             left : '6%',
+            // display : inputFocused? 'none' : 'block'
             
           }}></div>
 
@@ -596,7 +589,7 @@ const handleStartPointClick = (location: Location) => {
                 <input
                   type="text"
                   placeholder="Select Drop Off Point"
-                  value={dropOff?.name || ''}
+                  value={dropOff}
                   onChange={handleSearch}
                   style={{
                     flex: 1,
@@ -634,15 +627,13 @@ const handleStartPointClick = (location: Location) => {
           </div>
         </div>
 
-        <MapGl
-          isHomepage={true}
-          selectedLocation={selectedLocation}
-          dropPoints={selectedLocation?.dropPoints || []}
-          dropOffLocation={dropOff}
-          pickUpLocation={pickUp}
-        />
-        
-   
+        <MapGl isHomepage={true} selectedLocation={selectedLocation} dropPoints={selectedLocation?.dropPoints || []} /> 
+        {/* <MapGL
+  selectedLocation={selectedLocation}
+  dropPoints={[]} // No drop points needed on the homepage
+  isHomepage={true} // Enable homepage behavior
+/>   */} 
+     </div>
     </div>
   );
 }
