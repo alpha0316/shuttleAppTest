@@ -272,21 +272,22 @@ const handleStartPointClick = (location: Location) => {
     }
   };
 
-  const handleInputFocus = (event: React.FocusEvent<HTMLInputElement>) => {
+  const handleInputFocus = () => {
     if (!pickUp && !dropOff) {
       setInputFocused(true);
     }
   };
-
-  const handleInputBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+  
+  const handleInputBlur = () => {
     if (pickUp && dropOff) {
       setInputFocused(false);
     }
   };
 
-  const handleKeyPress = (event) => {
+  const handleKeyPress = (event : any) => {
     if (event.key === 'Enter') {
       setInputFocused(false);
+      console.log(inputFocused)
     }
   };
 
