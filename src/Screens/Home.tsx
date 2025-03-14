@@ -52,20 +52,20 @@ function Home() {
   const isMobile = useMediaQuery('(max-width: 768px)');
   const navigate = useNavigate();
 
-  interface Location {
-    id: string;
-    name: string;
-    description: string;
-    latitude: number;
-    longitude: number;
-    dropPoints: dropPoints[];
-  }
-  interface Coordinates {
-    latitude: number;
-    longitude: number;
-  }
+  // interface Location {
+  //   id: string;
+  //   name: string;
+  //   description: string;
+  //   latitude: number;
+  //   longitude: number;
+  //   dropPoints: dropPoints[];
+  // }
+  // interface Coordinates {
+  //   latitude: number;
+  //   longitude: number;
+  // }
 
-  const locations = [
+  const locations : Location [] = [
     { id: '1', name: 'Main Library', description: 'On Campus', latitude: 6.675033566213408, longitude: -1.5723546778455368,
       dropPoints: [ 
         { name: 'Brunei', latitude: 6.670465091472612, longitude: -1.5741574445526254 },
@@ -178,8 +178,8 @@ function Home() {
   const [isSelectingDropOff, setIsSelectingDropOff] = useState(false)
   const [pickUpDetails, setpickUpDetail] =  useState<Location | null>(null)
   // const [dropOffDetail, setDropOffDetail] =  useState<Location | null>(null)
-  const [inputFocused, setInputFocused] = useState(false);
-  const [pickUpCoordinates, setPickUpCoordinates] = useState<{ latitude: number; longitude: number } | null>(null);
+  // const [inputFocused, setInputFocused] = useState(false);
+  // const [pickUpCoordinates, setPickUpCoordinates] = useState<{ latitude: number; longitude: number } | null>(null);
 
 
   // const drawerHeaderHeight = -300
@@ -201,6 +201,8 @@ const handleStartPointClick = (location: Location) => {
   const validDropOffPoints = locations.filter((loc) =>
     location.dropPoints.some((dp) => dp.name === loc.name)
   );
+
+  
   setFilteredLocations(validDropOffPoints);
   setDropOff(null);
   setSearchQuery('');
@@ -237,7 +239,7 @@ const handleStartPointClick = (location: Location) => {
     setSearchQuery('');
     setIsSelectingDropOff(false);
     setSelectedLocation(null);
-    setPickUpCoordinates(null);
+    // setPickUpCoordinates(null);
   }
 
   // const handleClearDropOff = () => {
@@ -247,7 +249,7 @@ const handleStartPointClick = (location: Location) => {
   //   searchQuery('')
   // }
 
-  const handleSearch = (event) => {
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value;
     setSearchQuery(query);
 
@@ -256,7 +258,7 @@ const handleStartPointClick = (location: Location) => {
     } else if (isSelectingDropOff && pickUp) {
       const validDropOffPoints = locations.filter((location) =>
         location.name.toLowerCase().includes(query.toLowerCase()) &&
-        pickUpDetails.dropPoints.some(dp => dp.name === location.name)
+        pickUpDetails?.dropPoints.some(dp => dp.name === location.name)
       );
       setFilteredLocations(validDropOffPoints);
     } else {
@@ -304,7 +306,7 @@ const handleStartPointClick = (location: Location) => {
 //   }
 // };
 
-  const LocationList: React.FC<{ searchQuery: string; selectedLocation: Location | null }> = ({ searchQuery, selectedLocation }) => {
+  const LocationList: React.FC<{ searchQuery: string; selectedLocation: Location | null }> = ({  selectedLocation }) => {
     return (
       <div style={{
         borderRadius: 8,
@@ -512,7 +514,7 @@ const handleStartPointClick = (location: Location) => {
                 <input
                    type="text"
                    placeholder="Select Pickup Point"
-                   value={pickUp}
+                   value={dropOff?.name || ''} 
                    onChange={handleSearch}
                    onFocus={handleInputFocus}
                    onBlur={handleInputBlur}
