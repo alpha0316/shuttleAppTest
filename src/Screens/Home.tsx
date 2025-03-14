@@ -191,7 +191,8 @@ function Home() {
   // const [isDragging, setIsDragging] = useState(false)
   // const [isExpanded, setIsExpanded] = useState(false);
  
-
+  const keyboardHeight = 300; // Example: Get actual keyboard height
+  const bottomPosition = inputFocused ? `calc(100% - ${keyboardHeight}px)` : '-60%';
 
 
 
@@ -420,7 +421,7 @@ const handleStartPointClick = (location: Location) => {
           border: '1px solid rgba(0,0,0,0.1)',
           margin: isMobile ? '16px auto' : '16px 16px 16px 0',
           position : 'fixed',
-          bottom: isMobile ? (inputFocused ? '10%' : '-60%') : '',
+          bottom: isMobile ? (inputFocused ? '40%' : '-60%') : '',
           transition: 'bottom 0.3s ease-in-out',
           // transition: isDragging ? 'none' : 'bottom 0.3s ease-in-out',
           // bottom: isMobile ? `${drawerPosition}px` : '' 
