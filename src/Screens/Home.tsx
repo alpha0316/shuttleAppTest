@@ -65,6 +65,8 @@ function Home() {
   //   longitude: number;
   // }
 
+
+
   const locations : Location [] = [
     { id: '1', name: 'Main Library', description: 'On Campus', latitude: 6.675033566213408, longitude: -1.5723546778455368,
       dropPoints: [ 
@@ -177,6 +179,7 @@ function Home() {
   const [dropOff, setDropOff] =  useState<Location | null>(null)
   const [isSelectingDropOff, setIsSelectingDropOff] = useState(false)
   const [pickUpDetails, setpickUpDetail] =  useState<Location | null>(null)
+  const [inputFocused, setInputFocused] = useState(false);
   // const [dropOffDetail, setDropOffDetail] =  useState<Location | null>(null)
   // const [inputFocused, setInputFocused] = useState(false);
   // const [pickUpCoordinates, setPickUpCoordinates] = useState<{ latitude: number; longitude: number } | null>(null);
@@ -269,14 +272,13 @@ const handleStartPointClick = (location: Location) => {
     }
   };
 
-  const handleInputFocus = () => {   
-    // setInputFocused(true);
+  const handleInputFocus = (event: React.FocusEvent<HTMLInputElement>) => {
     if (!pickUp && !dropOff) {
       setInputFocused(true);
     }
   };
 
-  const handleInputBlur = () => {
+  const handleInputBlur = (event: React.FocusEvent<HTMLInputElement>) => {
     if (pickUp && dropOff) {
       setInputFocused(false);
     }
@@ -306,7 +308,26 @@ const handleStartPointClick = (location: Location) => {
 //   }
 // };
 
-  const LocationList: React.FC<{ searchQuery: string; selectedLocation: Location | null }> = ({  selectedLocation }) => {
+interface LocationListProps {
+  searchQuery: string;
+  selectedLocation: Location | null;
+  locations: Location[];
+  isSelectingDropOff: boolean;
+  handleDropOffPointClick: (location: Location) => void;
+  handleStartPointClick: (location: Location) => void;
+  isMobile: boolean;
+}
+
+const LocationList: React.FC<LocationListProps> = ({  
+    // searchQuery,
+    selectedLocation,
+    // locations,
+    isSelectingDropOff,
+    handleDropOffPointClick,
+    handleStartPointClick,
+    isMobile,
+
+   }) => {
     return (
       <div style={{
         borderRadius: 8,
@@ -606,7 +627,7 @@ const handleStartPointClick = (location: Location) => {
                 <input
                   type="text"
                   placeholder="Select Drop Off Point"
-                  value={dropOff}
+                  value={dropOff?.name}
                   onChange={handleSearch}
                   style={{
                     flex: 1,
