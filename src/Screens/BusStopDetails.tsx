@@ -374,7 +374,7 @@ function BusStopDetails() {
           border: '1px solid rgba(0,0,0,0.1)',
           margin: isMobile ? '16px auto' : '16px 16px 16px 0',
           position : 'fixed',
-          bottom : isMobile ? 10 : ''
+          bottom : isMobile ? -10 : ''
 
         }}>
          
@@ -492,7 +492,11 @@ function BusStopDetails() {
               <div style={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: 8
+                gap: 8,
+                overflow : 'hidden',
+                overflowY : 'auto',
+                maxHeight : isMobile ? 100  : 'calc(70vh - 220px)',
+                paddingRight: 8,
               }}>
               {filteredDropPointsForUI?.map((dropPoint: DropPoint, index: number) => (
                 <div key={dropPoint.name}>
