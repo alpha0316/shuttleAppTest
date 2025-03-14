@@ -208,7 +208,7 @@ function Home() {
   }, [])
  
   // const keyboardHeight = 300; // Example: Get actual keyboard height
-  const bottomPosition = inputFocused ? `calc(100% - ${keyboardHeight}px)` : '-40%';
+  const bottomPosition = inputFocused ? `calc(100% - ${keyboardHeight}px)` : '-70%';
 
 
 
