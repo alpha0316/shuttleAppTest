@@ -444,7 +444,7 @@ const LocationList: React.FC<LocationListProps> = ({
           position : 'fixed',
           bottom: isMobile 
           ? dropDown
-          ? '-25' // Fully visible (full screen)
+          ? '' // Fully visible (full screen)
           : pickUp
             ? '-30%' // Partially visible when pickUp is selected
             : '-10%' // Mostly hidden
