@@ -17,7 +17,7 @@ interface Location {
   description: string;
   latitude: number;
   longitude: number;
-  dropPoints: DropPoint[]; // Define dropPoints as an array of DropPoint
+  dropPoints: DropPoint[]; 
 }
 
 
@@ -25,9 +25,7 @@ function Home() {
 
   const BASE_CUSTOMER_URL = "http://shuttle-backend-0.onrender.com/api/v1";
 
-  // const { loaded, coordinates, error } = useGeolocation();
 
-  // console.log('so', coordinates)
   useEffect(() => {
     const fetchDrivers = async () => {
       try {
@@ -52,18 +50,6 @@ function Home() {
   const isMobile = useMediaQuery('(max-width: 768px)');
   const navigate = useNavigate();
 
-  // interface Location {
-  //   id: string;
-  //   name: string;
-  //   description: string;
-  //   latitude: number;
-  //   longitude: number;
-  //   dropPoints: dropPoints[];
-  // }
-  // interface Coordinates {
-  //   latitude: number;
-  //   longitude: number;
-  // }
 
 
 
@@ -165,10 +151,10 @@ function Home() {
     },
   ];
   
-  // Sort the locations array alphabetically by the `name` property
+ 
   locations.sort((a, b) => a.name.localeCompare(b.name));
   
-  // console.log(locations);
+  
 
 
   
@@ -180,6 +166,7 @@ function Home() {
   const [isSelectingDropOff, setIsSelectingDropOff] = useState(false)
   const [pickUpDetails, setpickUpDetail] =  useState<Location | null>(null)
   const [inputFocused, setInputFocused] = useState(false);
+  const [dropDown, setDropDown] = useState(true)
   // const [dropOffDetail, setDropOffDetail] =  useState<Location | null>(null)
   // const [inputFocused, setInputFocused] = useState(false);
   // const [pickUpCoordinates, setPickUpCoordinates] = useState<{ latitude: number; longitude: number } | null>(null);
@@ -245,12 +232,7 @@ const handleStartPointClick = (location: Location) => {
     // setPickUpCoordinates(null);
   }
 
-  // const handleClearDropOff = () => {
-  //   setpickUp("null")
-  //   setpickUpDetail(null)
-  //   setFilteredLocations(locations)
-  //   searchQuery('')
-  // }
+
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value;
@@ -290,6 +272,13 @@ const handleStartPointClick = (location: Location) => {
       console.log(inputFocused)
     }
   };
+
+  const handleDropDown = () => {
+    setDropDown(!dropDown)
+    if (pickUp) {
+      setDropDown(!dropDown)
+    }
+  }
 
 
 //   if (isSelectingDropOff && pickUp) {
@@ -453,7 +442,15 @@ const LocationList: React.FC<LocationListProps> = ({
           border: '1px solid rgba(0,0,0,0.1)',
           margin: isMobile ? '16px auto' : '16px 16px 16px 0',
           position : 'fixed',
-          bottom: isMobile ? (pickUp ? '-10%' : '-60%') : '',
+          bottom: isMobile 
+          ? (dropDown 
+            ? '-135%' 
+            : pickUp 
+              ? '-10%'  
+              : '-55%'
+          ) 
+          : '',
+          // -55
           transition: 'bottom 0.3s ease-in-out',
           // transition: isDragging ? 'none' : 'bottom 0.3s ease-in-out',
           // bottom: isMobile ? `${drawerPosition}px` : '' 
@@ -462,12 +459,44 @@ const LocationList: React.FC<LocationListProps> = ({
          {/* <div style={{ textAlign: 'center', marginBottom: '8px', display : isMobile ? 'block' : 'none' }}>
             <div style={{ width: '40px', height: '4px', backgroundColor: '#ccc', borderRadius: '2px', margin: '0 auto' }}></div>
          </div> */}
+         <div style={{
+          display : 'flex',
+          alignItems : 'center',
+          justifyContent : "space-between"
+         }}>
+
           <p style={{ fontSize: 20, fontWeight: '700', margin: 0 }}>
-            Welcome to KNUST 
-            
-            
+            Welcome to KNUST   
             <span style={{ fontSize: 20, color: '#34A853', fontWeight: '700' }}> Shuttle<span style={{ fontWeight: '400', color: '#FFCE31' }}>App</span></span>
           </p>
+
+          { !pickUp && (
+              dropDown ? 
+              <svg
+              onClick={handleDropDown} 
+              style={{
+                display : isMobile  ? 'black' : 'none'
+              }} 
+              xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M3 10L8 5L13 10" stroke="black" stroke-opacity="0.6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              :  
+              <svg
+              onClick={handleDropDown} 
+              style={{
+                display : isMobile  ? 'black' : 'none'
+              }} 
+              xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M13 6L8 11L3 6" stroke="black" stroke-opacity="0.6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+          ) 
+          }
+          
+         
+         
+
+         </div>
+          
 
           <div style={{
             display : 'flex',
@@ -502,7 +531,7 @@ const LocationList: React.FC<LocationListProps> = ({
                 display : 'flex',
                 alignItems : 'center',
                 borderRadius : 80,
-                border : '1px dashed rgba(0,0,0,0.1)',
+                border : '1px dashed rgba(0,0,0,0.2)',
                 justifyContent : 'center',
                 backgroundColor: pickUp? '#000' : '#ffff',
               }}>
@@ -524,7 +553,7 @@ const LocationList: React.FC<LocationListProps> = ({
                 backgroundColor: '#ffff',
                 borderRadius: 16,
                 alignItems: 'center',
-                border: pickUp ? '1px solid rgba(0,0,0,0.6)' : '1px solid rgba(0,0,0,0.1)',
+                border: pickUp ? '1px solid rgba(0,0,0,0.8)' : '1px solid rgba(0,0,0,0.2)',
                 width : '75%'
               }}>
 
@@ -536,7 +565,7 @@ const LocationList: React.FC<LocationListProps> = ({
                 <input
                    type="text"
                    placeholder="Select Pickup Point"
-                   value={dropOff?.name || ''} 
+                   value={pickUp}
                    onChange={handleSearch}
                    onFocus={handleInputFocus}
                    onBlur={handleInputBlur}
