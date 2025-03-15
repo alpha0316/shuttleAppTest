@@ -444,10 +444,10 @@ const LocationList: React.FC<LocationListProps> = ({
           position : 'fixed',
           bottom: isMobile 
           ? (dropDown 
-            ? '-125%'  //topp 
+            ? '-115%'  //topp 
             : pickUp 
               ? '-10%'  
-              : '-25%' // bottom
+              : '-5%' // bottom
           ) 
           : '',
           // -55
