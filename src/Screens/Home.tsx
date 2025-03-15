@@ -447,7 +447,7 @@ const LocationList: React.FC<LocationListProps> = ({
             ? '-95%' 
             : pickUp 
               ? '-10%'  
-              : '-15%'
+              : '-45%'
           ) 
           : '',
           // -55
