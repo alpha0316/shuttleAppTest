@@ -443,12 +443,13 @@ const LocationList: React.FC<LocationListProps> = ({
           margin: isMobile ? '16px auto' : '16px 16px 16px 0',
           position : 'fixed',
           bottom: isMobile 
-          ? dropDown
-          ? '-85' // Fully visible (full screen)
-          : pickUp
-            ? '-30%' // Partially visible when pickUp is selected
-            : '-10%' // Mostly hidden
-        : '',
+          ? (dropDown 
+            ? '-140%'  //topp 
+            : pickUp 
+              ? '-10%'  
+              : '-55%' // bottom
+          ) 
+          : '',
           // -55
           transition: 'bottom 0.3s ease-in-out',
           // transition: isDragging ? 'none' : 'bottom 0.3s ease-in-out',
