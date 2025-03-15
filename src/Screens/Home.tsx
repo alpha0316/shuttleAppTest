@@ -447,7 +447,7 @@ const LocationList: React.FC<LocationListProps> = ({
           ? '-85' // Fully visible (full screen)
           : pickUp
             ? '-30%' // Partially visible when pickUp is selected
-            : '10%' // Mostly hidden
+            : '-10%' // Mostly hidden
         : '',
           // -55
           transition: 'bottom 0.3s ease-in-out',
