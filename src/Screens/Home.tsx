@@ -429,7 +429,7 @@ const LocationList: React.FC<LocationListProps> = ({
           display: 'flex',
           paddingInline: 16,
           paddingBlock: 16,
-          backgroundColor: 'white',
+          backgroundColor: 'red',
           marginLeft: 12,
           borderRadius: 24,
           gap: 8,
@@ -444,7 +444,7 @@ const LocationList: React.FC<LocationListProps> = ({
           position : 'fixed',
           bottom: isMobile 
           ? dropDown
-          ? '-55' // Fully visible (full screen)
+          ? '-85' // Fully visible (full screen)
           : pickUp
             ? '-30%' // Partially visible when pickUp is selected
             : '10%' // Mostly hidden
