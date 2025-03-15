@@ -429,7 +429,7 @@ const LocationList: React.FC<LocationListProps> = ({
           display: 'flex',
           paddingInline: 16,
           paddingBlock: 16,
-          backgroundColor: 'white',
+          backgroundColor: 'red',
           marginLeft: 12,
           borderRadius: 24,
           gap: 8,
