@@ -429,7 +429,7 @@ const LocationList: React.FC<LocationListProps> = ({
           display: 'flex',
           paddingInline: 16,
           paddingBlock: 16,
-          backgroundColor: 'red',
+          backgroundColor: 'white',
           marginLeft: 12,
           borderRadius: 24,
           gap: 8,
@@ -444,7 +444,7 @@ const LocationList: React.FC<LocationListProps> = ({
           position : 'fixed',
           bottom: isMobile 
           ? (dropDown 
-            ? '-140%'  //topp 
+            ? '-40%'  //topp 
             : pickUp 
               ? '-10%'  
               : '-55%' // bottom
