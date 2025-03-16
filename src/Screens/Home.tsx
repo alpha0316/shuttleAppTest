@@ -155,7 +155,7 @@ function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredLocations, setFilteredLocations] = useState<Location[]>(locations);
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null)
-  const [pickUp, setpickUp] =  useState("")
+  const [pickUp, setpickUp] =  useState<Location | null>(null)
   const [dropOff, setDropOff] =  useState<Location | null>(null)
   const [isSelectingDropOff, setIsSelectingDropOff] = useState(false)
   const [pickUpDetails, setpickUpDetail] =  useState<Location | null>(null)
@@ -175,7 +175,7 @@ function Home() {
 const handleStartPointClick = (location: Location) => {
   setSelectedLocation(location);
   setpickUpDetail(location);
-  setpickUp(location.name);
+  setpickUp(location);
   setIsSelectingDropOff(true);
   console.log(pickUp)
 
@@ -209,7 +209,7 @@ const handleStartPointClick = (location: Location) => {
   }
 
   const handleClearPickUp = () => {
-    setpickUp('');
+    setpickUp(null);
     setpickUpDetail(null);
     setFilteredLocations(locations);
     setSearchQuery('');
@@ -325,7 +325,7 @@ const LocationList: React.FC<LocationListProps> = ({
         borderWidth: 1,
         flexDirection : 'column',
         overflowY : 'auto',
-        maxHeight : isMobile ? 'calc(130vh - 120px)'  : 'calc(70vh - 220px)',
+        maxHeight : isMobile ? 'calc(140vh - 120px)'  : 'calc(70vh - 220px)',
         width : '330',
         justifyContent : 'flex-start' ,
         // calc(130vh - 220px)
@@ -437,7 +437,7 @@ const LocationList: React.FC<LocationListProps> = ({
           zIndex: 11111,
           marginTop: 4,
           border: '1px solid rgba(0,0,0,0.1)',
-          margin: isMobile ? '16px auto' : '16px 16px 16px 0',
+          margin: isMobile ? '16px auto 0' : '16px 16px 16px 0',
           position : 'fixed',
           bottom: isMobile 
           ? (dropDown || inputFocused
@@ -449,7 +449,7 @@ const LocationList: React.FC<LocationListProps> = ({
           : '',
        
           transition: 'bottom 0.3s ease-in-out',
-          // marginInline : 2
+          marginInline : 2
           // transition: isDragging ? 'none' : 'bottom 0.3s ease-in-out',
           // bottom: isMobile ? `${drawerPosition}px` : '' 
         }}>
