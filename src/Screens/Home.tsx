@@ -334,7 +334,7 @@ const LocationList: React.FC<LocationListProps> = ({
         borderWidth: 1,
         flexDirection : 'column',
         overflowY : 'auto',
-        maxHeight : isMobile ? '90vh'  : 'calc(70vh - 220px)',
+        maxHeight : isMobile ? '70'  : 'calc(70vh - 220px)',
         width : '330',
         justifyContent : 'flex-start' ,
         
