@@ -231,10 +231,10 @@ const handleStartPointClick = (location: Location) => {
 
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const query = event.target.value;
-    setSearchQuery(query);
+    const searchQuery = event.target.value;
+    setSearchQuery(searchQuery);
 
-    if (query === '') {
+    if (searchQuery === '') {
       setFilteredLocations(locations);
     } else if (isSelectingDropOff && pickUp) {
       const validDropOffPoints = locations.filter((location) =>
@@ -244,7 +244,7 @@ const handleStartPointClick = (location: Location) => {
       setFilteredLocations(validDropOffPoints);
     } else {
       const filterData = locations.filter((location) =>
-        location.name.toLowerCase().includes(query.toLowerCase())
+        location.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setFilteredLocations(filterData);
     }
