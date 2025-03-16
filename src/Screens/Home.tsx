@@ -50,9 +50,6 @@ function Home() {
   const isMobile = useMediaQuery('(max-width: 768px)');
   const navigate = useNavigate();
 
-
-
-
   const locations : Location [] = [
     { id: '1', name: 'Main Library', description: 'On Campus', latitude: 6.675033566213408, longitude: -1.5723546778455368,
       dropPoints: [ 
@@ -154,10 +151,7 @@ function Home() {
  
   locations.sort((a, b) => a.name.localeCompare(b.name));
   
-  
 
-
-  
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredLocations, setFilteredLocations] = useState<Location[]>(locations);
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null)
@@ -177,9 +171,6 @@ function Home() {
   // const [isDragging, setIsDragging] = useState(false)
   // const [isExpanded, setIsExpanded] = useState(false);
  
-
-
-
 
 const handleStartPointClick = (location: Location) => {
   setSelectedLocation(location);
@@ -247,7 +238,7 @@ const handleStartPointClick = (location: Location) => {
       setFilteredLocations(locations);
     } else if (isSelectingDropOff && pickUp) {
       const validDropOffPoints = locations.filter((location) =>
-        location.name.toLowerCase().includes(query.toLowerCase()) &&
+        location.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
         pickUpDetails?.dropPoints.some(dp => dp.name === location.name)
       );
       setFilteredLocations(validDropOffPoints);
@@ -440,7 +431,7 @@ const LocationList: React.FC<LocationListProps> = ({
           borderRadius: 24,
           gap: 8,
           flexDirection: 'column',
-          width: isMobile ? '90%' : 340,
+          width: isMobile ? '87%' : 340,
           minHeight: isMobile ? 'auto' : 'auto',
           height: isMobile ? 'auto' : 'auto',
           zIndex: 11111,
@@ -458,6 +449,7 @@ const LocationList: React.FC<LocationListProps> = ({
           : '',
        
           transition: 'bottom 0.3s ease-in-out',
+          marginInline : 2
           // transition: isDragging ? 'none' : 'bottom 0.3s ease-in-out',
           // bottom: isMobile ? `${drawerPosition}px` : '' 
         }}>
@@ -603,7 +595,7 @@ const LocationList: React.FC<LocationListProps> = ({
             </div>
           </div>
 
-          { dropDown && isMobile && (
+          { !isMobile && (
             <div style={{
             width : 0.1,
             height : 20,
