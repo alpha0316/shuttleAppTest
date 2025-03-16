@@ -325,7 +325,7 @@ const LocationList: React.FC<LocationListProps> = ({
         borderWidth: 1,
         flexDirection : 'column',
         overflowY : 'auto',
-        maxHeight : isMobile ? '100vh'  : 'calc(70vh - 220px)',
+        maxHeight : isMobile ? '120vh'  : 'calc(70vh - 220px)',
         width : '330',
         justifyContent : 'flex-start' ,
         
@@ -449,7 +449,7 @@ const LocationList: React.FC<LocationListProps> = ({
           : '',
        
           transition: 'bottom 0.3s ease-in-out',
-          marginInline : 2
+          // marginInline : 2
           // transition: isDragging ? 'none' : 'bottom 0.3s ease-in-out',
           // bottom: isMobile ? `${drawerPosition}px` : '' 
         }}>
