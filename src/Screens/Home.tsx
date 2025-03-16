@@ -563,7 +563,7 @@ const LocationList: React.FC<LocationListProps> = ({
                 <input
                    type="text"
                    placeholder="Select Pickup Bus Stop"
-                   value={pickUp || searchQuery}
+                   value={pickUp?.name || searchQuery}
                    onChange={handleSearch}
                    onFocus={handleInputFocus}
                    onBlur={handleInputBlur}
