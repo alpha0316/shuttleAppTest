@@ -325,10 +325,10 @@ const LocationList: React.FC<LocationListProps> = ({
         borderWidth: 1,
         flexDirection : 'column',
         overflowY : 'auto',
-        maxHeight : isMobile ? '120vh'  : 'calc(70vh - 220px)',
+        maxHeight : isMobile ? '130vh'  : 'calc(70vh - 220px)',
         width : '330',
         justifyContent : 'flex-start' ,
-        
+        // calc(130vh - 220px)
       }}>
         {filteredLocations.length === 0 ? (
           <p>No Bus stop found. Select closest bus stop</p>
