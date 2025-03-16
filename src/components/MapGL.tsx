@@ -281,8 +281,8 @@ function MapGL({
         onClick={() => geolocateControlRef.current?.trigger()} // Trigger geolocation
         style={{
           position: 'absolute',
-          top: '10px',
-          right: '10px',
+          top: '20px',
+          right: '30px',
           backgroundColor: 'white',
           border: 'none',
           borderRadius: '50%',

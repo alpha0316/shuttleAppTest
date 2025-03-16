@@ -197,11 +197,6 @@ const handleStartPointClick = (location: Location) => {
   setDropOff(null);
   setSearchQuery('');
 
-  // setPickUpCoordinates({
-  //   latitude: location.latitude,
-  //   longitude: location.longitude,
-  // });
-  // console.log(pickUpCoordinates)  
 };
 
   const handleDropOffPointClick = (location: Location) => {
@@ -225,6 +220,16 @@ const handleStartPointClick = (location: Location) => {
   const handleClearPickUp = () => {
     setpickUp('');
     setpickUpDetail(null);
+    setFilteredLocations(locations);
+    setSearchQuery('');
+    setIsSelectingDropOff(false);
+    setSelectedLocation(null);
+    // setPickUpCoordinates(null);
+  }
+
+  const handleClearDropOff = () => {
+    setDropOff(null);
+    // setdropOffDetail(null);
     setFilteredLocations(locations);
     setSearchQuery('');
     setIsSelectingDropOff(false);
@@ -257,6 +262,7 @@ const handleStartPointClick = (location: Location) => {
   const handleInputFocus = () => {
     if (!pickUp && !dropOff) {
       setInputFocused(true);
+      // console.log('yes')
     }
   };
   
@@ -328,13 +334,13 @@ const LocationList: React.FC<LocationListProps> = ({
         borderWidth: 1,
         flexDirection : 'column',
         overflowY : 'auto',
-        maxHeight : isMobile ? 650  : 'calc(70vh - 220px)',
+        maxHeight : isMobile ? '90vh'  : 'calc(70vh - 220px)',
         width : '330',
         justifyContent : 'flex-start' ,
         
       }}>
         {filteredLocations.length === 0 ? (
-          <p>No Bus stop found</p>
+          <p>No Bus stop found. Select closest bus stop</p>
         ) : (
           filteredLocations.map((location) => (
             <div
@@ -443,14 +449,14 @@ const LocationList: React.FC<LocationListProps> = ({
           margin: isMobile ? '16px auto' : '16px 16px 16px 0',
           position : 'fixed',
           bottom: isMobile 
-          ? (dropDown 
+          ? (dropDown || inputFocused
             ? '-130%'  //topp 
             : pickUp 
-              ? '-10%'  
+              ? '-5%'  
               : '-40%' // bottom
           ) 
           : '',
-          // -55
+       
           transition: 'bottom 0.3s ease-in-out',
           // transition: isDragging ? 'none' : 'bottom 0.3s ease-in-out',
           // bottom: isMobile ? `${drawerPosition}px` : '' 
@@ -531,7 +537,7 @@ const LocationList: React.FC<LocationListProps> = ({
                 display : 'flex',
                 alignItems : 'center',
                 borderRadius : 80,
-                border : '1px dashed rgba(0,0,0,0.2)',
+                border : pickUp ? '1px dashed rgba(0,0,0,1)' : '1px dashed rgba(0,0,0,0.4)',
                 justifyContent : 'center',
                 backgroundColor: pickUp? '#000' : '#ffff',
               }}>
@@ -553,7 +559,7 @@ const LocationList: React.FC<LocationListProps> = ({
                 backgroundColor: '#ffff',
                 borderRadius: 16,
                 alignItems: 'center',
-                border: pickUp ? '1px solid rgba(0,0,0,0.8)' : '1px solid rgba(0,0,0,0.2)',
+                border: pickUp ? '1px solid rgba(0,0,0,0.8)' : '1px solid rgba(0,0,0,0.4)',
                 width : '75%'
               }}>
 
@@ -564,8 +570,8 @@ const LocationList: React.FC<LocationListProps> = ({
                 </svg>
                 <input
                    type="text"
-                   placeholder="Select Pickup Point"
-                   value={pickUp}
+                   placeholder="Select Pickup Bus Stop"
+                   value={pickUp || searchQuery}
                    onChange={handleSearch}
                    onFocus={handleInputFocus}
                    onBlur={handleInputBlur}
@@ -597,7 +603,8 @@ const LocationList: React.FC<LocationListProps> = ({
             </div>
           </div>
 
-          <div style={{
+          { dropDown && isMobile && (
+            <div style={{
             width : 0.1,
             height : 20,
             border : pickUp? '1px dashed rgba(0,0,0,1)' : '1px dashed rgba(0,0,0,0.2)',
@@ -606,7 +613,11 @@ const LocationList: React.FC<LocationListProps> = ({
             // display : inputFocused? 'none' : 'block'
             
           }}></div>
+          )
+          }
 
+          
+       
           <div style={{
             display : 'flex',
             flexDirection : 'column',
@@ -635,7 +646,7 @@ const LocationList: React.FC<LocationListProps> = ({
                 justifyContent : 'center',
                 backgroundColor: '#ffff',
               }}>
-                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none">
                   <path d="M20.6202 8.7C19.5802 4.07 15.5402 2 12.0002 2C12.0002 2 12.0002 2 11.9902 2C8.46024 2 4.43024 4.07 3.38024 8.69C2.20024 13.85 5.36024 18.22 8.22024 20.98C9.28024 22 10.6402 22.51 12.0002 22.51C13.3602 22.51 14.7202 22 15.7702 20.98C18.6302 18.22 21.7902 13.86 20.6202 8.7ZM15.2802 9.53L11.2802 13.53C11.1302 13.68 10.9402 13.75 10.7502 13.75C10.5602 13.75 10.3702 13.68 10.2202 13.53L8.72024 12.03C8.43024 11.74 8.43024 11.26 8.72024 10.97C9.01024 10.68 9.49024 10.68 9.78024 10.97L10.7502 11.94L14.2202 8.47C14.5102 8.18 14.9902 8.18 15.2802 8.47C15.5702 8.76 15.5702 9.24 15.2802 9.53Z" fill="black" fill-opacity="0.6"/>
                 </svg>
               </div>
@@ -656,9 +667,11 @@ const LocationList: React.FC<LocationListProps> = ({
                 </svg>
                 <input
                   type="text"
-                  placeholder="Select Drop Off Point"
+                  placeholder="Select Drop Off Bus Stop"
                   value={dropOff?.name}
-                  onChange={handleSearch}
+                  onChange={handleSearch || searchQuery}
+                  onFocus={handleInputFocus}
+                  onBlur={handleInputBlur}
                   style={{
                     flex: 1,
                     border: 'none',
@@ -670,7 +683,7 @@ const LocationList: React.FC<LocationListProps> = ({
                   }}
                 />
                   { dropOff ? 
-                  <svg onClick={handleClearPickUp} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <svg onClick={handleClearDropOff} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
                     <path d="M4.26671 12.6666L3.33337 11.7333L7.06671 7.99992L3.33337 4.26659L4.26671 3.33325L8.00004 7.06659L11.7334 3.33325L12.6667 4.26659L8.93337 7.99992L12.6667 11.7333L11.7334 12.6666L8.00004 8.93325L4.26671 12.6666Z" fill="#1D1B20"/>
                   </svg>
                   : 
@@ -682,6 +695,8 @@ const LocationList: React.FC<LocationListProps> = ({
 
             </div>
           </div>
+        
+        
           </div>
           
           <div style={{ display: 'flex', gap: 12, flexDirection: 'column' }}>
