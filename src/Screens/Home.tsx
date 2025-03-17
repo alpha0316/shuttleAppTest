@@ -161,6 +161,7 @@ function Home() {
   const [pickUpDetails, setpickUpDetail] =  useState<Location | null>(null)
   const [inputFocused, setInputFocused] = useState(false);
   const [dropDown, setDropDown] = useState(true)
+  
   // const [dropOffDetail, setDropOffDetail] =  useState<Location | null>(null)
   // const [inputFocused, setInputFocused] = useState(false);
   // const [pickUpCoordinates, setPickUpCoordinates] = useState<{ latitude: number; longitude: number } | null>(null);
@@ -253,8 +254,9 @@ const handleStartPointClick = (location: Location) => {
   const handleInputFocus = () => {
     if (!pickUp && !dropOff) {
       setInputFocused(true);
+      setDropDown(true);
       // console.log('yes')
-    }
+    } 
   };
   
   const handleInputBlur = () => {
@@ -325,7 +327,7 @@ const LocationList: React.FC<LocationListProps> = ({
         borderWidth: 1,
         flexDirection : 'column',
         overflowY : 'auto',
-        maxHeight : isMobile ? 'calc(140vh - 120px)'  : 'calc(70vh - 220px)',
+        maxHeight : isMobile ? '40vh'  : 'calc(80vh - 220px)',
         width : '330',
         justifyContent : 'flex-start' ,
         // calc(130vh - 220px)
@@ -430,16 +432,17 @@ const LocationList: React.FC<LocationListProps> = ({
           margin: isMobile ? '16px auto 0' : '16px 16px 16px 0',
           position : 'fixed',
           bottom: isMobile 
-          ? (dropDown || inputFocused
-            ? '-80vh'  //topp 
+          ? ( pickUp || dropDown
+            ? '-60vh'  //topp 
             : pickUp 
               ? '-5vh'  
-              : '-10vh' // bottom
+              : '0vh' // bottom
           ) 
           : '',
        
-          transition: 'bottom 0.3s ease-in-out',
-          marginInline : 2
+          transition: 'bottom 0.3s ease-in-out, max-height 0.3s ease-in-out',
+          marginInline : 2,
+          
           // transition: isDragging ? 'none' : 'bottom 0.3s ease-in-out',
           // bottom: isMobile ? `${drawerPosition}px` : '' 
         }}>
@@ -585,7 +588,7 @@ const LocationList: React.FC<LocationListProps> = ({
             </div>
           </div>
 
-          { !isMobile && (
+          { dropDown && (
             <div style={{
             width : 0.1,
             height : 20,
