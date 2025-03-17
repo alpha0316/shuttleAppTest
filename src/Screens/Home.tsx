@@ -254,7 +254,7 @@ const handleStartPointClick = (location: Location) => {
   const handleInputFocus = () => {
     if (!pickUp && !dropOff) {
       setInputFocused(true);
-      setDropDown(true);
+      // setDropDown(true);
       // console.log('yes')
     } 
   };
@@ -432,7 +432,7 @@ const LocationList: React.FC<LocationListProps> = ({
           margin: isMobile ? '16px auto 0' : '16px 16px 16px 0',
           position : 'fixed',
           bottom: isMobile 
-          ? ( pickUp || dropDown
+          ? ( inputFocused || dropDown
             ? '-60vh'  //topp 
             : pickUp 
               ? '-5vh'  
