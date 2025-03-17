@@ -398,26 +398,16 @@ const LocationList: React.FC<LocationListProps> = ({
 
   return (
     <div style={{
-      // display: 'flex',
+      display: 'flex',
       // flexDirection: isMobile ? 'column' : 'row',
-      height: '100vh',
+      height: '100lvh',
       width: '100vw',
       margin: 0,
       padding: 0,
       overflow: 'hidden', 
-      
+      // backgroundColor : 'red'
     }}>
      
-      <div style={{
-        display: 'flex',
-        // width: '100%',
-        borderRadius: 24,
-        height: 'auto',
-        overflow: 'hidden',
-        // flexDirection: isMobile ? 'column' : 'row',
-        backgroundColor : 'red',
-        margin : 0
-      }}>
         <div
           // onTouchStart={handleTouchStart}
           // onTouchMove={handleTouchMove}
@@ -427,12 +417,12 @@ const LocationList: React.FC<LocationListProps> = ({
           paddingInline: 16,
           paddingBlock: 16,
           backgroundColor: 'white',
-          marginLeft: 12,
+          marginLeft:  isMobile? '0' : 12,
           borderRadius: 24,
           gap: 8,
           flexDirection: 'column',
-          width: isMobile ? '87%' : 340,
-          minHeight: isMobile ? 'auto' : 'auto',
+          width: isMobile ? '90%' : 340,
+          maxHeight: isMobile ? '90vh' : 'auto',
           height: isMobile ? 'auto' : 'auto',
           zIndex: 11111,
           marginTop: 4,
@@ -441,10 +431,10 @@ const LocationList: React.FC<LocationListProps> = ({
           position : 'fixed',
           bottom: isMobile 
           ? (dropDown || inputFocused
-            ? '-130%'  //topp 
+            ? '-80%'  //topp 
             : pickUp 
               ? '-5%'  
-              : '-40%' // bottom
+              : '0%' // bottom
           ) 
           : '',
        
@@ -703,14 +693,14 @@ const LocationList: React.FC<LocationListProps> = ({
         </div>
 
         <MapGl 
-  isHomepage={true}
-  selectedLocation={selectedLocation}
-  dropPoints={selectedLocation?.dropPoints || []}
-  pickUpLocation={pickUpDetails}  // Add this
-  dropOffLocation={dropOff}       // Add this
-/>
+          isHomepage={true}
+          selectedLocation={selectedLocation}
+          dropPoints={selectedLocation?.dropPoints || []}
+          pickUpLocation={pickUpDetails}  // Add this
+          dropOffLocation={dropOff}       
+        />
 
-     </div>
+    
     </div>
   );
 }
