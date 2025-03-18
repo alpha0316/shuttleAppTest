@@ -160,7 +160,7 @@ function Home() {
   const [isSelectingDropOff, setIsSelectingDropOff] = useState(false)
   const [pickUpDetails, setpickUpDetail] =  useState<Location | null>(null)
   const [inputFocused, setInputFocused] = useState(false);
-  const [dropDown, setDropDown] = useState(false)
+  const [dropDown, setDropDown] = useState(true)
   
   // const [dropOffDetail, setDropOffDetail] =  useState<Location | null>(null)
   // const [inputFocused, setInputFocused] = useState(false);
