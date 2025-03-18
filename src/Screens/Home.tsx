@@ -160,7 +160,7 @@ function Home() {
   const [isSelectingDropOff, setIsSelectingDropOff] = useState(false)
   const [pickUpDetails, setpickUpDetail] =  useState<Location | null>(null)
   const [inputFocused, setInputFocused] = useState(false);
-  const [dropDown, setDropDown] = useState(true)
+  const [dropDown, setDropDown] = useState(false)
   
   // const [dropOffDetail, setDropOffDetail] =  useState<Location | null>(null)
   // const [inputFocused, setInputFocused] = useState(false);
@@ -424,7 +424,7 @@ const LocationList: React.FC<LocationListProps> = ({
           gap: 8,
           flexDirection: 'column',
           width: isMobile ? '90%' : 340,
-          maxHeight: isMobile ? (dropDown || inputFocused ? '90vh' : '20vh') : 'auto',
+          maxHeight: isMobile ? (dropDown || inputFocused ? '90vh' : '24vh') : 'auto',
           height: isMobile ? 'auto' : 'auto',
           zIndex: 11111,
           marginTop: 4,
@@ -469,7 +469,7 @@ const LocationList: React.FC<LocationListProps> = ({
                 display : isMobile  ? 'black' : 'none'
               }} 
               xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 16 16" fill="none">
-              <path d="M3 10L8 5L13 10" stroke="black" stroke-opacity="0.6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M13 6L8 11L3 6" stroke="black" stroke-opacity="0.6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
               :  
               <svg
@@ -478,13 +478,10 @@ const LocationList: React.FC<LocationListProps> = ({
                 display : isMobile  ? 'black' : 'none'
               }} 
               xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 16 16" fill="none">
-              <path d="M13 6L8 11L3 6" stroke="black" stroke-opacity="0.6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M3 10L8 5L13 10" stroke="black" stroke-opacity="0.6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
           ) 
           }
-          
-         
-         
 
          </div>
           
@@ -588,7 +585,7 @@ const LocationList: React.FC<LocationListProps> = ({
             </div>
           </div>
 
-          { dropDown && (
+          { !dropDown && (
             <div style={{
             width : 0.1,
             height : 20,
