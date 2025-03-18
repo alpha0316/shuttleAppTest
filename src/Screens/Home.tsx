@@ -252,6 +252,9 @@ const handleStartPointClick = (location: Location) => {
   };
 
   const handleInputFocus = () => {
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+
     if (!dropDown) {
       setDropDown(true); // Expand the card if it's collapsed
     }
@@ -259,6 +262,10 @@ const handleStartPointClick = (location: Location) => {
   };
   
   const handleInputBlur = () => {
+
+    document.body.style.overflow = '';
+    document.documentElement.style.overflow = '';
+
     setInputFocused(false);
     if (!pickUp && !dropOff) {
       setDropDown(false); // Collapse the card if no pickup or drop-off is selected
@@ -424,7 +431,7 @@ const LocationList: React.FC<LocationListProps> = ({
           gap: 8,
           flexDirection: 'column',
           width: isMobile ? '90%' : 340,
-          maxHeight: isMobile ? (dropDown || inputFocused ? '90vh' : '20vh') : 'auto',
+          maxHeight: isMobile ? (dropDown || inputFocused ? '80vh' : '20vh') : 'auto',
           height: isMobile ? 'auto' : 'auto',
           zIndex: 11111,
           marginTop: 4,
@@ -562,11 +569,12 @@ const LocationList: React.FC<LocationListProps> = ({
                     flex: 1,
                     border: 'none',
                     backgroundColor: 'transparent',
-                    fontSize: 14,
+                    fontSize: 16,
                     color:  pickUp ? "#000" : 'rgba(0,0,0,0.6)',
                     outline: 'none',
                     padding: 0,
                     transition: 'bottom 0.3s ease-in-out',
+                    touchAction : 'manipulation'
                   }}
                 />
 
