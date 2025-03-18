@@ -252,16 +252,16 @@ const handleStartPointClick = (location: Location) => {
   };
 
   const handleInputFocus = () => {
-    if (!pickUp && !dropOff) {
-      setInputFocused(true);
-      // setDropDown(true);
-      // console.log('yes')
-    } 
+    if (!dropDown) {
+      setDropDown(true); // Expand the card if it's collapsed
+    }
+    setInputFocused(true); // Ensure the input is focused
   };
   
   const handleInputBlur = () => {
-    if (pickUp && dropOff) {
-      setInputFocused(false);
+    setInputFocused(false);
+    if (!pickUp && !dropOff) {
+      setDropDown(false); // Collapse the card if no pickup or drop-off is selected
     }
   };
 
@@ -424,7 +424,7 @@ const LocationList: React.FC<LocationListProps> = ({
           gap: 8,
           flexDirection: 'column',
           width: isMobile ? '90%' : 340,
-          maxHeight: isMobile ? '90vh' : 'auto',
+          maxHeight: isMobile ? (dropDown || inputFocused ? '90vh' : '20vh') : 'auto',
           height: isMobile ? 'auto' : 'auto',
           zIndex: 11111,
           marginTop: 4,
@@ -433,9 +433,9 @@ const LocationList: React.FC<LocationListProps> = ({
           position : 'fixed',
           bottom: isMobile 
           ? ( inputFocused || dropDown
-            ? '-60vh'  //topp 
+            ? '8px'  //topp 
             : pickUp 
-              ? '-5vh'  
+              ? '0vh'  
               : '0vh' // bottom
           ) 
           : '',
