@@ -160,7 +160,7 @@ function Home() {
   const [isSelectingDropOff, setIsSelectingDropOff] = useState(false)
   const [pickUpDetails, setpickUpDetail] =  useState<Location | null>(null)
   const [inputFocused, setInputFocused] = useState(false);
-  const [dropDown, setDropDown] = useState(true)
+  const [dropDown, setDropDown] = useState(false)
   
   // const [dropOffDetail, setDropOffDetail] =  useState<Location | null>(null)
   // const [inputFocused, setInputFocused] = useState(false);
@@ -468,7 +468,7 @@ const LocationList: React.FC<LocationListProps> = ({
             <span style={{ fontSize: 20, color: '#34A853', fontWeight: '700' }}> Shuttle<span style={{ fontWeight: '400', color: '#FFCE31' }}>App</span></span>
           </p>
 
-          { pickUp && (
+          { !pickUp && (
               dropDown ? 
               <svg
               onClick={handleDropDown} 
