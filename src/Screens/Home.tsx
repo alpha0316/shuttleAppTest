@@ -424,7 +424,7 @@ const LocationList: React.FC<LocationListProps> = ({
           gap: 8,
           flexDirection: 'column',
           width: isMobile ? '90%' : 340,
-          maxHeight: isMobile ? (dropDown || inputFocused ? '90vh' : '24vh') : 'auto',
+          maxHeight: isMobile ? (dropDown || inputFocused ? '90vh' : '20vh') : 'auto',
           height: isMobile ? 'auto' : 'auto',
           zIndex: 11111,
           marginTop: 4,
