@@ -621,7 +621,7 @@ const LocationList: React.FC<LocationListProps> = ({
                     flex: 1,
                     border: 'none',
                     backgroundColor: 'transparent',
-                    fontSize: 16,
+                    fontSize: 14,
                     color:  pickUp ? "#000" : 'rgba(0,0,0,0.6)',
                     outline: 'none',
                     padding: 0,
