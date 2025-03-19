@@ -33,13 +33,13 @@ interface MapGLProps {
   buses: Bus[];
 }
 
-interface Driver {
-  id: string;
-  status: string;
-  latitude: number;
-  longitude: number;
-  dropPoints: DropPoint[]; 
-}
+// interface Driver {
+//   id: string;
+//   status: string;
+//   latitude: number;
+//   longitude: number;
+//   dropPoints: DropPoint[]; 
+// }
 
 interface DropPoint {
   name: string;
@@ -60,41 +60,17 @@ function MapGL({
     latitude: 6.678045,
     zoom: 14.95,
   });
-  const BASE_CUSTOMER_URL = "http://shuttle-backend-0.onrender.com/api/v1";
+  // const BASE_CUSTOMER_URL = "http://shuttle-backend-0.onrender.com/api/v1";
 
   const [route, setRoute] = useState<Route | null>(null);
-  const [drivers, setDrivers] = useState<Driver[]>([])
-  const [selectedBus, setSelectedBus] = useState<Bus | null>(null);
-  const [busLocation, setBusLocation] = useState<Coordinates | null>(null);
+  // const [drivers, setDrivers] = useState<Driver[]>([])
+  // const [selectedBus, setSelectedBus] = useState<Bus | null>(null);
+  // const [busLocation, setBusLocation] = useState<Coordinates | null>(null);
   const geolocateControlRef = useRef<any>(null);
   const activeBuses = buses.filter((bus) => bus.status === 'active');
   const [busBearing, setBusBearing] = useState<number | null>(null);
 
 
-  useEffect(() => {
-    const fetchDrivers = async () => {
-      try {
-        const response = await fetch(`${BASE_CUSTOMER_URL}/drivers/drivers`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch drivers');
-        }
-
-        const data = await response.json();
-        setDrivers(data); // Set the fetched drivers to state'
-        console.log('yes')
-      } catch (error) {
-        console.error('Error fetching drivers:', error);
-      }
-    };
-
-    fetchDrivers();
-  }, []);
 
 
   useEffect(() => {
@@ -106,10 +82,10 @@ function MapGL({
           latitude: bus.latitude + 0.0001, // Simulate movement
           bearing: (bus.bearing || 0) + 1, // Simulate bearing change
         }));
-        setBusLocation(updatedBuses[0]); // Track the first bus for simplicity
+        // setBusLocation(updatedBuses[0]); // Track the first bus for simplicity
         setBusBearing(updatedBuses[0].bearing || 0);
       }, 1000); // Update every second
-
+      console.log(busBearing)
       return () => clearInterval(interval);
     }
   }, [activeBuses]);
@@ -296,7 +272,7 @@ function MapGL({
     </svg>
   );
 
-   const BusIcon = ({ rotation = 0 }: { rotation?: number }) => (
+   const BusIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" width="60" height="80" viewBox="0 0 60 80" fill="none">
     <g clip-path="url(#clip0_756_599)">
       <path d="M16.0436 30.617C16.1914 30.6061 16.3391 30.5953 16.4913 30.5842C20.2896 37.0297 24.088 43.4753 28.0014 50.1162C31.8702 47.8825 35.739 45.6488 39.7251 43.3475C39.7017 42.8465 39.5733 42.621 39.333 42.1877C39.2524 42.0414 39.1719 41.8951 39.0889 41.7444C39.0009 41.5867 38.913 41.4289 38.8225 41.2664C38.7332 41.1043 38.6439 40.9422 38.5518 40.7751C38.2658 40.2558 37.9786 39.7371 37.6912 39.2186C37.3131 38.5365 36.9362 37.8538 36.5599 37.1708C36.472 37.013 36.3841 36.8553 36.2935 36.6927C36.213 36.5464 36.1324 36.4002 36.0494 36.2495C35.978 36.1207 35.9066 35.9919 35.833 35.8592C35.6778 35.5292 35.6778 35.5292 35.6573 35.0897C35.7728 35.023 35.8883 34.9563 36.0073 34.8876C41.8116 44.9411 47.616 54.9945 53.5963 65.3526C53.3975 65.5418 53.1988 65.7311 52.9941 65.926C52.8651 65.7026 52.7361 65.4792 52.6032 65.249C49.0231 67.316 45.443 69.3829 41.7544 71.5125C40.8193 69.8928 39.8841 68.2731 38.9207 66.6043C38.401 66.9043 37.8813 67.2044 37.3458 67.5135C34.5848 62.7933 31.8247 58.0725 29.0658 53.351C27.7848 51.1589 26.5036 48.967 25.2215 46.7755C24.1044 44.8659 22.9879 42.956 21.8721 41.0456C21.281 40.0336 20.6896 39.0218 20.0975 38.0104C19.5406 37.0593 18.9846 36.1077 18.4292 35.1557C18.2248 34.8056 18.02 34.4558 17.815 34.1061C17.5359 33.6301 17.2579 33.1534 16.9802 32.6766C16.8981 32.5371 16.8161 32.3977 16.7315 32.2541C16.4107 31.7011 16.1668 31.2514 16.0436 30.617Z" fill="#34A853"/>
@@ -582,10 +558,10 @@ function MapGL({
           latitude={bus.latitude}
           onClick={(e) => {
             e.originalEvent.stopPropagation();
-            setSelectedBus(bus);
+            // setSelectedBus(bus);
           }}
         >
-          <BusIcon rotation={bus.bearing || 0} />
+          <BusIcon />
         </Marker>
       ))}
 
