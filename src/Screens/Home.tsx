@@ -20,6 +20,16 @@ interface Location {
   dropPoints: DropPoint[]; 
 }
 
+interface Bus {
+  id: string;
+  name: string;
+  latitude: number;
+  longitude: number;
+  status: 'active' | 'inactive';
+  stops: { name: string }[];
+}
+
+
 
 function Home() {
 
@@ -29,7 +39,7 @@ function Home() {
   useEffect(() => {
     const fetchDrivers = async () => {
       try {
-        const response = await fetch(`${BASE_CUSTOMER_URL}/drivers`);
+        const response = await fetch(`${BASE_CUSTOMER_URL}/drivers/drivers`);
         
         if (!response.ok) {
           throw new Error('Failed to fetch orders');
@@ -172,6 +182,48 @@ function Home() {
   // const [isDragging, setIsDragging] = useState(false)
   // const [isExpanded, setIsExpanded] = useState(false);
  
+  const buses: Bus[] = [
+    {
+      id: 'bus1',
+      name: 'Bus 1',
+      latitude: 6.675033566213408,
+      longitude: -1.5723546778455368,
+      status : 'active',
+      stops: [
+        { name: 'brunei' },
+        { name: 'Main Library' },
+        { name: 'Pentecost Busstop' },
+        { name: 'KSB' },
+      ],
+    },
+    {
+      id: 'bus2',
+      name: 'Bus 2',
+      latitude: 6.6800787890749245,
+      longitude: -1.549747261104641,
+      status : 'inactive',
+      stops: [
+        { name: 'Gaza' },
+        { name: 'Medical Village' },
+        { name: 'Pharmacy Busstop' },
+      ],
+    },
+    {
+      id: 'bus3',
+      name: 'Bus 3',
+      latitude: 6.669314250173885,
+      longitude: -1.567181795001016,
+      status : 'active',
+      stops: [
+        { name: 'Commercial Area' },
+        { name: 'Hall 7' },
+        { name: 'Conti Busstop' },
+        { name: 'SRC Busstop' },
+        { name: 'Pentecost Busstop' },
+        { name: 'KSB' },
+      ],
+    },
+  ];
 
 const handleStartPointClick = (location: Location) => {
   setSelectedLocation(location);
@@ -448,7 +500,7 @@ const LocationList: React.FC<LocationListProps> = ({
           : '',
        
           transition: 'bottom 0.3s ease-in-out, max-height 0.3s ease-in-out',
-          marginInline : 2,
+          marginInline : isMobile ? 2 : 14,
           
           // transition: isDragging ? 'none' : 'bottom 0.3s ease-in-out',
           // bottom: isMobile ? `${drawerPosition}px` : '' 
@@ -593,7 +645,7 @@ const LocationList: React.FC<LocationListProps> = ({
             </div>
           </div>
 
-          { !dropDown && (
+          { !isMobile && (
             <div style={{
             width : 0.1,
             height : 20,
@@ -705,7 +757,8 @@ const LocationList: React.FC<LocationListProps> = ({
           selectedLocation={selectedLocation}
           dropPoints={selectedLocation?.dropPoints || []}
           pickUpLocation={pickUpDetails}  // Add this
-          dropOffLocation={dropOff}       
+          dropOffLocation={dropOff} 
+          buses={buses}      
         />
 
     
