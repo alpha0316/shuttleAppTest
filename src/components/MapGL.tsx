@@ -232,7 +232,71 @@ function MapGL({
       </defs>
     </svg>
   );
-  const BusIcon = ({ color }: { color: string }) => (
+  
+
+
+  // Custom Location Icon
+  const LocationIcon = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="72"
+      height="72"
+      viewBox="0 0 72 72"
+      fill="none"
+    >
+      <g filter="url(#filter0_d_723_117)">
+        <path
+          d="M18.3223 53.6777C28.0854 63.4408 43.9146 63.4408 53.6777 53.6777C63.4408 43.9146 63.4408 28.0854 53.6777 18.3223C43.9146 8.55921 28.0854 8.55921 18.3223 18.3223C8.55922 28.0854 8.55922 43.9146 18.3223 53.6777Z"
+          fill="white"
+          fillOpacity="0.6"
+          shapeRendering="crispEdges"
+        />
+      </g>
+      <path
+        d="M22.8723 39.4662C21.0235 38.9073 20.7436 36.3888 22.4413 35.588L43.5073 25.6507C45.2671 24.8206 47.1794 26.733 46.3493 28.4927L36.412 49.5587C35.6112 51.2564 33.0927 50.9765 32.5338 49.1276L30.802 43.3989C30.4846 42.3488 29.6513 41.5154 28.6012 41.198L22.8723 39.4662Z"
+        fill="black"
+      />
+      <defs>
+        <filter
+          id="filter0_d_723_117"
+          x="6"
+          y="7"
+          width="60"
+          height="60"
+          filterUnits="userSpaceOnUse"
+          colorInterpolationFilters="sRGB"
+        >
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
+          <feColorMatrix
+            in="SourceAlpha"
+            type="matrix"
+            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+            result="hardAlpha"
+          />
+          <feOffset dy="1" />
+          <feGaussianBlur stdDeviation="2.5" />
+          <feComposite in2="hardAlpha" operator="out" />
+          <feColorMatrix
+            type="matrix"
+            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
+          />
+          <feBlend
+            mode="normal"
+            in2="BackgroundImageFix"
+            result="effect1_dropShadow_723_117"
+          />
+          <feBlend
+            mode="normal"
+            in="SourceGraphic"
+            in2="effect1_dropShadow_723_117"
+            result="shape"
+          />
+        </filter>
+      </defs>
+    </svg>
+  );
+
+   const BusIcon = ({ rotation = 0 }: { rotation?: number }) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="60" height="80" viewBox="0 0 60 80" fill="none">
     <g clip-path="url(#clip0_756_599)">
       <path d="M16.0436 30.617C16.1914 30.6061 16.3391 30.5953 16.4913 30.5842C20.2896 37.0297 24.088 43.4753 28.0014 50.1162C31.8702 47.8825 35.739 45.6488 39.7251 43.3475C39.7017 42.8465 39.5733 42.621 39.333 42.1877C39.2524 42.0414 39.1719 41.8951 39.0889 41.7444C39.0009 41.5867 38.913 41.4289 38.8225 41.2664C38.7332 41.1043 38.6439 40.9422 38.5518 40.7751C38.2658 40.2558 37.9786 39.7371 37.6912 39.2186C37.3131 38.5365 36.9362 37.8538 36.5599 37.1708C36.472 37.013 36.3841 36.8553 36.2935 36.6927C36.213 36.5464 36.1324 36.4002 36.0494 36.2495C35.978 36.1207 35.9066 35.9919 35.833 35.8592C35.6778 35.5292 35.6778 35.5292 35.6573 35.0897C35.7728 35.023 35.8883 34.9563 36.0073 34.8876C41.8116 44.9411 47.616 54.9945 53.5963 65.3526C53.3975 65.5418 53.1988 65.7311 52.9941 65.926C52.8651 65.7026 52.7361 65.4792 52.6032 65.249C49.0231 67.316 45.443 69.3829 41.7544 71.5125C40.8193 69.8928 39.8841 68.2731 38.9207 66.6043C38.401 66.9043 37.8813 67.2044 37.3458 67.5135C34.5848 62.7933 31.8247 58.0725 29.0658 53.351C27.7848 51.1589 26.5036 48.967 25.2215 46.7755C24.1044 44.8659 22.9879 42.956 21.8721 41.0456C21.281 40.0336 20.6896 39.0218 20.0975 38.0104C19.5406 37.0593 18.9846 36.1077 18.4292 35.1557C18.2248 34.8056 18.02 34.4558 17.815 34.1061C17.5359 33.6301 17.2579 33.1534 16.9802 32.6766C16.8981 32.5371 16.8161 32.3977 16.7315 32.2541C16.4107 31.7011 16.1668 31.2514 16.0436 30.617Z" fill="#34A853"/>
@@ -311,100 +375,6 @@ function MapGL({
       </clipPath>
     </defs>
   </svg>
-  );
-
-  // Custom Location Icon
-  const LocationIcon = () => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="72"
-      height="72"
-      viewBox="0 0 72 72"
-      fill="none"
-    >
-      <g filter="url(#filter0_d_723_117)">
-        <path
-          d="M18.3223 53.6777C28.0854 63.4408 43.9146 63.4408 53.6777 53.6777C63.4408 43.9146 63.4408 28.0854 53.6777 18.3223C43.9146 8.55921 28.0854 8.55921 18.3223 18.3223C8.55922 28.0854 8.55922 43.9146 18.3223 53.6777Z"
-          fill="white"
-          fillOpacity="0.6"
-          shapeRendering="crispEdges"
-        />
-      </g>
-      <path
-        d="M22.8723 39.4662C21.0235 38.9073 20.7436 36.3888 22.4413 35.588L43.5073 25.6507C45.2671 24.8206 47.1794 26.733 46.3493 28.4927L36.412 49.5587C35.6112 51.2564 33.0927 50.9765 32.5338 49.1276L30.802 43.3989C30.4846 42.3488 29.6513 41.5154 28.6012 41.198L22.8723 39.4662Z"
-        fill="black"
-      />
-      <defs>
-        <filter
-          id="filter0_d_723_117"
-          x="6"
-          y="7"
-          width="60"
-          height="60"
-          filterUnits="userSpaceOnUse"
-          colorInterpolationFilters="sRGB"
-        >
-          <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feColorMatrix
-            in="SourceAlpha"
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-            result="hardAlpha"
-          />
-          <feOffset dy="1" />
-          <feGaussianBlur stdDeviation="2.5" />
-          <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_723_117"
-          />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="effect1_dropShadow_723_117"
-            result="shape"
-          />
-        </filter>
-      </defs>
-    </svg>
-  );
-
-   const BusIcon = ({ rotation = 0 }: { rotation?: number }) => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="40"
-      height="40"
-      viewBox="0 0 40 40"
-      fill="none"
-      style={{ transform: `rotate(${rotation}deg)` }} // Rotate the icon based on bearing
-    >
-      {/* Custom Bus Icon SVG */}
-      <path
-        d="M20 0C8.954 0 0 8.954 0 20s8.954 20 20 20 20-8.954 20-20S31.046 0 20 0zm0 38C9.523 38 2 30.477 2 20S9.523 2 20 2s18 7.523 18 18-7.523 18-18 18z"
-        fill="#000"
-      />
-      <path
-        d="M20 4C10.059 4 4 10.059 4 20s6.059 16 16 16 16-6.059 16-16S29.941 4 20 4zm0 30C11.163 34 6 28.837 6 20S11.163 6 20 6s14 5.163 14 14-5.163 14-14 14z"
-        fill="#FFD700"
-      />
-      <path
-        d="M20 8c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm0 22c-5.523 0-10-4.477-10-10S14.477 10 20 10s10 4.477 10 10-4.477 10-10 10z"
-        fill="#000"
-      />
-      <path
-        d="M20 12c-4.418 0-8 3.582-8 8s3.582 8 8 8 8-3.582 8-8-3.582-8-8-8zm0 14c-3.314 0-6-2.686-6-6s2.686-6 6-6 6 2.686 6 6-2.686 6-6 6z"
-        fill="#FFD700"
-      />
-      <path
-        d="M20 16c-2.209 0-4 1.791-4 4s1.791 4 4 4 4-1.791 4-4-1.791-4-4-4zm0 6c-1.105 0-2-.895-2-2s.895-2 2-2 2 .895 2 2-.895 2-2 2z"
-        fill="#000"
-      />
-    </svg>
   );
 
   return (
@@ -615,7 +585,7 @@ function MapGL({
             setSelectedBus(bus);
           }}
         >
-          <BusIcon color="#34A853" rotation={bus.bearing || 0} />
+          <BusIcon rotation={bus.bearing || 0} />
         </Marker>
       ))}
 
