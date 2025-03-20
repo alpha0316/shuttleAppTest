@@ -33,28 +33,28 @@ interface Bus {
 
 function Home() {
 
-  const BASE_CUSTOMER_URL = "http://shuttle-backend-0.onrender.com/api/v1";
+  const BASE_CUSTOMER_URL = "https://shuttle-backend-0.onrender.com/api/v1";
 
 
   useEffect(() => {
     const fetchDrivers = async () => {
       try {
         const response = await fetch(`${BASE_CUSTOMER_URL}/drivers/drivers`);
-        
+        // console.log(response);
+
         if (!response.ok) {
-          throw new Error('Failed to fetch orders');
+          throw new Error("Failed to fetch drivers");
         }
-        
+
         const data = await response.json();
-    
-        console.log(data)
+
+        console.log(data);
       } catch (err) {
-        console.error("Error fetching orders:", err);
+        console.error("Error fetching drivers:", err);
       }
-    }
+    };
 
     fetchDrivers();
-    
   }, []);
 
   const isMobile = useMediaQuery('(max-width: 768px)');
