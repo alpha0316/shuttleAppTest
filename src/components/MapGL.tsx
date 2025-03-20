@@ -29,7 +29,7 @@ interface Bus {
   status: string;
   latitude: number;
   longitude: number;
-  bearing?: number; // Optional, as it might not always be present
+  bearing?: number; 
 }
 
 interface MapGLProps {
