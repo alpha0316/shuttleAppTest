@@ -308,9 +308,9 @@ const handleStartPointClick = (location: Location) => {
     document.documentElement.style.overflow = 'hidden';
 
     if (!dropDown) {
-      setDropDown(true); // Expand the card if it's collapsed
+      setDropDown(true); 
     }
-    setInputFocused(true); // Ensure the input is focused
+    setInputFocused(true); 
   };
   
   const handleInputBlur = () => {
@@ -320,7 +320,7 @@ const handleStartPointClick = (location: Location) => {
 
     setInputFocused(false);
     if (!pickUp && !dropOff) {
-      setDropDown(false); // Collapse the card if no pickup or drop-off is selected
+      setDropDown(false); 
     }
   };
 
@@ -339,22 +339,6 @@ const handleStartPointClick = (location: Location) => {
   }
 
 
-//   if (isSelectingDropOff && pickUp) {
-//     // When selecting drop-off point, filter from valid drop-off points
-//     const startLocation = locations.find(loc => loc.name === pickUp);
-//     const filteredDropOffs = locations.filter((location) => 
-//       location.name.toLowerCase().includes(query.toLowerCase()) &&
-//       startLocation?.dropPoints.some(dp => dp.name === location.name)
-//     );
-//     setFilteredLocations(filteredDropOffs);
-//   } else {
-//     // When selecting start point, filter from all locations
-//     const filterData = locations.filter((location) =>
-//       location.name.toLowerCase().includes(query.toLowerCase())
-//     );
-//     setFilteredLocations(filterData);
-//   }
-// };
 
 interface LocationListProps {
   searchQuery: string;
@@ -460,7 +444,6 @@ const LocationList: React.FC<LocationListProps> = ({
   return (
     <div style={{
       display: 'flex',
-      // flexDirection: isMobile ? 'column' : 'row',
       height: '100lvh',
       width: '100vw',
       margin: 0,

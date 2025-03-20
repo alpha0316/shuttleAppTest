@@ -24,6 +24,14 @@ interface Route {
   end: Coordinates;
 }
 
+interface Bus {
+  id: string;
+  status: string;
+  latitude: number;
+  longitude: number;
+  bearing?: number; // Optional, as it might not always be present
+}
+
 interface MapGLProps {
   selectedLocation: Coordinates | null;
   dropOffLocation: Coordinates | null;
