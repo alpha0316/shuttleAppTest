@@ -33,29 +33,10 @@ interface Bus {
 
 function Home() {
 
-  const BASE_CUSTOMER_URL = "https://shuttle-backend-0.onrender.com/api/v1";
+  // const BASE_CUSTOMER_URL = "https://shuttle-backend-0.onrender.com/api/v1";
 
 
-  useEffect(() => {
-    const fetchDrivers = async () => {
-      try {
-        const response = await fetch(`${BASE_CUSTOMER_URL}/drivers/drivers`);
-        // console.log(response);
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch drivers");
-        }
-
-        const data = await response.json();
-
-        console.log(data);
-      } catch (err) {
-        console.error("Error fetching drivers:", err);
-      }
-    };
-
-    fetchDrivers();
-  }, []);
 
   const isMobile = useMediaQuery('(max-width: 768px)');
   const navigate = useNavigate();
@@ -171,6 +152,7 @@ function Home() {
   const [pickUpDetails, setpickUpDetail] =  useState<Location | null>(null)
   const [inputFocused, setInputFocused] = useState(false);
   const [dropDown, setDropDown] = useState(true)
+  // const [drivers, setDrivers] = useState([])
   
   // const [dropOffDetail, setDropOffDetail] =  useState<Location | null>(null)
   // const [inputFocused, setInputFocused] = useState(false);
@@ -181,6 +163,8 @@ function Home() {
   // const [drawerPosition, setDrawerPosition] = useState(drawerHeaderHeight)
   // const [isDragging, setIsDragging] = useState(false)
   // const [isExpanded, setIsExpanded] = useState(false);
+
+ 
  
   const buses: Bus[] = [
     {
@@ -327,7 +311,7 @@ const handleStartPointClick = (location: Location) => {
   const handleKeyPress = (event : any) => {
     if (event.key === 'Enter') {
       setInputFocused(false);
-      console.log(inputFocused)
+      // console.log(inputFocused)
     }
   };
 
