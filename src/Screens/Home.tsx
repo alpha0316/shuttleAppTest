@@ -34,9 +34,31 @@ interface Bus {
 function Home() {
 
   // const BASE_CUSTOMER_URL = "https://shuttle-backend-0.onrender.com/api/v1";
+  //   const [drivers, setDrivers] = useState<Bus[]>([]);
+  
 
 
+  // useEffect(() => {
+  //   const fetchDrivers = async () => {
+  //     try {
+  //       const response = await fetch(`${BASE_CUSTOMER_URL}/drivers/drivers`);
+  //       // console.log(response);
 
+  //       if (!response.ok) {
+  //         throw new Error("Failed to fetch drivers");
+  //       }
+        
+  //       const data = await response.json();
+  //       setDrivers(data)
+
+  //       console.log(drivers);
+  //     } catch (err) {
+  //       console.error("Error fetching drivers:", err);
+  //     }
+  //   };
+
+  //   fetchDrivers();
+  // }, []);
 
   const isMobile = useMediaQuery('(max-width: 768px)');
   const navigate = useNavigate();
@@ -152,17 +174,7 @@ function Home() {
   const [pickUpDetails, setpickUpDetail] =  useState<Location | null>(null)
   const [inputFocused, setInputFocused] = useState(false);
   const [dropDown, setDropDown] = useState(true)
-  // const [drivers, setDrivers] = useState([])
-  
-  // const [dropOffDetail, setDropOffDetail] =  useState<Location | null>(null)
-  // const [inputFocused, setInputFocused] = useState(false);
-  // const [pickUpCoordinates, setPickUpCoordinates] = useState<{ latitude: number; longitude: number } | null>(null);
 
-
-  // const drawerHeaderHeight = -300
-  // const [drawerPosition, setDrawerPosition] = useState(drawerHeaderHeight)
-  // const [isDragging, setIsDragging] = useState(false)
-  // const [isExpanded, setIsExpanded] = useState(false);
 
  
  
@@ -345,20 +357,7 @@ const LocationList: React.FC<LocationListProps> = ({
 
    }) => {
     return (
-      <div style={{
-        borderRadius: 8,
-        display: 'flex',
-        padding: 12,
-        alignItems: 'flex-start',
-        gap: 12,
-        borderWidth: 1,
-        flexDirection : 'column',
-        overflowY : 'auto',
-        maxHeight : isMobile ? '40vh'  : 'calc(80vh - 220px)',
-        width : '330',
-        justifyContent : 'flex-start' ,
-        // calc(130vh - 220px)
-      }}>
+      <div className="rounded-lg flex flex-col p-3 gap-3 overflow-y-auto max-h-[40vh] md:max-h-[calc(80vh-220px)] w-[360px]">
         {filteredLocations.length === 0 ? (
           <p>No Bus stop found. Select closest bus stop</p>
         ) : (
@@ -372,7 +371,7 @@ const LocationList: React.FC<LocationListProps> = ({
               padding: 12,
               alignItems: 'center',
               gap: 16,
-              width: '90%',
+              width: '100%',
               justifyContent: 'flex-start',
               cursor: 'pointer',
               backgroundColor: selectedLocation?.id === location.id ? '#F0F8FF' : '#f4f4f4f', 
@@ -426,65 +425,45 @@ const LocationList: React.FC<LocationListProps> = ({
   };
 
   return (
-    <div style={{
-      display: 'flex',
-      height: '100lvh',
-      width: '100vw',
-      margin: 0,
-      padding: 0,
-      overflow: 'hidden', 
-      // backgroundColor : 'red'
-    }}>
-     
+    <div className='flex h-100vh w-100vw m-0 p-0 overflow-hidden '>
+     {/* flex h-100vh w-100vw m-0 p-0 overflow-hidden */}
         <div
-          // onTouchStart={handleTouchStart}
-          // onTouchMove={handleTouchMove}
-          // onTouchEnd={handleTouchEnd}
-        style={{
-          display: 'flex',
-          paddingInline: 16,
-          paddingBlock: 16,
-          backgroundColor: 'white',
-          marginLeft:  isMobile? '0' : 12,
-          borderRadius: 24,
-          gap: 8,
-          flexDirection: 'column',
-          width: isMobile ? '90%' : 340,
-          maxHeight: isMobile ? (dropDown || inputFocused ? '80vh' : '20vh') : 'auto',
-          height: isMobile ? 'auto' : 'auto',
-          zIndex: 11111,
-          marginTop: 4,
-          border: '1px solid rgba(0,0,0,0.1)',
-          margin: isMobile ? '16px auto 0' : '16px 16px 16px 0',
-          position : 'fixed',
-          bottom: isMobile 
-          ? ( inputFocused || dropDown
-            ? '8px'  //topp 
-            : pickUp 
-              ? '0vh'  
-              : '0vh' // bottom
-          ) 
-          : '',
-       
-          transition: 'bottom 0.3s ease-in-out, max-height 0.3s ease-in-out',
-          marginInline : isMobile ? 2 : 14,
-          
-          // transition: isDragging ? 'none' : 'bottom 0.3s ease-in-out',
-          // bottom: isMobile ? `${drawerPosition}px` : '' 
-        }}>
+        className={`
+            flex
+            mt-3
+            px-4 py-4
+            bg-white
+            ${isMobile ? 'ml-0' : 'ml-3'}
+            rounded-3xl
+            gap-2
+            flex-col
+            ${isMobile ? 'w-full' : 'w-[380px]'}
+            ${isMobile ? (dropDown || inputFocused ? 'max-h-[80vh]' : 'max-h-[20vh]') : 'max-h-auto'}
+            ${isMobile ? 'h-auto' : 'h-auto'}
+            z-[11111]
+            mt-1 
+            border border-gray-200
+            ${isMobile ? 'mx-auto mt-4' : 'm-4 mr-4 ml-0'}
+            fixed
+            ${isMobile ? 
+              (inputFocused || dropDown) ? 'bottom-2' : 
+                (pickUp ? 'bottom-0' : 'bottom-0')
+              : ''}
+            transition-[bottom,max-height] duration-300 ease-in-out
+            ${isMobile ? 'mx-0.5' : 'mx-3.5'}  // marginInline: isMobile ? 2 : 14
+          `}
+        
+        >
+
 
          {/* <div style={{ textAlign: 'center', marginBottom: '8px', display : isMobile ? 'block' : 'none' }}>
             <div style={{ width: '40px', height: '4px', backgroundColor: '#ccc', borderRadius: '2px', margin: '0 auto' }}></div>
          </div> */}
-         <div style={{
-          display : 'flex',
-          alignItems : 'center',
-          justifyContent : "space-between"
-         }}>
+         <div className='flex items-center justify-between'>
 
-          <p style={{ fontSize: 20, fontWeight: '700', margin: 0 }}>
+          <p className='text-[20px] font-bold m-0'>
             Welcome to KNUST   
-            <span style={{ fontSize: 20, color: '#34A853', fontWeight: '700' }}> Shuttle<span style={{ fontWeight: '400', color: '#FFCE31' }}>App</span></span>
+            <span className = 'text-[20px] text-[#34A853] font-bold'> Shuttle<span style={{ fontWeight: '400', color: '#FFCE31' }}>App</span></span>
           </p>
 
           { !pickUp && (
@@ -512,43 +491,18 @@ const LocationList: React.FC<LocationListProps> = ({
          </div>
           
 
-          <div style={{
-            display : 'flex',
-            flexDirection : 'column',
-            gap : 12,
-            padding : 16,
-            borderRadius : 24,
-            backgroundColor : '#fafafa'
-          }}>
-                <div style={{
-            display : 'flex',
-            flexDirection : 'column',
-            gap : 8,
-            
-          }}>
-            <p style={{
-              margin : 0,
-              fontSize : 14,
-              color : 'rgba(0,0,0,0.5)'
-            }} >Starting Point</p>
+          <div className="flex flex-col gap-3 p-4 rounded-3xl bg-gray-50">
+            <div className="flex flex-col gap-2">
+            <p className= " m-0 text-[14px] text-[rgba(0,0,0,0.5)] ">Starting Point</p>
 
-            <div style={{
-              display : 'flex',
-              alignItems : 'center',
-              gap : 8,
-              // justifyContent : 'space-between'
-            }}>
-
-              <div style={{
-                width : 40,
-                height : 40,
-                display : 'flex',
-                alignItems : 'center',
-                borderRadius : 80,
-                border : pickUp ? '1px dashed rgba(0,0,0,1)' : '1px dashed rgba(0,0,0,0.4)',
-                justifyContent : 'center',
-                backgroundColor: pickUp? '#000' : '#ffff',
-              }}>
+            <div className = 'flex items-center gap-2'>
+              <div  className={`
+              w-10 h-10               
+              flex items-center justify-center  
+              rounded-full           
+              border border-dashed    
+              ${pickUp ? 'border-black bg-black' : 'border-black/40 bg-white'}
+            `}>
 
                 { pickUp?  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none">
                     <path d="M20.6201 8.45C19.5701 3.83 15.5401 1.75 12.0001 1.75C12.0001 1.75 12.0001 1.75 11.9901 1.75C8.4601 1.75 4.4201 3.82 3.3701 8.44C2.2001 13.6 5.3601 17.97 8.2201 20.72C9.2801 21.74 10.6401 22.25 12.0001 22.25C13.3601 22.25 14.7201 21.74 15.7701 20.72C18.6301 17.97 21.7901 13.61 20.6201 8.45ZM12.0001 13.46C10.2601 13.46 8.8501 12.05 8.8501 10.31C8.8501 8.57 10.2601 7.16 12.0001 7.16C13.7401 7.16 15.1501 8.57 15.1501 10.31C15.1501 12.05 13.7401 13.46 12.0001 13.46Z" fill="white" fill-opacity="1"/>
@@ -559,20 +513,8 @@ const LocationList: React.FC<LocationListProps> = ({
                 }
               </div>
 
-              <div style={{
-                display: 'flex',
-                paddingInline: 16,
-                paddingBlock: 12,
-                gap: 8,
-                backgroundColor: '#ffff',
-                borderRadius: 16,
-                alignItems: 'center',
-                border: pickUp ? '1px solid rgba(0,0,0,0.8)' : '1px solid rgba(0,0,0,0.4)',
-                width : '75%'
-              }}>
-
+              <div className ={`flex px-4 py-3 gap-2 bg-white rounded-[16px] items-center border   ${pickUp ? 'border-black/80' : 'border-black/40'} w-[90%] `}>
                 
-
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
                   <path d="M20.031 20.79C20.491 21.25 21.201 20.54 20.741 20.09L16.991 16.33C18.3064 14.8745 19.0336 12.9818 19.031 11.02C19.031 6.63 15.461 3.06 11.071 3.06C6.681 3.06 3.111 6.63 3.111 11.02C3.111 15.41 6.681 18.98 11.071 18.98C13.051 18.98 14.881 18.25 16.281 17.04L20.031 20.79ZM4.11 11.02C4.11 7.18 7.24 4.06 11.07 4.06C14.91 4.06 18.03 7.18 18.03 11.02C18.03 14.86 14.91 17.98 11.07 17.98C7.24 17.98 4.11 14.86 4.11 11.02Z" fill= "black" fillOpacity="0.6" />
                 </svg>
@@ -584,17 +526,7 @@ const LocationList: React.FC<LocationListProps> = ({
                    onFocus={handleInputFocus}
                    onBlur={handleInputBlur}
                    onKeyPress={handleKeyPress}
-                  style={{
-                    flex: 1,
-                    border: 'none',
-                    backgroundColor: 'transparent',
-                    fontSize: 14,
-                    color:  pickUp ? "#000" : 'rgba(0,0,0,0.6)',
-                    outline: 'none',
-                    padding: 0,
-                    transition: 'bottom 0.3s ease-in-out',
-                    touchAction : 'manipulation'
-                  }}
+                   className = {` flex-1 border-none bg-transparent text-[14px] ${pickUp ? 'text-black' : 'text-black/60'} outline-none p-0 transition-all duration-300 touch-manipulation `}
                 />
 
                   { pickUp ? 
@@ -669,7 +601,7 @@ const LocationList: React.FC<LocationListProps> = ({
                 borderRadius: 16,
                 alignItems: 'center',
                 border: '1px solid rgba(0,0,0,0.1)',
-                width : '75%'
+                width : '90%'
               }}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
                   <path d="M20.031 20.79C20.491 21.25 21.201 20.54 20.741 20.09L16.991 16.33C18.3064 14.8745 19.0336 12.9818 19.031 11.02C19.031 6.63 15.461 3.06 11.071 3.06C6.681 3.06 3.111 6.63 3.111 11.02C3.111 15.41 6.681 18.98 11.071 18.98C13.051 18.98 14.881 18.25 16.281 17.04L20.031 20.79ZM4.11 11.02C4.11 7.18 7.24 4.06 11.07 4.06C14.91 4.06 18.03 7.18 18.03 11.02C18.03 14.86 14.91 17.98 11.07 17.98C7.24 17.98 4.11 14.86 4.11 11.02Z" fill="black" fillOpacity="0.6" />
@@ -708,7 +640,7 @@ const LocationList: React.FC<LocationListProps> = ({
         
           </div>
           
-          <div style={{ display: 'flex', gap: 12, flexDirection: 'column' }}>
+          <div className='flex flex-col gap-3'>
             <LocationList searchQuery={searchQuery}
               selectedLocation={selectedLocation}
               locations={locations}

@@ -12,6 +12,7 @@
   "dependencies": {
     "@mapbox/search-js-react": "^1.0.0-beta.25",
     "@react-google-maps/api": "^2.20.5",
+    "@tailwindcss/vite": "^4.0.17",
     "flatlist-react": "^1.5.14",
     "leaflet": "^1.9.4",
     "mapbox-gl": "^3.9.4",
@@ -19,7 +20,8 @@
     "react-dom": "^19.0.0",
     "react-leaflet": "^5.0.0",
     "react-map-gl": "^8.0.0",
-    "react-router-dom": "^7.1.5"
+    "react-router-dom": "^7.1.5",
+    "tailwindcss": "^4.0.17"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

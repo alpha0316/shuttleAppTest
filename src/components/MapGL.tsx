@@ -56,7 +56,6 @@ interface DropPoint {
 }
 
 
-
 function MapGL({
   selectedLocation,
   dropOffLocation,
@@ -96,7 +95,7 @@ function MapGL({
         }
         
         const data = await response.json();
-        setDrivers(data.drivers)
+        setDrivers(data)
 
         console.log(drivers);
       } catch (err) {
@@ -106,6 +105,7 @@ function MapGL({
 
     fetchDrivers();
   }, []);
+  
 
 
   useEffect(() => {
