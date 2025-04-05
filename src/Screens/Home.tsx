@@ -3,6 +3,7 @@ import MapGl from '../components/MapGL';
 // import { FlyToInterpolator } from 'react-map-gl';
 import useMediaQuery from '../components/useMediaQuery';
 import { useNavigate } from 'react-router-dom';
+import ErrorBoundary from '../components/ErrorBoundary';
 // import useGeolocation from '../../hooks/useGeolocation'
 
 interface DropPoint {
@@ -651,6 +652,7 @@ const LocationList: React.FC<LocationListProps> = ({
           </div>
         </div>
 
+        <ErrorBoundary fallback={<div className="map-error">Map loading failed. Please refresh.</div>}>
         <MapGl 
           isHomepage={true}
           selectedLocation={selectedLocation}
@@ -659,6 +661,9 @@ const LocationList: React.FC<LocationListProps> = ({
           dropOffLocation={dropOff} 
           buses={buses}      
         />
+        </ErrorBoundary>
+
+       
 
     
     </div>

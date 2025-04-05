@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import Map, { Marker, Source, Layer, GeolocateControl } from 'react-map-gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { solveTSP } from './../components/solveTSP'; // Custom TSP solver (see below)
+import { solveTSP } from './../components/solveTSP'; 
+import { useDriverWebSocket } from './../../hooks/useDriverWebSocket'
 
 
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoidGhlbG9jYWxnb2RkIiwiYSI6ImNtMm9ocHFhYTBmczQya3NnczhoampiZ3gifQ.lPNutwk6XRi_kH_1R1ebiw';
@@ -25,14 +26,14 @@ interface Route {
   end: Coordinates;
 }
 
-interface Bus {
-  id: string;
-  status: 'active' | 'inactive';
-  latitude: number;
-  longitude: number;
-  bearing?: number; 
-  name : string; 
-}
+// interface Bus {
+//   id: string;
+//   status: 'active' | 'inactive';
+//   latitude: number;
+//   longitude: number;
+//   bearing?: number; 
+//   name : string; 
+// }
 
 interface MapGLProps {
   selectedLocation: Coordinates | null;
@@ -43,13 +44,19 @@ interface MapGLProps {
   buses: Bus[];
 }
 
-// interface Driver {
-//   id: string;
-//   status: string;
-//   latitude: number;
-//   longitude: number;
-//   dropPoints: DropPoint[]; 
-// }
+interface Stop {
+  name: string;
+}
+
+interface Bus {
+  id: string; // e.g., "bus1"
+  name: string; // e.g., "Bus 1"
+  status: string; // e.g., "active", "inactive"
+  latitude: number; // Initial latitude from API
+  longitude: number; // Initial longitude from API
+  stops: Stop[];
+  bearing?: number; // Optional, added for WebSocket updates
+}
 
 interface DropPoint {
   name: string;
@@ -62,8 +69,12 @@ function MapGL({
   isHomepage = false,
   pickUpLocation,
   dropPoints = [],
-  buses
+  buses,
 }: MapGLProps) {
+
+  const WS_URL = 'ws://localhost:3000'
+  const { driverLocations, shareLocation, isConnected, error } = useDriverWebSocket(WS_URL);
+
   const [viewState, setViewState] = useState({
     longitude: -1.573568,
     latitude: 6.678045,
@@ -72,15 +83,17 @@ function MapGL({
   // const BASE_CUSTOMER_URL = "http://shuttle-backend-0.onrender.com/api/v1";
 
   const [route, setRoute] = useState<Route | null>(null);
-  // const [drivers, setDrivers] = useState<Driver[]>([])
+  const [drivers, setDrivers] = useState<Bus[]>(buses || []);
   // const [selectedBus, setSelectedBus] = useState<Bus | null>(null);
   // const [busLocation, setBusLocation] = useState<Coordinates | null>(null);
   const geolocateControlRef = useRef<any>(null);
-  const [drivers, setDrivers] = useState<Bus[]>([]);
-  const activeBuses = drivers.filter((bus) => bus.active === 'active');
+  // const activeBuses = drivers.filter((bus) => bus.active === 'active');
   const [busBearing, setBusBearing] = useState<number | null>(null);
   
-  
+  useEffect(() => {
+    setDrivers(buses);
+  }, [buses]);
+
 
   const BASE_CUSTOMER_URL = "https://shuttle-backend-0.onrender.com/api/v1"
   
@@ -97,6 +110,7 @@ function MapGL({
         const data = await response.json();
         setDrivers(data)
 
+        // console.log(driverLocations)
         console.log(drivers);
       } catch (err) {
         console.error("Error fetching drivers:", err);
@@ -106,25 +120,19 @@ function MapGL({
     fetchDrivers();
   }, []);
   
-
-
   useEffect(() => {
-    if (drivers.length > 0) {
-      const interval = setInterval(() => {
-        const updatedBuses = activeBuses.map((bus) => ({
-          ...drivers,
-          longitude: 6.675033566213408 + 0.0001, // Simulate movement
-          latitude: -1.5723546778455368 + 0.0001, // Simulate movement
-          // bearing: (bus.bearing || 0) + 1, // Simulate bearing change
-        }));
-        // setBusLocation(updatedBuses[0]); // Track the first bus for simplicity
-        // setBusBearing(updatedBuses[0].bearing || 0);
-      }, 1000); // Update every second
-      // console.log(busBearing)
-      return () => clearInterval(interval);
+    const fetchLiveLocation = async () => {
+      try {
+
+      }
+      catch(err) {
+
+      }
     }
-  }, [activeBuses]);
-  
+
+    fetchLiveLocation()
+  })
+
 
   useEffect(() => {
     // Set the map view to the selected location (homepage) or pick-up point (details page)
@@ -463,19 +471,6 @@ function MapGL({
       </button>
 
 
-      {activeBuses.map((bus) => (
-        <Marker
-          key={bus.id}
-          longitude={"6.675033566213408"}
-          latitude={"-1.5723546778455368"}
-          onClick={(e) => {
-            e.originalEvent.stopPropagation();
-            // setSelectedBus(bus);
-          }}
-        >
-          <BusIcon />
-        </Marker>
-      ))}
 
 
 
