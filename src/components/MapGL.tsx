@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import Map, { Marker, Source, Layer, GeolocateControl } from 'react-map-gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { solveTSP } from './../components/solveTSP'; 
-import { useDriverWebSocket } from './../../hooks/useDriverWebSocket'
+// import { useDriverWebSocket } from './../../hooks/useDriverWebSocket'
 
 
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoidGhlbG9jYWxnb2RkIiwiYSI6ImNtMm9ocHFhYTBmczQya3NnczhoampiZ3gifQ.lPNutwk6XRi_kH_1R1ebiw';
@@ -26,15 +26,6 @@ interface Route {
   end: Coordinates;
 }
 
-// interface Bus {
-//   id: string;
-//   status: 'active' | 'inactive';
-//   latitude: number;
-//   longitude: number;
-//   bearing?: number; 
-//   name : string; 
-// }
-
 interface MapGLProps {
   selectedLocation: Coordinates | null;
   dropOffLocation: Coordinates | null;
@@ -53,9 +44,9 @@ interface Bus {
   name: string; // e.g., "Bus 1"
   status: string; // e.g., "active", "inactive"
   latitude: number; // Initial latitude from API
-  longitude: number; // Initial longitude from API
+  longitude: number; 
   stops: Stop[];
-  bearing?: number; // Optional, added for WebSocket updates
+  // bearing?: number; // Optional, added for WebSocket updates
 }
 
 interface DropPoint {
@@ -72,15 +63,15 @@ function MapGL({
   buses,
 }: MapGLProps) {
 
-  const WS_URL = 'ws://localhost:3000'
-  const { driverLocations, shareLocation, isConnected, error } = useDriverWebSocket(WS_URL);
+  // const WS_URL = 'ws://localhost:3000'
+  // const { driverLocations, shareLocation, isConnected, error } = useDriverWebSocket(WS_URL);
 
   const [viewState, setViewState] = useState({
     longitude: -1.573568,
     latitude: 6.678045,
     zoom: 14.95,
   });
-  // const BASE_CUSTOMER_URL = "http://shuttle-backend-0.onrender.com/api/v1";
+
 
   const [route, setRoute] = useState<Route | null>(null);
   const [drivers, setDrivers] = useState<Bus[]>(buses || []);
@@ -88,7 +79,7 @@ function MapGL({
   // const [busLocation, setBusLocation] = useState<Coordinates | null>(null);
   const geolocateControlRef = useRef<any>(null);
   // const activeBuses = drivers.filter((bus) => bus.active === 'active');
-  const [busBearing, setBusBearing] = useState<number | null>(null);
+  // const [busBearing, setBusBearing] = useState<number | null>(null);
   
   useEffect(() => {
     setDrivers(buses);
@@ -109,9 +100,8 @@ function MapGL({
         
         const data = await response.json();
         setDrivers(data)
-
-        // console.log(driverLocations)
-        console.log(drivers);
+        console.log(drivers)
+        
       } catch (err) {
         console.error("Error fetching drivers:", err);
       }
@@ -120,18 +110,25 @@ function MapGL({
     fetchDrivers();
   }, []);
   
-  useEffect(() => {
-    const fetchLiveLocation = async () => {
-      try {
+  // useEffect(() =>{
+  //   console.log('yes :' ,driverLocations)
+  //   if(driverLocations) {
+  //     setDrivers(prevDrivers =>
+  //       prevDrivers.map(bus => {
+  //         const liveLocation = driverLocations[bus.id]
+  //         if(liveLocation){
+  //           return {
+  //             ... bus,
+  //             latitude: liveLocation.latitude,
+  //             longitude: liveLocation.longitude
+  //           }
+  //         }
+  //         return bus
+  //       })
+  //     )
+  //   }
+  // }, [driverLocations])
 
-      }
-      catch(err) {
-
-      }
-    }
-
-    fetchLiveLocation()
-  })
 
 
   useEffect(() => {
@@ -363,6 +360,27 @@ function MapGL({
   </svg>
   );
 
+  const renderBusMarkers = () => {
+    console.log('essandoh:', drivers);
+    return drivers.map((bus) => (
+      <Marker
+        key ={bus.id}
+        longitude={bus.longitude}
+        latitude={bus.latitude}
+      > 
+        <div style={{
+          opacity : bus.status === 'active' ? 1 : 0.5,
+          cursor : 'pointer'
+        }}>
+          <BusIcon/>
+        </div>
+
+      </Marker>
+    ))
+  }
+
+
+
   return (
     <Map
       mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
@@ -438,6 +456,7 @@ function MapGL({
         </>
       )}
 
+      {/* {renderBusMarkers()} */}
     
       <GeolocateControl
         ref={geolocateControlRef}
