@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import MapGl from '../components/MapGL';
 // import { FlyToInterpolator } from 'react-map-gl';
 import useMediaQuery from '../components/useMediaQuery';
@@ -21,14 +21,7 @@ interface Location {
   dropPoints: DropPoint[]; 
 }
 
-interface Bus {
-  id: string;
-  name: string;
-  latitude: number;
-  longitude: number;
-  status: 'active' | 'inactive';
-  stops: { name: string }[];
-}
+
 
 
 
@@ -178,49 +171,7 @@ function Home() {
 
 
  
- 
-  const buses: Bus[] = [
-    {
-      id: 'bus1',
-      name: 'Bus 1',
-      latitude: 6.675033566213408,
-      longitude: -1.5723546778455368,
-      status : 'active',
-      stops: [
-        { name: 'brunei' },
-        { name: 'Main Library' },
-        { name: 'Pentecost Busstop' },
-        { name: 'KSB' },
-      ],
-    },
-    {
-      id: 'bus2',
-      name: 'Bus 2',
-      latitude: 6.6800787890749245,
-      longitude: -1.549747261104641,
-      status : 'inactive',
-      stops: [
-        { name: 'Gaza' },
-        { name: 'Medical Village' },
-        { name: 'Pharmacy Busstop' },
-      ],
-    },
-    {
-      id: 'bus3',
-      name: 'Bus 3',
-      latitude: 6.669314250173885,
-      longitude: -1.567181795001016,
-      status : 'active',
-      stops: [
-        { name: 'Commercial Area' },
-        { name: 'Hall 7' },
-        { name: 'Conti Busstop' },
-        { name: 'SRC Busstop' },
-        { name: 'Pentecost Busstop' },
-        { name: 'KSB' },
-      ],
-    },
-  ];
+
 
 const handleStartPointClick = (location: Location) => {
   setSelectedLocation(location);
@@ -354,7 +305,7 @@ const LocationList: React.FC<LocationListProps> = ({
     isSelectingDropOff,
     handleDropOffPointClick,
     handleStartPointClick,
-    isMobile,
+    // isMobile,
 
    }) => {
     return (
@@ -659,7 +610,7 @@ const LocationList: React.FC<LocationListProps> = ({
           dropPoints={selectedLocation?.dropPoints || []}
           pickUpLocation={pickUpDetails}  // Add this
           dropOffLocation={dropOff} 
-          buses={buses}      
+          
         />
         </ErrorBoundary>
 

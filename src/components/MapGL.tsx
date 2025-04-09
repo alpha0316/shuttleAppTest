@@ -32,22 +32,30 @@ interface MapGLProps {
   isHomepage?: boolean;
   pickUpLocation: Coordinates | null;
   dropPoints?: DropPoint[];
-  buses: Bus[];
+  // buses: Bus[];
 }
 
 interface Stop {
   name: string;
 }
 
-interface Bus {
-  id: string; // e.g., "bus1"
-  name: string; // e.g., "Bus 1"
-  status: string; // e.g., "active", "inactive"
-  latitude: number; // Initial latitude from API
+interface Driver  {
+  busID: string; 
+  active: boolean; 
+  latitude: number; 
   longitude: number; 
   stops: Stop[];
   // bearing?: number; // Optional, added for WebSocket updates
 }
+
+// interface Filteredrivers {
+//   busID: string; 
+//   active: boolean; 
+//   latitude: number; 
+//   longitude: number; 
+//   stops: Stop[];
+//   // bearing?: number; // Optional, added for WebSocket updates
+// }
 
 interface DropPoint {
   name: string;
@@ -60,7 +68,7 @@ function MapGL({
   isHomepage = false,
   pickUpLocation,
   dropPoints = [],
-  buses,
+
 }: MapGLProps) {
 
   // const WS_URL = 'ws://localhost:3000'
@@ -74,16 +82,16 @@ function MapGL({
 
 
   const [route, setRoute] = useState<Route | null>(null);
-  const [drivers, setDrivers] = useState<Bus[]>(buses || []);
+  const [drivers, setDrivers] = useState<Driver[]>([]);
   // const [selectedBus, setSelectedBus] = useState<Bus | null>(null);
   // const [busLocation, setBusLocation] = useState<Coordinates | null>(null);
   const geolocateControlRef = useRef<any>(null);
   // const activeBuses = drivers.filter((bus) => bus.active === 'active');
   // const [busBearing, setBusBearing] = useState<number | null>(null);
+  const [filterDrivers, setFilterDrivers] = useState<Driver[]>([]);
+
   
-  useEffect(() => {
-    setDrivers(buses);
-  }, [buses]);
+
 
 
   const BASE_CUSTOMER_URL = "https://shuttle-backend-0.onrender.com/api/v1"
@@ -99,7 +107,7 @@ function MapGL({
         }
         
         const data = await response.json();
-        setDrivers(data)
+        setDrivers(data.drivers || [])
         console.log(drivers)
         
       } catch (err) {
@@ -109,6 +117,15 @@ function MapGL({
 
     fetchDrivers();
   }, []);
+
+  useEffect(() => {
+    if (drivers.length > 0) {
+      const active = drivers.filter((bus) => bus.active === true);
+      setFilterDrivers(active); // active is Driver[]
+    } else {
+      setFilterDrivers([]); // Ensure it’s an empty array if no drivers
+    }
+  }, [drivers]);
   
   // useEffect(() =>{
   //   console.log('yes :' ,driverLocations)
@@ -361,15 +378,18 @@ function MapGL({
   );
 
   const renderBusMarkers = () => {
-    console.log('essandoh:', drivers);
-    return drivers.map((bus) => (
+    // console.log('essandoh:', drivers);
+
+    if (!filterDrivers || filterDrivers.length === 0) return null
+
+    return filterDrivers.map((bus) => (
       <Marker
-        key ={bus.id}
-        longitude={bus.longitude}
-        latitude={bus.latitude}
+        key = {bus.busID}
+        longitude={bus.longitude || -1.5741574445526254} 
+        latitude={bus.latitude || 6.670465091472612}
       > 
         <div style={{
-          opacity : bus.status === 'active' ? 1 : 0.5,
+          // opacity : bus.active === 'active' ? 1 : 0.5,
           cursor : 'pointer'
         }}>
           <BusIcon/>
@@ -456,7 +476,7 @@ function MapGL({
         </>
       )}
 
-      {/* {renderBusMarkers()} */}
+      {renderBusMarkers()}
     
       <GeolocateControl
         ref={geolocateControlRef}

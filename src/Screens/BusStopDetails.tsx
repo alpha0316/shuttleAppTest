@@ -5,14 +5,6 @@ import MapGl from '../components/MapGL';
 import useMediaQuery from '../components/useMediaQuery';
 import { useParams, useNavigate, useLocation  } from 'react-router-dom';
 
-interface Bus {
-  id: string;
-  name: string;
-  latitude: number;
-  longitude: number;
-  status: 'active' | 'inactive';
-  stops: { name: string }[];
-}
 
 function BusStopDetails() {
 
@@ -26,48 +18,6 @@ function BusStopDetails() {
   // const [filteredDropPoints, setFilteredDropPoints] = useState<DropPoint[]>([]); // Filtered drop points
   // const [unfilteredDropPoints, setUnfilteredDropPoints] = useState<DropPoint[]>([]); 
   
-  const buses: Bus[] = [
-    {
-      id: 'bus1',
-      name: 'Bus 1',
-      latitude: 6.675033566213408,
-      longitude: -1.5723546778455368,
-      status : 'active',
-      stops: [
-        { name: 'brunei' },
-        { name: 'Main Library' },
-        { name: 'Pentecost Busstop' },
-        { name: 'KSB' },
-      ],
-    },
-    {
-      id: 'bus2',
-      name: 'Bus 2',
-      latitude: 6.6800787890749245,
-      longitude: -1.549747261104641,
-      status : 'inactive',
-      stops: [
-        { name: 'Gaza' },
-        { name: 'Medical Village' },
-        { name: 'Pharmacy Busstop' },
-      ],
-    },
-    {
-      id: 'bus3',
-      name: 'Bus 3',
-      latitude: 6.669314250173885,
-      longitude: -1.567181795001016,
-      status : 'active',
-      stops: [
-        { name: 'Commercial Area' },
-        { name: 'Hall 7' },
-        { name: 'Conti Busstop' },
-        { name: 'SRC Busstop' },
-        { name: 'Pentecost Busstop' },
-        { name: 'KSB' },
-      ],
-    },
-  ];
 
 
   const navigate = useNavigate(); 
@@ -378,7 +328,7 @@ function BusStopDetails() {
   
       setBusStop(updatedBusStop);
       setSelectedLocation(updatedBusStop);
-      console.log(updatedBusStop);
+      // console.log(updatedBusStop);
     } else {
       console.error('Bus stop not found');
       navigate('/');
@@ -416,7 +366,7 @@ function BusStopDetails() {
           borderRadius: 24,
           gap: 16,
           flexDirection: 'column',
-          width: isMobile ? '90%' : 340,
+          width: isMobile ? '100%' : 340,
           minHeight: isMobile ? 300 : 'auto',
           height: isMobile ? 300 : 'auto',
           zIndex: 11111,
@@ -600,7 +550,6 @@ function BusStopDetails() {
           pickUpLocation={pickUp}
           dropOffLocation={dropOff}
           isHomepage={false} 
-          buses={buses} 
           />
             
       </div>
