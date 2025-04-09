@@ -453,7 +453,7 @@ const LocationList: React.FC<LocationListProps> = ({
               flex items-center justify-center  
               rounded-full           
               border border-dashed    
-              ${pickUp ? 'border-black bg-black' : 'border-black/40 bg-white'}
+              ${pickUp ? 'border-black bg-black' : 'border-black/80 bg-white'}
             `}>
 
                 { pickUp?  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none">
