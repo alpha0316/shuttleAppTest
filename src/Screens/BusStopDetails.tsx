@@ -336,9 +336,9 @@ function BusStopDetails() {
   }, [id, navigate, pickUp, dropOff]);
   
   
-  const filteredDropPointsForUI = selectedLocation?.dropPoints?.filter(
-    (dropPoint: DropPoint) => dropPoint.name !== 'Paa Joe Round About'
-  );
+  // const filteredDropPointsForUI = selectedLocation?.dropPoints?.filter(
+  //   (dropPoint: DropPoint) => dropPoint.name !== 'Paa Joe Round About'
+  // );
 
 
   return (
