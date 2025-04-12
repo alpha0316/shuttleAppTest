@@ -89,7 +89,7 @@ function MapGL({
   // const activeBuses = drivers.filter((bus) => bus.active === 'active');
   // const [busBearing, setBusBearing] = useState<number | null>(null);
   const [filterDrivers, setFilterDrivers] = useState<Driver[]>([]);
-
+  // const [driverStops,setDriverStops] = useState()
   
 
 
@@ -108,7 +108,8 @@ function MapGL({
         
         const data = await response.json();
         setDrivers(data.drivers || [])
-        console.log(drivers)
+        // console.log(data.drivers[0].busRoute[0].stops)
+        // setDriverStops(data.drivers[0].busRoute[0].stops)
         
       } catch (err) {
         console.error("Error fetching drivers:", err);
@@ -121,30 +122,14 @@ function MapGL({
   useEffect(() => {
     if (drivers.length > 0) {
       const active = drivers.filter((bus) => bus.active === true);
-      setFilterDrivers(active); // active is Driver[]
+      setFilterDrivers(active); 
+      
     } else {
-      setFilterDrivers([]); // Ensure it’s an empty array if no drivers
+      setFilterDrivers([]); 
     }
   }, [drivers]);
   
-  // useEffect(() =>{
-  //   console.log('yes :' ,driverLocations)
-  //   if(driverLocations) {
-  //     setDrivers(prevDrivers =>
-  //       prevDrivers.map(bus => {
-  //         const liveLocation = driverLocations[bus.id]
-  //         if(liveLocation){
-  //           return {
-  //             ... bus,
-  //             latitude: liveLocation.latitude,
-  //             longitude: liveLocation.longitude
-  //           }
-  //         }
-  //         return bus
-  //       })
-  //     )
-  //   }
-  // }, [driverLocations])
+
 
 
 
@@ -160,7 +145,6 @@ function MapGL({
     }
 
 
-    // On details page, fetch the shortest route passing through all drop points
     if (!isHomepage && selectedLocation && pickUpLocation && dropOffLocation) {
       const allWaypoints = [
         selectedLocation,
