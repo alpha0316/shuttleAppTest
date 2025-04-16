@@ -386,8 +386,10 @@ function BusStopDetails() {
             <div style={{
               display : 'flex',
               alignItems : 'center',
-              // justifyContent : 'space-between'
-              gap : '16%'
+              justifyContent : 'space-between',
+              // gap : '16%',
+              width: '100%', 
+              boxSizing: 'border-box',
             }}>
               
 
@@ -408,7 +410,11 @@ function BusStopDetails() {
               <div style={{
                 display : 'flex',
                 gap : 12,
-                alignItems : 'center'
+                alignItems : 'center',
+                justifyContent: 'center',
+                flex: 1,
+                flexWrap: 'nowrap',
+                overflowX: 'auto',
               }}>
 
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -511,7 +517,7 @@ function BusStopDetails() {
                     margin : 0,
                     fontSize : 12,
                     color : 'rgba(0,0,0,0.5)'
-                  }}>heading towards Main Library</p>
+                  }}>Heading towards Main Library</p>
                 
                 </div>
 
@@ -536,12 +542,12 @@ function BusStopDetails() {
               { isMobile ? (
               <div style={{
                 display: 'flex',
-                gap : 12,
-                alignItems : 'center',
-                overflow : 'hidden',
-                overflowX : 'auto',
-                maxWidth : 600,
-                flexDirection : 'row',
+                gap: 12,
+                alignItems: 'center',
+                overflow: 'hidden',
+                overflowX: 'auto',
+                maxWidth: 600,
+                flexDirection: 'row',
               }}>
 
           {filteredDropPointsForUI?.map((dropPoint: DropPoint, index: number) => (
@@ -557,7 +563,7 @@ function BusStopDetails() {
                   alignItems : 'center',
                   gap : 4,
                   flexDirection : 'column',
-                  width : 100,
+                  minWidth: 60,
                   // backgroundColor : 'red',
                   justifyContent : 'center',
 
@@ -579,7 +585,8 @@ function BusStopDetails() {
                   <p style={{
                     margin : 0,
                     fontSize : 12,
-                    
+                    textAlign: 'center',
+                    whiteSpace: 'nowrap',
                   }}>{dropPoint.name}</p>
 
                 </div>
