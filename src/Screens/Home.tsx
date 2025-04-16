@@ -390,7 +390,7 @@ const LocationList: React.FC<LocationListProps> = ({
             gap-2
             flex-col
             ${isMobile ? 'w-full' : 'w-[380px]'}
-            ${isMobile ? (dropDown || inputFocused ? 'max-h-[80vh]' : 'max-h-[20vh]') : 'max-h-auto'}
+            ${isMobile ? (dropDown || inputFocused ? 'max-h-[200vh]' : 'max-h-[25vh]') : 'max-h-auto'}
             ${isMobile ? 'h-auto' : 'h-auto'}
             z-[11111]
             mt-1 
@@ -496,23 +496,24 @@ const LocationList: React.FC<LocationListProps> = ({
             </div>
           </div>
 
-          { !isMobile && (
+         
             <div style={{
             width : 0.1,
             height : 20,
             border : pickUp? '1px dashed rgba(0,0,0,1)' : '1px dashed rgba(0,0,0,0.2)',
             position : 'relative',
             left : '6%',
+            display : pickUp ? 'flex' : 'none' ,
             // display : inputFocused? 'none' : 'block'
             
           }}></div>
-          )
-          }
+          
+        
 
           
        
           <div style={{
-            display : 'flex',
+            display : pickUp ? 'flex' : 'none' ,
             flexDirection : 'column',
             gap : 8
           }}>
