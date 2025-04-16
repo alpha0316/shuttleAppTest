@@ -511,7 +511,7 @@ function BusStopDetails() {
                   alignItems : 'center',
                   gap : 4,
                   flexDirection : 'column',
-                  width : 100,
+                  width : '110',
                   // backgroundColor : 'red',
                   justifyContent : 'center',
 
