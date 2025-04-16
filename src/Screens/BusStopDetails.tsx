@@ -14,6 +14,7 @@ function BusStopDetails() {
   const { pickUp, dropOff } = state || {};
 
   const [busStop, setBusStop] = useState<Location | null>(null);
+  const [startPoint, setStartPoint] = useState<Location | null>(null);
 
   // const [filteredDropPoints, setFilteredDropPoints] = useState<DropPoint[]>([]); // Filtered drop points
   // const [unfilteredDropPoints, setUnfilteredDropPoints] = useState<DropPoint[]>([]); 
@@ -32,6 +33,8 @@ function BusStopDetails() {
     longitude: number;
     dropPoints: DropPoint[];
   }
+
+  
 
   interface DropPoint {
     name: string;
@@ -325,7 +328,8 @@ function BusStopDetails() {
         );
       } 
       
-  
+      // console.log('yes',startPoint)
+      setStartPoint(state.pickUp)
       setBusStop(updatedBusStop);
       setSelectedLocation(updatedBusStop);
       // console.log(updatedBusStop);
@@ -374,7 +378,8 @@ function BusStopDetails() {
           border: '1px solid rgba(0,0,0,0.1)',
           margin: isMobile ? '16px auto' : '16px 16px 16px 0',
           position : 'fixed',
-          bottom : isMobile ? -10 : ''
+          bottom : isMobile ? -10 : '',
+          overflow : 'hidden'
 
         }}>
          
@@ -382,7 +387,7 @@ function BusStopDetails() {
               display : 'flex',
               alignItems : 'center',
               // justifyContent : 'space-between'
-              gap : '36%'
+              gap : '16%'
             }}>
               
 
@@ -399,8 +404,44 @@ function BusStopDetails() {
                     <path d="M10 13L5 8L10 3" stroke="black" stroke-opacity="0.6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
               </div>
+              
+              <div style={{
+                display : 'flex',
+                gap : 12,
+                alignItems : 'center'
+              }}>
+
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M20.6201 8.45C19.5701 3.83 15.5401 1.75 12.0001 1.75C12.0001 1.75 12.0001 1.75 11.9901 1.75C8.4601 1.75 4.4201 3.82 3.3701 8.44C2.2001 13.6 5.3601 17.97 8.2201 20.72C9.2801 21.74 10.6401 22.25 12.0001 22.25C13.3601 22.25 14.7201 21.74 15.7701 20.72C18.6301 17.97 21.7901 13.61 20.6201 8.45ZM12.0001 13.46C10.2601 13.46 8.8501 12.05 8.8501 10.31C8.8501 8.57 10.2601 7.16 12.0001 7.16C13.7401 7.16 15.1501 8.57 15.1501 10.31C15.1501 12.05 13.7401 13.46 12.0001 13.46Z" fill="black" fill-opacity="0.6"/>
+                  </svg> 
 
               {busStop ? (
+                  <p style={{
+                    fontSize: '16px',
+                    fontWeight: '700',
+                    color : 'rgba(0,0,0,0.6)'
+                  }}>{startPoint ? startPoint.name : 'Loading...'}</p>
+                ) : (
+                  <p>Loading...</p>
+                )}
+
+                  {/* <div style={{
+                    width : 10,
+                    height : 1,
+                    border : '1px dashed',
+                    color : 'rgba(0,0,0,0.6)'
+                  }}></div> */}
+
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <path d="M14.4299 5.92993L20.4999 11.9999L14.4299 18.0699" stroke="black" stroke-opacity="0.6" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M3.5 12H20.33" stroke="black" stroke-opacity="0.6" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <path d="M20.6202 8.7C19.5802 4.07 15.5402 2 12.0002 2C12.0002 2 12.0002 2 11.9902 2C8.46024 2 4.43024 4.07 3.38024 8.69C2.20024 13.85 5.36024 18.22 8.22024 20.98C9.28024 22 10.6402 22.51 12.0002 22.51C13.3602 22.51 14.7202 22 15.7702 20.98C18.6302 18.22 21.7902 13.86 20.6202 8.7ZM15.2802 9.53L11.2802 13.53C11.1302 13.68 10.9402 13.75 10.7502 13.75C10.5602 13.75 10.3702 13.68 10.2202 13.53L8.72024 12.03C8.43024 11.74 8.43024 11.26 8.72024 10.97C9.01024 10.68 9.49024 10.68 9.78024 10.97L10.7502 11.94L14.2202 8.47C14.5102 8.18 14.9902 8.18 15.2802 8.47C15.5702 8.76 15.5702 9.24 15.2802 9.53Z" fill="black" fill-opacity="1"/>
+                    </svg>
+
+                  {busStop ? (
                   <p style={{
                     fontSize: '16px',
                     fontWeight: '700'
@@ -409,7 +450,10 @@ function BusStopDetails() {
                   <p>Loading...</p>
                 )}
 
-                  {/* <div>     </div> */}
+              </div>
+
+          
+             
 
             </div>
       
@@ -420,7 +464,8 @@ function BusStopDetails() {
               paddingInline : 16,
               paddingBlock : 12,
               flexDirection : 'column',
-              gap : 16
+              gap : 16,
+              
             }}>
               
 
@@ -479,7 +524,8 @@ function BusStopDetails() {
               paddingInline: 16,
               paddingBlock: 12,
               flexDirection: 'column',
-              gap: 16
+              gap: 16,
+             
             }}>
               <p style={{
                 margin: 0,
