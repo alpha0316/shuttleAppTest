@@ -367,7 +367,7 @@ function BusStopDetails() {
           gap: 16,
           flexDirection: 'column',
           width: isMobile ? '100%' : 340,
-          minHeight: isMobile ? 300 : 'auto',
+          minHeight: isMobile ? 310 : 'auto',
           height: isMobile ? 300 : 'auto',
           zIndex: 11111,
           marginTop: 12,
@@ -436,9 +436,11 @@ function BusStopDetails() {
 
                   <p style={{
                     margin : 0,
-                    fontSize : 12,
+                    fontSize : 14,
                     color : 'rgba(0,0,0,0.5)'
-                  }}>Arriving in 5 mibutes</p>
+                  }}>Arriving in <span style={{
+                    fontWeight : '800'
+                  }}>5</span> minutes </p>
                 </div>
 
                 <div style={{
@@ -464,12 +466,8 @@ function BusStopDetails() {
                     margin : 0,
                     fontSize : 12,
                     color : 'rgba(0,0,0,0.5)'
-                  }}>60 meters away</p>
-                  <p style={{
-                    margin : 0,
-                    fontSize : 12,
-                    color : 'rgba(0,0,0,0.5)'
-                  }}>Total Distance Covered: 180M</p>
+                  }}>heading towards Main Library</p>
+                
                 </div>
 
             </div>
