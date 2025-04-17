@@ -138,6 +138,7 @@ function MapGL({
     }
   }, [drivers]);
   
+ 
 
 
   useEffect(() => {
@@ -156,7 +157,8 @@ function MapGL({
       );
     });
   
-    setFilterDrivers(matchingDrivers);
+    setSelectedBus(matchingDrivers);
+
   }, [storedDropPoints, filterDrivers]);
   
   useEffect(() => {
@@ -396,27 +398,43 @@ function MapGL({
   </svg>
   );
 
+  
+
   const renderBusMarkers = () => {
-    // console.log('essandoh:', drivers);
+    // If no drop points selected or no filtered drivers, return all filtered drivers
+    if (storedDropPoints.length === 0) {
+      return filterDrivers.map((bus) => (
+        <Marker
+          key={bus.busID}
+          longitude={bus.longitude || -1.5741574445526254}
+          latitude={bus.latitude || 6.670465091472612}
+        >
+          <div style={{ cursor: 'pointer' }}>
+            <BusIcon />
+          </div>
+        </Marker>
+      ));
+    }
+    
+    // If drop points selected, only show matching buses
+    if (selectedBus.length > 0) {
+      return selectedBus.map((bus) => (
+        <Marker
+          key={bus.busID}
+          longitude={bus.longitude || -1.5741574445526254}
+          latitude={bus.latitude || 6.670465091472612}
+        >
+          <div style={{ cursor: 'pointer' }}>
+            <BusIcon />
+          </div>
+        </Marker>
+      ));
+    }
+    
+    // If drop points selected but no matches, show nothing
+    return null;
+  };
 
-    if (!filterDrivers || filterDrivers.length === 0) return null
-
-    return filterDrivers.map((bus) => (
-      <Marker
-        key = {bus.busID}
-        longitude={bus.longitude || -1.5741574445526254} 
-        latitude={bus.latitude || 6.670465091472612}
-      > 
-        <div style={{
-          // opacity : bus.active === 'active' ? 1 : 0.5,
-          cursor : 'pointer'
-        }}>
-          <BusIcon/>
-        </div>
-
-      </Marker>
-    ))
-  }
 
   return (
     <Map
