@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef,  } from 'react';
 import Map, { Marker, Source, Layer, GeolocateControl } from 'react-map-gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { solveTSP } from './../components/solveTSP'; 
@@ -19,12 +19,15 @@ interface DropPoint {
 }
 
 interface Route {
-  geometry: any;
+  geometry: GeoJSON.Geometry; // Adjust based on Mapbox API response type
   distance: number;
   duration: number;
   start: Coordinates;
   end: Coordinates;
+  stops: string[];
 }
+
+
 
 interface MapGLProps {
   selectedLocation: Coordinates | null;
@@ -35,27 +38,25 @@ interface MapGLProps {
   // buses: Bus[];
 }
 
-interface Stop {
-  name: string;
-}
+// interface Stop {
+//   name: string;
+// }
+
+// interface Route {
+
+//   stops: string[];
+// }
 
 interface Driver  {
   busID: string; 
   active: boolean; 
   latitude: number; 
   longitude: number; 
-  stops: Stop[];
+  busRoute: Route[];
   // bearing?: number; // Optional, added for WebSocket updates
 }
 
-// interface Filteredrivers {
-//   busID: string; 
-//   active: boolean; 
-//   latitude: number; 
-//   longitude: number; 
-//   stops: Stop[];
-//   // bearing?: number; // Optional, added for WebSocket updates
-// }
+
 
 interface DropPoint {
   name: string;
@@ -86,10 +87,11 @@ function MapGL({
   // const [selectedBus, setSelectedBus] = useState<Bus | null>(null);
   // const [busLocation, setBusLocation] = useState<Coordinates | null>(null);
   const geolocateControlRef = useRef<any>(null);
-  // const activeBuses = drivers.filter((bus) => bus.active === 'active');
   // const [busBearing, setBusBearing] = useState<number | null>(null);
   const [filterDrivers, setFilterDrivers] = useState<Driver[]>([]);
-  // const [driverStops,setDriverStops] = useState()
+  const [selectedBus, setSelectedBus] = useState<Driver[]>([]);
+  const [storedDropPoints, setStoredDropPoints] = useState<DropPoint[]>([]);
+  // const [error, setError] = useState<string | null>(null);
   
 
 
@@ -120,10 +122,17 @@ function MapGL({
   }, []);
 
   useEffect(() => {
+    setStoredDropPoints(dropPoints);
+  }, [dropPoints]);
+  
+
+  useEffect(() => {
+    console.log(drivers)
+    
     if (drivers.length > 0) {
       const active = drivers.filter((bus) => bus.active === true);
+      // const driverStopsNames = drivers.busRoute[0]?.stops.map((stops) => stops.name)
       setFilterDrivers(active); 
-      
     } else {
       setFilterDrivers([]); 
     }
@@ -131,6 +140,31 @@ function MapGL({
   
 
 
+  useEffect(() => {
+    if (storedDropPoints.length === 0 || filterDrivers.length === 0) {
+      setSelectedBus([]);
+      return;
+    }
+  
+    const matchingDrivers: Driver[] = filterDrivers.filter((driver) => {
+      
+      const allStopNames = driver.busRoute
+        .flatMap(route => route.stops); 
+  
+      return storedDropPoints.some((point) => 
+        allStopNames.includes(point.name)
+      );
+    });
+  
+    setSelectedBus(matchingDrivers);
+  }, [storedDropPoints, filterDrivers]);
+  
+  useEffect(() => {
+    console.log('Matched Drivers:', selectedBus);
+  }, [selectedBus]);
+  
+  
+  
 
 
   useEffect(() => {
@@ -185,6 +219,7 @@ function MapGL({
           duration: data.routes[0].duration,
           start: waypoints[0],
           end: waypoints[waypoints.length - 1],
+          stops: ['SRC Busstop', 'Main Library', 'KSB']
         });
       }
     } catch (error) {
@@ -383,8 +418,6 @@ function MapGL({
     ))
   }
 
-
-
   return (
     <Map
       mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
@@ -400,9 +433,6 @@ function MapGL({
         </Marker>
       )}
 
-      
-
-    
       {!isHomepage && (
         <>
          
@@ -492,10 +522,6 @@ function MapGL({
       >
         <LocationIcon />
       </button>
-
-
-
-
 
     </Map>
   );
