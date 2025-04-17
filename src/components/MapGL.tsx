@@ -156,7 +156,7 @@ function MapGL({
       );
     });
   
-    setSelectedBus(matchingDrivers);
+    setFilterDrivers(matchingDrivers);
   }, [storedDropPoints, filterDrivers]);
   
   useEffect(() => {
