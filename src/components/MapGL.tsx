@@ -38,24 +38,20 @@ interface MapGLProps {
   // buses: Bus[];
 }
 
-// interface Stop {
-//   name: string;
-// }
-
-// interface Route {
-
-//   stops: string[];
-// }
 
 interface Driver  {
   busID: string; 
   active: boolean; 
-  latitude: number; 
-  longitude: number; 
   busRoute: Route[];
-  // bearing?: number; // Optional, added for WebSocket updates
+  coords : Coords
 }
 
+interface Coords  {
+  latitude: number; 
+  longitude: number; 
+  speed: number; 
+  heading: number; 
+} 
 
 
 interface DropPoint {
@@ -110,7 +106,7 @@ function MapGL({
         
         const data = await response.json();
         setDrivers(data.drivers || [])
-        // console.log(data.drivers[0].busRoute[0].stops)
+        console.log(drivers)
         // setDriverStops(data.drivers[0].busRoute[0].stops)
         
       } catch (err) {
@@ -406,8 +402,8 @@ function MapGL({
       return filterDrivers.map((bus) => (
         <Marker
           key={bus.busID}
-          longitude={bus.longitude || -1.5741574445526254}
-          latitude={bus.latitude || 6.670465091472612}
+          longitude={bus.coords.longitude }
+          latitude={bus.coords.latitude }
         >
           <div style={{ cursor: 'pointer' }}>
             <BusIcon />
@@ -421,8 +417,8 @@ function MapGL({
       return selectedBus.map((bus) => (
         <Marker
           key={bus.busID}
-          longitude={bus.longitude || -1.5741574445526254}
-          latitude={bus.latitude || 6.670465091472612}
+          longitude={bus.coords.longitude }
+          latitude={bus.coords.latitude }
         >
           <div style={{ cursor: 'pointer' }}>
             <BusIcon />
