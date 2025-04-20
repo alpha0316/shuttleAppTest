@@ -550,14 +550,14 @@ function BusStopDetails() {
                     color : 'rgba(0,0,0,0.5)',
                     padding : 2,
                     borderRadius : 4,
-                    backgroundColor : '#f4f4f4',
+                    backgroundColor : '#fafafa',
                   }}>Start</p>
                 </div>
                 <div style={{
                     display : 'flex',
                     alignItems : "center",
                     gap : 4,
-                    padding : 4,
+                    // padding : 4,
                     borderRadius : 6,
                     // backgroundColor : '#fafafa'
                 }}>
@@ -687,14 +687,14 @@ function BusStopDetails() {
                     color : 'rgba(0,0,0,0.5)',
                     padding : 2,
                     borderRadius : 4,
-                    backgroundColor : '#f4f4f4',
+                    backgroundColor : '#fafafa',
                   }}>Arrriving</p>
                 </div>
                 <div style={{
                     display : 'flex',
                     alignItems : "center",
                     gap : 4,
-                    padding : 4,
+                    // padding : 4,
                     borderRadius : 6,
                     // backgroundColor : '#fafafa'
                 }}>
