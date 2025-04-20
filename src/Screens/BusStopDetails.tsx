@@ -524,7 +524,7 @@ function BusStopDetails() {
             </div> */}
             <div style={{
                 display : 'flex',
-                paddingInline: 4,
+                paddingInline: 12,
                 paddingBlock: 12,
                 borderRadius: 16,
                 border: '1px solid rgba(0,0,0,0.1)',
