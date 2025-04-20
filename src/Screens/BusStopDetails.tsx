@@ -13,8 +13,8 @@ function BusStopDetails() {
   const { state } = useLocation();
   const { pickUp, dropOff } = state || {};
 
-  const [busStop, setBusStop] = useState<Location | null>(null);
-  const [startPoint, setStartPoint] = useState<Location | null>(null);
+  // const [busStop, setBusStop] = useState<Location | null>(null);
+  // const [startPoint, setStartPoint] = useState<Location | null>(null);
 
   // const [filteredDropPoints, setFilteredDropPoints] = useState<DropPoint[]>([]); // Filtered drop points
   // const [unfilteredDropPoints, setUnfilteredDropPoints] = useState<DropPoint[]>([]); 
@@ -329,8 +329,8 @@ function BusStopDetails() {
       } 
       
       // console.log('yes',startPoint)
-      setStartPoint(state.pickUp)
-      setBusStop(updatedBusStop);
+      // setStartPoint(state.pickUp)
+      // setBusStop(updatedBusStop);
       setSelectedLocation(updatedBusStop);
       // console.log(updatedBusStop);
     } else {
