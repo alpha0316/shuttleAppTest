@@ -177,17 +177,17 @@ const closestBuses = useMemo(() => {
     if(closestBuses.length > 0) {
       console.log('close', closestBuses)
     }
-  },[closestBuses])
+  },[])
 
  
 
-  const closestBus = startPoint ? getClosestBuses(startPoint, filterDrivers) : null;
+  // const closestBus = startPoint ? getClosestBuses(startPoint, filterDrivers) : null;
   
   useEffect(() => {
-    if (closestBus) {
+    if (closestBuses.length > 0) {
       console.log('All close buses:', closestBuses);
+      console.log('Closest bus:', closestBuses[0]);
       // setClosest(closestBuses[0]);
-      console.log('Closest bus:', closestBuses[0]); 
     } else if (startPoint && filterDrivers.length > 0) {
       console.log('No closest bus found');
     }
@@ -548,7 +548,7 @@ const renderBusMarkers = () => {
   
   if (selectedBus.length > 0) {
 
-    const closestBusID = closestBuses[0]?.driver.busID;
+    const closestBusID = closestBuses.length > 0 ? closestBuses[0].driver.busID : null;
 
     return selectedBus.map((bus) => (
       <Marker
@@ -562,23 +562,6 @@ const renderBusMarkers = () => {
       </Marker>
     ));
   }
-
-
-  if (closestBuses.length > 0) {
-    const closestBus = closestBuses[0]; // Take only the closest bus
-    return (
-      <Marker
-        key={closestBus.driver.busID}
-        longitude={closestBus.driver.coords.longitude}
-        latitude={closestBus.driver.coords.latitude}
-      >
-        <div style={{ cursor: 'pointer' }}>
-          <ClosestBusIcon />
-        </div>
-      </Marker>
-    );
-  }
-
   return null;
 };
 
