@@ -13,13 +13,13 @@ function BusStopDetails() {
   const { state } = useLocation();
   const { pickUp, dropOff } = state || {};
 
-  // const [busStop, setBusStop] = useState<Location | null>(null);
+
   const [startPoint, setStartPoint] = useState<Location | null>(null);
+  const [closestStopName, setClosestStopName] = useState< string | null> (null)
 
-  // const [filteredDropPoints, setFilteredDropPoints] = useState<DropPoint[]>([]); // Filtered drop points
-  // const [unfilteredDropPoints, setUnfilteredDropPoints] = useState<DropPoint[]>([]); 
-  
-
+  const handleClosestStopChange = (name : string) => {
+    setClosestStopName(name)
+  }
 
   const navigate = useNavigate(); 
   
@@ -660,7 +660,7 @@ function BusStopDetails() {
                   <p style={{
                     fontWeight : '500',
                     fontSize : 13
-                  }}>KSB</p>
+                  }}> {closestStopName ?? 'Loading...'}</p>
                   <p style={{
                     fontSize : 11,
                     color : 'rgba(0,0,0,0.5)',
@@ -828,7 +828,7 @@ function BusStopDetails() {
                       margin: 0,
                       fontSize: 12,
                       color: 'rgba(0,0,0,0.6)'
-                    }}>7:32</p> {/* Replace with dynamic time if available */}
+                    }}>7:32</p> 
                 </div>
 
                   {index < filteredDropPointsForUI.length - 1 && (
@@ -858,6 +858,7 @@ function BusStopDetails() {
           pickUpLocation={pickUp}
           dropOffLocation={dropOff}
           isHomepage={false} 
+          onClosestStopChange={handleClosestStopChange}
           />
             
       </div>

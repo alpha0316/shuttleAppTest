@@ -4,6 +4,9 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { solveTSP } from './../components/solveTSP'; 
 // import { useDriverWebSocket } from './../../hooks/useDriverWebSocket'
 import { haversineDistance } from './../../utils/distance'
+// import { useBus } from './../Screens/BusContext'
+
+
 
 
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoidGhlbG9jYWxnb2RkIiwiYSI6ImNtMm9ocHFhYTBmczQya3NnczhoampiZ3gifQ.lPNutwk6XRi_kH_1R1ebiw';
@@ -17,6 +20,7 @@ interface DropPoint {
   name: string;
   latitude: number;
   longitude: number;
+  // coords: Coordinates;
 }
 
 interface Route {
@@ -59,14 +63,16 @@ interface DropPoint {
   name: string;
 }
 
-// interface RenderBusMarkersProps {
-//   filterDrivers: Driver[];
-//   storedDropPoints: any[];
-//   selectedBus: Driver[];
-//   startPoint?: { longitude: number; latitude: number } | null;
-//   closestBus?: ClosestBusInfo | null;
-// }
 
+
+interface ClosestBusInfo {
+  distance: number;
+  driver: Driver;
+}
+
+interface MapGLProps {
+  onClosestStopChange: (name: string) => void;
+}
 
 function MapGL({
   selectedLocation,
@@ -74,15 +80,21 @@ function MapGL({
   isHomepage = false,
   pickUpLocation,
   dropPoints = [],
-
+  onClosestStopChange 
 }: MapGLProps) {
+
+
+  
 
   // const WS_URL = 'ws://localhost:3000'
   // const { driverLocations, shareLocation, isConnected, error } = useDriverWebSocket(WS_URL);
+  const [closest, setClosest] = useState<ClosestBusInfo | null>(null);
+
+
 
   const [viewState, setViewState] = useState({
-    longitude: -1.573568,
-    latitude: 6.678045,
+    longitude: closest?.driver.coords.longitude ?? -1.573568,
+    latitude: closest?.driver.coords.latitude ?? 6.678045,
     zoom: 14.95,
   });
 
@@ -98,8 +110,23 @@ function MapGL({
   const [storedDropPoints, setStoredDropPoints] = useState<DropPoint[]>([]);
   const [startPoint, setStartPoint] = useState<Coordinates | null>(null);
   // const [error, setError] = useState<string | null>(null);
-  // const [closest, setClosest] = useState<ClosestBusInfo[]>([]);
+ 
+  const [closestDropPoint, setClosestDropPoint] = useState<{
+    latitude: number;
+    longitude: number;
+    name: string;
+  } | null>(null);
   
+
+
+    // const { 
+  //   closest, 
+  //   setClosest, 
+  //   closestDropPoint, 
+  //   setClosestDropPoint,
+  //   startPoint,
+  //   filterDrivers 
+  // } = useBus();
 
 
 
@@ -165,10 +192,9 @@ function MapGL({
   }
  
 
+
 const closestBuses = useMemo(() => {
-  if (!startPoint || filterDrivers.length === 0) {
-    return [];
-  }
+  if (!startPoint || filterDrivers.length === 0) return [];
   return getClosestBuses(startPoint, filterDrivers);
 }, [startPoint, filterDrivers]);
 
@@ -186,8 +212,9 @@ const closestBuses = useMemo(() => {
   useEffect(() => {
     if (closestBuses.length > 0) {
       console.log('All close buses:', closestBuses);
-      console.log('Closest bus:', closestBuses[0]);
-      // setClosest(closestBuses[0]);
+      console.log('Closest bus:', closest);
+      setClosest(closestBuses[0]);
+      console.log
     } else if (startPoint && filterDrivers.length > 0) {
       console.log('No closest bus found');
     }
@@ -217,11 +244,57 @@ const closestBuses = useMemo(() => {
   useEffect(() => {
     // console.log('Matched Drivers:', selectedBus);
   }, [selectedBus]);
-  
-  
-  
 
 
+  useEffect(() => {
+    if(!closest || storedDropPoints.length === 0) {
+      setClosestDropPoint(null)
+      return
+    }
+
+    const busCoords = closest.driver.coords
+
+    const dropPointsExludingStart = storedDropPoints.filter(point => 
+      !(point.latitude === startPoint?.latitude &&
+        point.longitude === startPoint?.longitude
+       )
+    )
+
+    if (dropPointsExludingStart.length === 0) {
+      setClosestDropPoint(null)
+      return
+    }
+
+    const dropPointswithDistances = dropPointsExludingStart.map(point => ({
+      point,
+      distance : haversineDistance(busCoords, point, 'km')
+    }))
+
+    const sortedDropPoints = dropPointswithDistances
+      .filter(item => item.distance !== null && !isNaN(item.distance))
+      .sort((a,b) => a.distance - b.distance)
+
+
+      if (sortedDropPoints.length > 0 ) {
+        setClosestDropPoint(sortedDropPoints[0].point)
+        console.log('closest drop point', closestDropPoint)
+      
+      } else {
+        setClosestDropPoint(null)
+      }
+
+  }, [closest, storedDropPoints, startPoint, closestDropPoint])
+
+  useEffect(() => {
+ 
+    if (onClosestStopChange && typeof onClosestStopChange === 'function' && closestDropPoint !== null) {
+      onClosestStopChange(closestDropPoint.name);
+    }
+    
+
+   
+  }, [closestDropPoint]);
+  
   useEffect(() => {
     // Set the map view to the selected location (homepage) or pick-up point (details page)
     const centerLocation = isHomepage ? selectedLocation : pickUpLocation;
@@ -544,11 +617,10 @@ const renderBusMarkers = () => {
       </Marker>
     ));
   }
-
   
   if (selectedBus.length > 0) {
 
-    const closestBusID = closestBuses.length > 0 ? closestBuses[0].driver.busID : null;
+    const closestBusID = closestBuses.length > 0 ? closestBuses[0]?.driver?.busID : null;
 
     return selectedBus.map((bus) => (
       <Marker
@@ -564,6 +636,37 @@ const renderBusMarkers = () => {
   }
   return null;
 };
+
+// const renderHighlightedDropPoint = () => {
+//   if (closestDropPoint) {
+//     return (
+//       <Marker
+//         key="closest-drop-point"
+//         longitude={closestDropPoint.longitude}
+//         latitude={closestDropPoint.latitude}
+//       >
+//         <div style={{ cursor: 'pointer' }}>
+//           <HighlightedDropPointIcon />
+//         </div>
+//       </Marker>
+//     );
+//   }
+//   return null;
+// };
+
+// if (closest) {
+//   return (
+//     <Marker
+//       key={`closest-${closest.driver.busID}`}
+//       longitude={closest.driver.coords.longitude}
+//       latitude={closest.driver.coords.latitude}
+//     >
+//       <div style={{ cursor: 'pointer' }}>
+//         <ClosestBusIcon />
+//       </div>
+//     </Marker>
+//   );
+// }
 
 
   return (
@@ -639,6 +742,7 @@ const renderBusMarkers = () => {
       )}
 
       {renderBusMarkers()}
+      {/* {renderHighlightedDropPoint()} */}
     
       <GeolocateControl
         ref={geolocateControlRef}
@@ -677,20 +781,3 @@ const renderBusMarkers = () => {
 
 export default MapGL;
 
- // function getClosestBuses (
-  //   start : Coordinates | null,
-  //   drivers : Driver[]
-  // ): { driver: Driver; distance: number } | null {
-  //   if (!start || !start.latitude || !start.longitude || drivers.length === 0) return null
-
-  //   let closest : {driver: Driver; distance: number} | null = null
-
-  //   for (const driver of drivers){
-  //     const distance = haversineDistance(start, driver.coords, 'km')
-  //     if (distance !== null && !isNaN(distance)){
-  //       closest = {driver, distance}
-  //     }
-  //   }
-
-  //   return closest
-  // }
