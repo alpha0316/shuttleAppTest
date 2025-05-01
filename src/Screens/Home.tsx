@@ -170,7 +170,13 @@ function Home() {
   const [dropDown, setDropDown] = useState(true)
 
 
- 
+  const [closestStopName, setClosestStopName] = useState< string | null> (null)
+
+  const handleClosestStopChange = (name : string) => {
+    setClosestStopName(name)
+  }
+
+  console.log(closestStopName)
 
 
 const handleStartPointClick = (location: Location) => {
@@ -611,7 +617,7 @@ const LocationList: React.FC<LocationListProps> = ({
           dropPoints={selectedLocation?.dropPoints || []}
           pickUpLocation={pickUpDetails}  // Add this
           dropOffLocation={dropOff} 
-          
+          onClosestStopChange={handleClosestStopChange}
         />
         </ErrorBoundary>
 
