@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect,  } from 'react';
 import MapGl from '../components/MapGL';
 
 // import { FlyToInterpolator } from 'react-map-gl';
 import useMediaQuery from '../components/useMediaQuery';
 import { useParams, useNavigate, useLocation  } from 'react-router-dom';
-
+import { useClosestStop  } from "./../Screens/ClosestStopContext";
 
 function BusStopDetails() {
 
@@ -12,14 +12,15 @@ function BusStopDetails() {
   const { id  } = useParams(); 
   const { state } = useLocation();
   const { pickUp, dropOff } = state || {};
+  const { closestStopName } = useClosestStop();
 
 
   const [startPoint, setStartPoint] = useState<Location | null>(null);
-  const [closestStopName, setClosestStopName] = useState< string | null> (null)
+  // const [closestStopName, setClosestStopName] = useState< string | null> (null)
 
-  const handleClosestStopChange = (name : string) => {
-    setClosestStopName(name)
-  }
+  // const handleClosestStopChange = useCallback((name: string) => {
+  //   setClosestStopName(name);
+  // }, []);
 
   const navigate = useNavigate(); 
   
@@ -660,7 +661,7 @@ function BusStopDetails() {
                   <p style={{
                     fontWeight : '500',
                     fontSize : 13
-                  }}> {closestStopName ?? 'Loading...'}</p>
+                  }}> {closestStopName  ?? 'Loading...'}</p>
                   <p style={{
                     fontSize : 11,
                     color : 'rgba(0,0,0,0.5)',
@@ -844,11 +845,6 @@ function BusStopDetails() {
               ))}
             </div> 
               }
-
-            
-
-
-            
           </div>
         </div>
 
@@ -858,7 +854,7 @@ function BusStopDetails() {
           pickUpLocation={pickUp}
           dropOffLocation={dropOff}
           isHomepage={false} 
-          onClosestStopChange={handleClosestStopChange}
+          // onClosestStopChange={handleClosestStopChange}
           />
             
       </div>

@@ -4,9 +4,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { solveTSP } from './../components/solveTSP'; 
 // import { useDriverWebSocket } from './../../hooks/useDriverWebSocket'
 import { haversineDistance } from './../../utils/distance'
-
-
-
+import { useClosestStop  } from './../Screens/ClosestStopContext';
 
 
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoidGhlbG9jYWxnb2RkIiwiYSI6ImNtMm9ocHFhYTBmczQya3NnczhoampiZ3gifQ.lPNutwk6XRi_kH_1R1ebiw';
@@ -70,9 +68,9 @@ interface ClosestBusInfo {
   driver: Driver;
 }
 
-interface MapGLProps {
-  onClosestStopChange: (name: string) => void;
-}
+// interface MapGLProps {
+//   onClosestStopChange: (name: string) => void;
+// }
 
 function MapGL({
   selectedLocation,
@@ -80,7 +78,7 @@ function MapGL({
   isHomepage = false,
   pickUpLocation,
   dropPoints = [],
-  onClosestStopChange 
+  // onClosestStopChange 
 }: MapGLProps) {
 
 
@@ -119,14 +117,6 @@ function MapGL({
   
 
 
-    // const { 
-  //   closest, 
-  //   setClosest, 
-  //   closestDropPoint, 
-  //   setClosestDropPoint,
-  //   startPoint,
-  //   filterDrivers 
-  // } = useBus();
 
 
 
@@ -205,7 +195,7 @@ const closestBuses = useMemo(() => {
     }
   },[])
 
- 
+  const { setClosestStopName } = useClosestStop();
 
   // const closestBus = startPoint ? getClosestBuses(startPoint, filterDrivers) : null;
   
@@ -247,53 +237,52 @@ const closestBuses = useMemo(() => {
 
 
   useEffect(() => {
-    if(!closest || storedDropPoints.length === 0) {
-      setClosestDropPoint(null)
-      return
+    if (!closest || storedDropPoints.length === 0) {
+      setClosestDropPoint(null);
+      return;
     }
 
-    const busCoords = closest.driver.coords
+    const busCoords = closest.driver.coords;
 
-    const dropPointsExludingStart = storedDropPoints.filter(point => 
-      !(point.latitude === startPoint?.latitude &&
-        point.longitude === startPoint?.longitude
-       )
-    )
+    const filtered = storedDropPoints.filter(
+      (point) =>
+        point.latitude !== startPoint?.latitude ||
+        point.longitude !== startPoint?.longitude
+    );
 
-    if (dropPointsExludingStart.length === 0) {
-      setClosestDropPoint(null)
-      return
+    if (filtered.length === 0) {
+      setClosestDropPoint(null);
+      return;
     }
 
-    const dropPointswithDistances = dropPointsExludingStart.map(point => ({
+    const dropPointsWithDistances = filtered.map((point) => ({
       point,
-      distance : haversineDistance(busCoords, point, 'km')
-    }))
+      distance: haversineDistance(busCoords, point, 'km'),
+    }));
 
-    const sortedDropPoints = dropPointswithDistances
-      .filter(item => item.distance !== null && !isNaN(item.distance))
-      .sort((a,b) => a.distance - b.distance)
+    const sorted = dropPointsWithDistances
+      .filter((item) => item.distance !== null && !isNaN(item.distance))
+      .sort((a, b) => a.distance - b.distance);
 
-
-      if (sortedDropPoints.length > 0 ) {
-        setClosestDropPoint(sortedDropPoints[0].point)
-        console.log('closest drop point', closestDropPoint)
-      
-      } else {
-        setClosestDropPoint(null)
-      }
-
-  }, [closest, storedDropPoints, startPoint, closestDropPoint])
-
-  useEffect(() => {
- 
-    if (onClosestStopChange && typeof onClosestStopChange === 'function' && closestDropPoint !== null) {
-      onClosestStopChange(closestDropPoint.name);
-    }
-    
+    if (sorted.length > 0) {
+      const nearest = sorted[0].point;
+      setClosestDropPoint(nearest);
+      console.log('✅ Closest drop point set:', nearest.name);
 
    
-  }, [closestDropPoint]);
+    } 
+  }, [closest, storedDropPoints, startPoint]);
+  
+  
+
+useEffect(() => {
+  if (closestDropPoint && setClosestStopName) {
+    setClosestStopName(closestDropPoint.name);
+  }
+}, [closestDropPoint]);
+
+  
+
   
   useEffect(() => {
     // Set the map view to the selected location (homepage) or pick-up point (details page)
