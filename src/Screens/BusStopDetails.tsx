@@ -520,9 +520,9 @@ function BusStopDetails() {
                 <div style={{
                     display : 'flex',
                     flexDirection : 'column',
-                    alignItems : "center"
+                    alignItems : "center",
                 }}>
-                <p style={{ fontWeight: '500', fontSize: 13 }}>
+                <p style={{ fontWeight: '500', fontSize: 13, textAlign : 'center' }}>
                     {startPoint ? startPoint.name : 'No location'}
                   </p>
                   <p style={{
@@ -642,7 +642,7 @@ function BusStopDetails() {
 
                       <div style={{
                   height : 6,
-                  width : 130,
+                  width : 100,
                   borderRadius : 8,
                   backgroundColor : 'rgba(0,0,0,0.2)'
                 }}></div>
@@ -656,11 +656,13 @@ function BusStopDetails() {
                 <div style={{
                     display : 'flex',
                     flexDirection : 'column',
-                    alignItems : "center"
+                    alignItems : "center",
+                    // whiteSpace: 'nowrap',
                 }}>
                   <p style={{
                     fontWeight : '500',
-                    fontSize : 13
+                    fontSize : 13,
+                    textAlign : 'center' 
                   }}> {closestStopName  ?? 'Loading...'}</p>
                   <p style={{
                     fontSize : 11,
@@ -854,7 +856,7 @@ function BusStopDetails() {
           pickUpLocation={pickUp}
           dropOffLocation={dropOff}
           isHomepage={false} 
-          // onClosestStopChange={handleClosestStopChange}
+         
           />
             
       </div>
