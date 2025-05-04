@@ -515,7 +515,8 @@ function BusStopDetails() {
               <div style={{
                     display : 'flex',
                     flexDirection : 'column',
-                    alignItems : "center"
+                    alignItems : "center",
+                    justifyContent : 'center'
                 }} >
                 <div style={{
                     display : 'flex',
@@ -651,12 +652,14 @@ function BusStopDetails() {
               <div style={{
                     display : 'flex',
                     flexDirection : 'column',
-                    alignItems : "center"
+                    alignItems : "center",
+                     justifyContent : 'center'
                 }} >
                 <div style={{
                     display : 'flex',
                     flexDirection : 'column',
                     alignItems : "center",
+                     justifyContent : 'center'
                     // whiteSpace: 'nowrap',
                 }}>
                   <p style={{

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef,  } from 'react';
-import Map, { Marker, Source, Layer, GeolocateControl } from 'react-map-gl/mapbox';
+import Map, { Marker, Source, Layer, GeolocateControl, ViewState as MapViewState } from 'react-map-gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { solveTSP } from './../components/solveTSP'; 
 // import { useDriverWebSocket } from './../../hooks/useDriverWebSocket'
@@ -49,30 +49,15 @@ interface Driver  {
   coords : Coordinates
 }
 
-
-
-// interface Coords  {
-//   latitude: number; 
-//   longitude: number; 
-//   speed: number; 
-//   heading: number; 
-// } 
+interface ExtendedViewState extends Partial<MapViewState> {
+  transitionDuration?: number;
+}
 
 
 interface DropPoint {
   name: string;
 }
 
-
-
-// interface ClosestBusInfo {
-//   distance: number;
-//   driver: Driver;
-// }
-
-// interface MapGLProps {
-//   onClosestStopChange: (name: string) => void;
-// }
 
 function MapGL({
   selectedLocation,
@@ -91,27 +76,32 @@ function MapGL({
   // const [closest, setClosest] = useState<ClosestBusInfo | null>(null);
   const { closest, setClosest, closestBuses, setClosestBuses } = useClosestBus();
 
+  const DEFAULT_LONGITUDE = -1.573568;
+  const DEFAULT_LATITUDE = 6.678045;
+  const DEFAULT_ZOOM = 14.95;
+  const TRANSITION_DURATION = 500;
 
-  const [viewState, setViewState] = useState({
-    longitude: closest?.driver.coords.longitude ?? -1.573568,
-    latitude: closest?.driver.coords.latitude ?? 6.678045,
-    zoom: 14.95,
+  const [viewState, setViewState] = useState<ExtendedViewState>({
+    longitude: DEFAULT_LONGITUDE,
+    latitude: DEFAULT_LATITUDE,
+    zoom: DEFAULT_ZOOM,
+  });
+  
+  const [transitionOptions, setTransitionOptions] = useState({
+    transitionDuration: TRANSITION_DURATION
   });
 
+  
 
   const [route, setRoute] = useState<Route | null>(null);
   const [drivers, setDrivers] = useState<Driver[]>([]);
-  // const [selectedBus, setSelectedBus] = useState<Bus | null>(null);
-  // const [busLocation, setBusLocation] = useState<Coordinates | null>(null);
+
   const geolocateControlRef = useRef<any>(null);
-  // const [busBearing, setBusBearing] = useState<number | null>(null);
   const [filterDrivers, setFilterDrivers] = useState<Driver[]>([]);
   const [selectedBus, setSelectedBus] = useState<Driver[]>([]);
   const [storedDropPoints, setStoredDropPoints] = useState<DropPoint[]>([]);
   const [startPoint, setStartPoint] = useState<Coordinates | null>(null);
-  // const [error, setError] = useState<string | null>(null);
 
-  // const { setClosestBusID, closestBusID  } = useClosest();
  
   const [closestDropPoint, setClosestDropPoint] = useState<{
     latitude: number;
@@ -132,8 +122,6 @@ function MapGL({
         
         const data = await response.json();
         setDrivers(data.drivers || [])
-        // console.log(drivers)
-        // setDriverStops(data.drivers[0].busRoute[0].stops)
         
       } catch (err) {
         console.error("Error fetching drivers:", err);
@@ -192,7 +180,6 @@ function MapGL({
     }
   }, [startPoint, filterDrivers, setClosestBuses]);
 
-  // const closestBus = startPoint ? getClosestBuses(startPoint, filterDrivers) : null;
   
   useEffect(() => {
     if (closestBuses.length > 0) {
@@ -203,6 +190,35 @@ function MapGL({
       setClosest(null);
     }
   }, [closestBuses, startPoint, filterDrivers, setClosest]);
+
+  useEffect(() => {
+    if (closest?.driver?.coords) {
+      setViewState(prevState => ({
+        ...prevState,
+        longitude: closest.driver.coords.longitude,
+        latitude: closest.driver.coords.latitude,
+        transitionDuration: TRANSITION_DURATION
+      }));
+
+      setTransitionOptions({
+        transitionDuration: TRANSITION_DURATION
+      });
+      console.log('Updating map view to follow closest bus:', closest.driver.busID);
+    }
+  }, [closest]);
+
+  const handleViewStateChange = (evt: { viewState: MapViewState }) => {
+    // Only update relevant properties
+    const { longitude, latitude, zoom } = evt.viewState;
+    setViewState(prevState => ({
+      ...prevState,
+      longitude,
+      latitude,
+      zoom: zoom || prevState.zoom,
+    }));
+  };
+  
+  
 
 
   useEffect(() => {
@@ -225,9 +241,6 @@ function MapGL({
 
   }, [storedDropPoints, filterDrivers]);
   
-  useEffect(() => {
-    // console.log('Matched Drivers:', selectedBus);
-  }, [selectedBus]);
 
 
   useEffect(() => {
@@ -635,7 +648,8 @@ const renderBusMarkers = () => {
       {...viewState}
       style={{ width: '100vw', height: '100vh', position: 'absolute' }}
       mapStyle="mapbox://styles/mapbox/streets-v11"
-      onMove={(evt) => setViewState(evt.viewState)}
+      {...transitionOptions}
+      onMove={handleViewStateChange}
     >
   
       {isHomepage && selectedLocation && (
