@@ -617,7 +617,6 @@ const LocationList: React.FC<LocationListProps> = ({
           dropPoints={selectedLocation?.dropPoints || []}
           pickUpLocation={pickUpDetails}  // Add this
           dropOffLocation={dropOff} 
-          // onClosestStopChange={handleClosestStopChange}
         />
         </ErrorBoundary>
 
