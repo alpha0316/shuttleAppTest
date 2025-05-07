@@ -74,7 +74,29 @@ function MapGL({
   // const WS_URL = 'ws://localhost:3000'
   // const { driverLocations, shareLocation, isConnected, error } = useDriverWebSocket(WS_URL);
   // const [closest, setClosest] = useState<ClosestBusInfo | null>(null);
-  const { closest, setClosest, closestBuses, setClosestBuses } = useClosestBus();
+  const { closest, setClosest, closestBuses, setClosestBuses, mapViewState,
+    // setMapViewState
+ } = useClosestBus();
+
+ 
+
+ useEffect(() => {
+  if (closest?.driver?.coords) {
+    // Update the map view to follow the closest bus
+    setViewState(prevState => ({
+      ...prevState,
+      longitude: closest.driver.coords.longitude,
+      latitude: closest.driver.coords.latitude,
+    }));
+    
+    // Set the transition options separately
+    setTransitionOptions({
+      transitionDuration: TRANSITION_DURATION
+    });
+    
+    console.log('Updating map view to follow closest bus:', closest.driver.busID);
+  }
+}, [closest]);
 
   const DEFAULT_LONGITUDE = -1.573568;
   const DEFAULT_LATITUDE = 6.678045;
@@ -134,7 +156,7 @@ function MapGL({
   useEffect(() => {
     setStoredDropPoints(dropPoints);
     setStartPoint(storedDropPoints[0])
-    // console.log('yes', startPoint);
+    console.log('yes', viewState);
   }, [dropPoints]);
   
 
@@ -208,7 +230,7 @@ function MapGL({
   }, [closest]);
 
   const handleViewStateChange = (evt: { viewState: MapViewState }) => {
-    // Only update relevant properties
+    // Only update the latitude, longitude, and zoom from the event
     const { longitude, latitude, zoom } = evt.viewState;
     setViewState(prevState => ({
       ...prevState,
@@ -645,7 +667,7 @@ const renderBusMarkers = () => {
   return (
     <Map
       mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
-      {...viewState}
+       {...mapViewState}
       style={{ width: '100vw', height: '100vh', position: 'absolute' }}
       mapStyle="mapbox://styles/mapbox/streets-v11"
       {...transitionOptions}
