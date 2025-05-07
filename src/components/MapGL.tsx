@@ -74,29 +74,29 @@ function MapGL({
   // const WS_URL = 'ws://localhost:3000'
   // const { driverLocations, shareLocation, isConnected, error } = useDriverWebSocket(WS_URL);
   // const [closest, setClosest] = useState<ClosestBusInfo | null>(null);
-  const { closest, setClosest, closestBuses, setClosestBuses, mapViewState,
-    // setMapViewState
+  const { closest, setClosest, closestBuses, setClosestBuses
+  
  } = useClosestBus();
 
  
 
- useEffect(() => {
-  if (closest?.driver?.coords) {
-    // Update the map view to follow the closest bus
-    setViewState(prevState => ({
-      ...prevState,
-      longitude: closest.driver.coords.longitude,
-      latitude: closest.driver.coords.latitude,
-    }));
+//  useEffect(() => {
+//   if (closest?.driver?.coords) {
+//     // Update the map view to follow the closest bus
+//     setViewState(prevState => ({
+//       ...prevState,
+//       longitude: closest.driver.coords.longitude,
+//       latitude: closest.driver.coords.latitude,
+//     }));
     
-    // Set the transition options separately
-    setTransitionOptions({
-      transitionDuration: TRANSITION_DURATION
-    });
+//     // Set the transition options separately
+//     setTransitionOptions({
+//       transitionDuration: TRANSITION_DURATION
+//     });
     
-    console.log('Updating map view to follow closest bus:', closest.driver.busID);
-  }
-}, [closest]);
+//     console.log('Updating map view to follow closest bus:', closest.driver.busID);
+//   }
+// }, [closest]);
 
   const DEFAULT_LONGITUDE = -1.573568;
   const DEFAULT_LATITUDE = 6.678045;
@@ -156,7 +156,7 @@ function MapGL({
   useEffect(() => {
     setStoredDropPoints(dropPoints);
     setStartPoint(storedDropPoints[0])
-    console.log('yes', viewState);
+    // console.log('yes', viewState);
   }, [dropPoints]);
   
 
@@ -213,21 +213,43 @@ function MapGL({
     }
   }, [closestBuses, startPoint, filterDrivers, setClosest]);
 
+  const [isManuallyAdjusted, setIsManuallyAdjusted] = useState(false);
+
   useEffect(() => {
+    if (isManuallyAdjusted) return; // Don’t override manual adjustments
+  
+    // Priority 1: Center on closest bus if available
     if (closest?.driver?.coords) {
-      setViewState(prevState => ({
-        ...prevState,
+      setViewState({
         longitude: closest.driver.coords.longitude,
         latitude: closest.driver.coords.latitude,
-        transitionDuration: TRANSITION_DURATION
-      }));
-
-      setTransitionOptions({
-        transitionDuration: TRANSITION_DURATION
+        zoom: DEFAULT_ZOOM,
       });
+      setTransitionOptions({ transitionDuration: TRANSITION_DURATION });
       console.log('Updating map view to follow closest bus:', closest.driver.busID);
+      return;
     }
-  }, [closest]);
+  
+    // Priority 2: Center on selectedLocation (homepage) or pickUpLocation (details page)
+    const centerLocation = isHomepage ? selectedLocation : pickUpLocation;
+    if (centerLocation) {
+      setViewState({
+        longitude: centerLocation.longitude,
+        latitude: centerLocation.latitude,
+        zoom: DEFAULT_ZOOM,
+      });
+      setTransitionOptions({ transitionDuration: TRANSITION_DURATION });
+      return;
+    }
+  
+    // Priority 3: Default to DEFAULT_LONGITUDE and DEFAULT_LATITUDE
+    setViewState({
+      longitude: DEFAULT_LONGITUDE,
+      latitude: DEFAULT_LATITUDE,
+      zoom: DEFAULT_ZOOM,
+    });
+    setTransitionOptions({ transitionDuration: TRANSITION_DURATION });
+  }, [closest, selectedLocation, pickUpLocation, isHomepage, isManuallyAdjusted]);
 
   const handleViewStateChange = (evt: { viewState: MapViewState }) => {
     // Only update the latitude, longitude, and zoom from the event
@@ -238,6 +260,7 @@ function MapGL({
       latitude,
       zoom: zoom || prevState.zoom,
     }));
+    setIsManuallyAdjusted(true);
   };
   
   
@@ -313,36 +336,22 @@ useEffect(() => {
   
 
   
-  useEffect(() => {
-    // Set the map view to the selected location (homepage) or pick-up point (details page)
-    const centerLocation = isHomepage ? selectedLocation : pickUpLocation;
-    if (centerLocation) {
-      setViewState((prevState) => ({
-        ...prevState,
-        longitude: centerLocation.longitude,
-        latitude: centerLocation.latitude,
-      }));
-    }
+useEffect(() => {
+  if (!isHomepage && selectedLocation && pickUpLocation && dropOffLocation) {
+    const allWaypoints = [
+      selectedLocation,
+      ...dropPoints.map((point) => ({
+        longitude: point.longitude,
+        latitude: point.latitude,
+      })),
+      pickUpLocation,
+      dropOffLocation,
+    ];
 
-
-    if (!isHomepage && selectedLocation && pickUpLocation && dropOffLocation) {
-      const allWaypoints = [
-        selectedLocation,
-        ...dropPoints.map((point) => ({
-          longitude: point.longitude,
-          latitude: point.latitude,
-        })),
-        pickUpLocation,
-        dropOffLocation,
-      ];
-
-      // Solve TSP to find the optimal order of waypoints
-      const optimalWaypoints = solveTSP(allWaypoints);
-
-      // Fetch the route with the optimal waypoints
-      fetchRouteWithWaypoints(optimalWaypoints, setRoute);
-    }
-  }, [selectedLocation, dropOffLocation, isHomepage, pickUpLocation, dropPoints]);
+    const optimalWaypoints = solveTSP(allWaypoints);
+    fetchRouteWithWaypoints(optimalWaypoints, setRoute);
+  }
+}, [selectedLocation, dropOffLocation, isHomepage, pickUpLocation, dropPoints]);
 
   const fetchRouteWithWaypoints = async (
     waypoints: Coordinates[],
@@ -667,7 +676,7 @@ const renderBusMarkers = () => {
   return (
     <Map
       mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
-       {...mapViewState}
+       {...viewState}
       style={{ width: '100vw', height: '100vh', position: 'absolute' }}
       mapStyle="mapbox://styles/mapbox/streets-v11"
       {...transitionOptions}
