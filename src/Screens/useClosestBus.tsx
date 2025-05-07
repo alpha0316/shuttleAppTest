@@ -76,7 +76,7 @@ export const ClosestBusProvider = ({ children }: ClosestBusProviderProps) => {
         latitude: closest.driver.coords.latitude,
         transitionDuration: immediately ? 0 : DEFAULT_TRANSITION_DURATION
       }));
-      console.log('Updating map view to follow closest bus:', closest.driver.busID);
+      // console.log('Updating map view to follow closest bus:', closest.driver.busID);
     }
   };
 

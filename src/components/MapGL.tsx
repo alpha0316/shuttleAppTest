@@ -73,7 +73,6 @@ function MapGL({
 
   // const WS_URL = 'ws://localhost:3000'
   // const { driverLocations, shareLocation, isConnected, error } = useDriverWebSocket(WS_URL);
-  // const [closest, setClosest] = useState<ClosestBusInfo | null>(null);
   const { closest, setClosest, closestBuses, setClosestBuses
   
  } = useClosestBus();
@@ -119,6 +118,7 @@ function MapGL({
   const [drivers, setDrivers] = useState<Driver[]>([]);
 
   const geolocateControlRef = useRef<any>(null);
+  // const [userCoords, setUserCoords] = useState({ latitude: null, longitude: null })
   const [filterDrivers, setFilterDrivers] = useState<Driver[]>([]);
   const [selectedBus, setSelectedBus] = useState<Driver[]>([]);
   const [storedDropPoints, setStoredDropPoints] = useState<DropPoint[]>([]);
@@ -156,8 +156,10 @@ function MapGL({
   useEffect(() => {
     setStoredDropPoints(dropPoints);
     setStartPoint(storedDropPoints[0])
-    // console.log('yes', viewState);
+    // console.log('yes', dropOffLocation);
   }, [dropPoints]);
+
+  
   
 
   useEffect(() => {
@@ -189,9 +191,8 @@ function MapGL({
       .sort((a, b) => a.distance - b.distance)
       .slice(0, limit)
   }
- 
+
   const { setClosestStopName } = useClosestStop();
-  // const { closestBus } = useClosest()
 
   useEffect(() => {
     if (startPoint && filterDrivers.length > 0) {
@@ -205,10 +206,10 @@ function MapGL({
   
   useEffect(() => {
     if (closestBuses.length > 0) {
-      console.log('All close buses:', closestBuses);
+      // console.log('All close buses:', closestBuses);
       setClosest(closestBuses[0]);
     } else if (startPoint && filterDrivers.length > 0) {
-      console.log('No closest bus found');
+      // console.log('No closest bus found');
       setClosest(null);
     }
   }, [closestBuses, startPoint, filterDrivers, setClosest]);
@@ -218,7 +219,6 @@ function MapGL({
   useEffect(() => {
     if (isManuallyAdjusted) return; // Don’t override manual adjustments
   
-    // Priority 1: Center on closest bus if available
     if (closest?.driver?.coords) {
       setViewState({
         longitude: closest.driver.coords.longitude,
@@ -226,11 +226,11 @@ function MapGL({
         zoom: DEFAULT_ZOOM,
       });
       setTransitionOptions({ transitionDuration: TRANSITION_DURATION });
-      console.log('Updating map view to follow closest bus:', closest.driver.busID);
+      // console.log('Updating map view to follow closest bus:', closest.driver.busID);
       return;
     }
   
-    // Priority 2: Center on selectedLocation (homepage) or pickUpLocation (details page)
+
     const centerLocation = isHomepage ? selectedLocation : pickUpLocation;
     if (centerLocation) {
       setViewState({
@@ -252,7 +252,6 @@ function MapGL({
   }, [closest, selectedLocation, pickUpLocation, isHomepage, isManuallyAdjusted]);
 
   const handleViewStateChange = (evt: { viewState: MapViewState }) => {
-    // Only update the latitude, longitude, and zoom from the event
     const { longitude, latitude, zoom } = evt.viewState;
     setViewState(prevState => ({
       ...prevState,
@@ -286,8 +285,6 @@ function MapGL({
 
   }, [storedDropPoints, filterDrivers]);
   
-
-
   useEffect(() => {
     if (!closest || storedDropPoints.length === 0) {
       setClosestDropPoint(null);
@@ -298,9 +295,13 @@ function MapGL({
 
     const filtered = storedDropPoints.filter(
       (point) =>
-        point.latitude !== startPoint?.latitude ||
-        point.longitude !== startPoint?.longitude
+        // (point.latitude !== startPoint?.latitude ||
+        // point.longitude !== startPoint?.longitude) &&
+
+        point.name !== 'Paa Joe Round About'
+
     );
+
 
     if (filtered.length === 0) {
       setClosestDropPoint(null);
@@ -319,7 +320,7 @@ function MapGL({
     if (sorted.length > 0) {
       const nearest = sorted[0].point;
       setClosestDropPoint(nearest);
-      console.log('✅ Closest drop point set:', nearest.name);
+      // console.log('✅ Closest drop point set:', nearest.name);
       // setClosestBusID(nearest.busID);
    
     } 

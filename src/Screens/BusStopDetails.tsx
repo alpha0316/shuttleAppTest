@@ -523,9 +523,11 @@ function BusStopDetails() {
                     flexDirection : 'column',
                     alignItems : "center",
                 }}>
-                <p style={{ fontWeight: '500', fontSize: 13, textAlign : 'center' }}>
-                    {startPoint ? startPoint.name : 'No location'}
-                  </p>
+                     <p style={{
+                    fontWeight : '500',
+                    fontSize : 13,
+                    textAlign : 'center' 
+                  }}> {closestStopName  ?? 'Loading...'}</p>
                   <p style={{
                     fontSize : 11,
                     color : 'rgba(0,0,0,0.5)',
@@ -662,11 +664,9 @@ function BusStopDetails() {
                      justifyContent : 'center'
                     // whiteSpace: 'nowrap',
                 }}>
-                  <p style={{
-                    fontWeight : '500',
-                    fontSize : 13,
-                    textAlign : 'center' 
-                  }}> {closestStopName  ?? 'Loading...'}</p>
+                   <p style={{ fontWeight: '500', fontSize: 13, textAlign : 'center' }}>
+                    {startPoint ? startPoint.name : 'No location'}
+                  </p>
                   <p style={{
                     fontSize : 11,
                     color : 'rgba(0,0,0,0.5)',
@@ -683,10 +683,7 @@ function BusStopDetails() {
                     borderRadius : 6,
                     // backgroundColor : '#fafafa'
                 }}>
-                  {/* <p style={{
-                    fontSize : 12,
-                    color : 'rgba(0,0,0,0.5)'
-                  }}>Arriv</p> */}
+          
                   <p style={{
                     fontSize : 12,
                     //  color : 'rgba(0,0,0,0.5)'
