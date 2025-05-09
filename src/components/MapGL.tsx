@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef,  } from 'react';
+import { useState, useEffect, useRef, } from 'react';
 import Map, { Marker, Source, Layer, GeolocateControl, ViewState as MapViewState } from 'react-map-gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { solveTSP } from './../components/solveTSP'; 
@@ -6,6 +6,7 @@ import { solveTSP } from './../components/solveTSP';
 import { haversineDistance } from './../../utils/distance'
 import { useClosestStop  } from './../Screens/ClosestStopContext';
 import {useClosestBus } from '../Screens/useClosestBus'
+
 
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoidGhlbG9jYWxnb2RkIiwiYSI6ImNtMm9ocHFhYTBmczQya3NnczhoampiZ3gifQ.lPNutwk6XRi_kH_1R1ebiw';
 
@@ -77,26 +78,6 @@ function MapGL({
   
  } = useClosestBus();
 
- 
-
-//  useEffect(() => {
-//   if (closest?.driver?.coords) {
-//     // Update the map view to follow the closest bus
-//     setViewState(prevState => ({
-//       ...prevState,
-//       longitude: closest.driver.coords.longitude,
-//       latitude: closest.driver.coords.latitude,
-//     }));
-    
-//     // Set the transition options separately
-//     setTransitionOptions({
-//       transitionDuration: TRANSITION_DURATION
-//     });
-    
-//     console.log('Updating map view to follow closest bus:', closest.driver.busID);
-//   }
-// }, [closest]);
-
   const DEFAULT_LONGITUDE = -1.573568;
   const DEFAULT_LATITUDE = 6.678045;
   const DEFAULT_ZOOM = 14.95;
@@ -118,11 +99,12 @@ function MapGL({
   const [drivers, setDrivers] = useState<Driver[]>([]);
 
   const geolocateControlRef = useRef<any>(null);
-  // const [userCoords, setUserCoords] = useState({ latitude: null, longitude: null })
+  const [userCoords, setUserCoords] = useState<{ latitude: number; longitude: number } | null>(null);
   const [filterDrivers, setFilterDrivers] = useState<Driver[]>([]);
   const [selectedBus, setSelectedBus] = useState<Driver[]>([]);
   const [storedDropPoints, setStoredDropPoints] = useState<DropPoint[]>([]);
   const [startPoint, setStartPoint] = useState<Coordinates | null>(null);
+  // const [busAtStartPoint, setBusAsStartPoint] = useState(false)
 
  
   const [closestDropPoint, setClosestDropPoint] = useState<{
@@ -159,7 +141,34 @@ function MapGL({
     // console.log('yes', dropOffLocation);
   }, [dropPoints]);
 
-  
+
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setUserCoords({
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude,
+        });
+      },
+      (err) => console.error('Error getting location', err),
+      { enableHighAccuracy: true },
+    );
+  }, []);
+
+
+
+
+  useEffect(()=> {
+    // console.log(closest)
+    console.log(userCoords)
+  })
+
+
+  // const getCloseRange = (
+  //   start : Coordinates, 
+  // )
+
   
 
   useEffect(() => {
@@ -177,7 +186,7 @@ function MapGL({
  const getClosestBuses = (
   start : Coordinates,
   drivers : Driver[],
-  limit: number = 3 
+  limit: number = 3,
  ) : 
   { driver : Driver; distance: number }[] => {
     if (!start) return[]
@@ -190,15 +199,36 @@ function MapGL({
       .filter((item) => item.distance !== null && !isNaN(item.distance))
       .sort((a, b) => a.distance - b.distance)
       .slice(0, limit)
+
+
   }
 
   const { setClosestStopName } = useClosestStop();
 
   useEffect(() => {
-    if (startPoint && filterDrivers.length > 0) {
+    if (startPoint && filterDrivers.length > 0 ) {
       const newClosestBuses = getClosestBuses(startPoint, filterDrivers);
       setClosestBuses(newClosestBuses);
-    } else {
+
+         
+       if (newClosestBuses.length > 0 && newClosestBuses[0].driver.coords.latitude === startPoint.latitude && newClosestBuses[0].driver.coords.longitude === startPoint.longitude) {
+        console.log(newClosestBuses[0])
+        // alert (`A bus is now within 500 meters of your location!`)
+      }
+
+      else if (newClosestBuses.length > 0 && newClosestBuses[0].distance <= 0.1) {
+         console.log(true)
+        // alert (`A bus is now within 500 meters of your location!`)
+      } 
+      
+   
+      
+      else {
+        console.log(false)
+      }
+    } 
+    
+    else {
       setClosestBuses([]);
     }
   }, [startPoint, filterDrivers, setClosestBuses]);
@@ -226,7 +256,7 @@ function MapGL({
         zoom: DEFAULT_ZOOM,
       });
       setTransitionOptions({ transitionDuration: TRANSITION_DURATION });
-      // console.log('Updating map view to follow closest bus:', closest.driver.busID);
+      // console.log('Updating map view to follow closest bus:', closest.driver);
       return;
     }
   
@@ -786,4 +816,6 @@ const renderBusMarkers = () => {
 }
 
 export default MapGL;
+
+
 
