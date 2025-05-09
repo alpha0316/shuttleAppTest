@@ -861,7 +861,7 @@ function BusStopDetails() {
             
       </div>
 
-      <div style={{
+      {/* <div style={{
           backgroundColor : 'white',
           // height : 100,
           position : 'absolute',
@@ -914,7 +914,7 @@ function BusStopDetails() {
           }}>Brunei</span> in less than 2 minutes!</p>
         </div>
 
-      </div>
+      </div> */}
 
     </div>
   );
