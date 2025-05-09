@@ -863,17 +863,16 @@ function BusStopDetails() {
 
       <div style={{
           backgroundColor : 'white',
-          // width: '350px',
           // height : 100,
           position : 'absolute',
-          top : '4%',
+          top : '10%',
           left : '4%',
           borderRadius : 18,
           display : 'flex',
           flexDirection : 'column',
           gap : 8,
           padding : 12,
-          width : '360px'
+          width : '366px'
       }}>
 
         <div style={{
