@@ -5,6 +5,7 @@ import MapGl from '../components/MapGL';
 import useMediaQuery from '../components/useMediaQuery';
 import { useParams, useNavigate, useLocation  } from 'react-router-dom';
 import { useClosestStop  } from "./../Screens/ClosestStopContext";
+import { useClosestBus } from './useClosestBus';
 
 function BusStopDetails() {
 
@@ -13,16 +14,29 @@ function BusStopDetails() {
   const { state } = useLocation();
   const { pickUp, dropOff } = state || {};
   const { closestStopName } = useClosestStop();
-
+  const { arrived, arriveInTwo, setArriveInTwo, setArrived } =useClosestBus()
 
   const [startPoint, setStartPoint] = useState<Location | null>(null);
-  // const [closestStopName, setClosestStopName] = useState< string | null> (null)
-
-  // const handleClosestStopChange = useCallback((name: string) => {
-  //   setClosestStopName(name);
-  // }, []);
 
   const navigate = useNavigate(); 
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | null = null;
+
+    if (arrived || arriveInTwo) {
+      timer = setTimeout(() => {
+        setArriveInTwo(false)
+        setArrived(false)
+      }, 10000)
+    }
+
+    return() => {
+      if (timer) clearTimeout(timer)
+    }
+
+  }, [arriveInTwo,arrived])
+
+ 
   
   // console.log('Bus Stop ID:', id);
 
@@ -334,24 +348,39 @@ function BusStopDetails() {
       setStartPoint(state.pickUp)
       // setBusStop(updatedBusStop);
       setSelectedLocation(updatedBusStop);
-      // console.log(updatedBusStop);
+      // console.log(arrived);
     } else {
       console.error('Bus stop not found');
       navigate('/');
     }
   }, [id, navigate, pickUp, dropOff]);
   
+   const closeModal = () => {
+      setArriveInTwo(false)
+        setArrived(false)
+   }
   
   const filteredDropPointsForUI = selectedLocation?.dropPoints?.filter(
     (dropPoint: DropPoint) => dropPoint.name !== 'Paa Joe Round About'
   );
+
+  useEffect(() => {
+        
+
+         if (closestStopName === startPoint?.name){
+          console.log(true);
+
+         }
+  })
+
 
 
   return (
     <div style={{
       flexDirection: "column",
       margin: 0,
-      top: 0
+      top: 0,
+      
     }}>
       <div style={{
         display: 'flex',
@@ -360,7 +389,6 @@ function BusStopDetails() {
         height: 'auto',
         overflow: 'hidden',
         flexDirection: isMobile ? 'column' : 'row',
-
       }}>
 
         <div style={{
@@ -413,13 +441,14 @@ function BusStopDetails() {
                 display : 'flex',
                 gap : 12,
                 alignItems : 'center',
-                // justifyContent: 'center',
-                // flex: 1,
-                // flexWrap: 'nowrap',
-                // overflowX: 'auto',
+                justifyContent: 'center',
+                flex: 1,
+                flexWrap: 'nowrap',
+                overflowX: 'auto',
               }}>
-
+            
               
+            
                 <div style={{
                   display : 'flex',
                   gap : 8,
@@ -443,66 +472,6 @@ function BusStopDetails() {
              
 
             </div>
-      
-            {/* <div style={{
-              display : 'flex',
-              borderRadius : 16,
-              border: '1px solid rgba(0,0,0,0.1)',
-              paddingInline : 16,
-              paddingBlock : 12,
-              flexDirection : 'column',
-              gap : 16,
-              
-            }}>
-              
-
-                <div style={{
-                  display : 'flex',
-                  gap : 8,
-                  alignItems : 'center'
-                }}>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M8 5.33333V7.99999L9.66667 9.66666" stroke="black" stroke-opacity="0.6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M2.892 4.58067L2.392 4.58267C2.39253 4.71447 2.44507 4.84073 2.53821 4.93399C2.63134 5.02725 2.75753 5.07997 2.88933 5.08067L2.892 4.58067ZM4.58667 5.08867C4.65233 5.08897 4.71741 5.07634 4.77819 5.0515C4.83897 5.02666 4.89426 4.99008 4.9409 4.94387C4.98755 4.89766 5.02464 4.84271 5.05005 4.78216C5.07546 4.72162 5.08869 4.65666 5.089 4.591C5.08931 4.52534 5.07668 4.46026 5.05183 4.39948C5.02699 4.3387 4.99042 4.28341 4.9442 4.23676C4.89799 4.19012 4.84304 4.15303 4.7825 4.12762C4.72195 4.10221 4.65699 4.08897 4.59133 4.08867L4.58667 5.08867ZM3.38333 2.88067C3.38263 2.74806 3.32927 2.62116 3.235 2.52789C3.14073 2.43463 3.01328 2.38263 2.88067 2.38333C2.74806 2.38404 2.62116 2.4374 2.52789 2.53167C2.43463 2.62593 2.38263 2.75339 2.38333 2.886L3.38333 2.88067ZM2.5 8C2.5 7.86739 2.44732 7.74022 2.35355 7.64645C2.25979 7.55268 2.13261 7.5 2 7.5C1.86739 7.5 1.74021 7.55268 1.64645 7.64645C1.55268 7.74022 1.5 7.86739 1.5 8H2.5ZM11.25 13.63C11.3092 13.5985 11.3615 13.5553 11.4037 13.5031C11.4459 13.4509 11.4772 13.3908 11.4957 13.3263C11.5142 13.2617 11.5194 13.1941 11.5112 13.1275C11.503 13.0609 11.4815 12.9966 11.4479 12.9385C11.4143 12.8804 11.3694 12.8297 11.3158 12.7893C11.2622 12.7489 11.201 12.7197 11.1358 12.7035C11.0707 12.6873 11.003 12.6843 10.9367 12.6948C10.8704 12.7053 10.8069 12.7291 10.75 12.7647L11.25 13.63ZM12.7647 10.75C12.7291 10.8069 12.7053 10.8704 12.6948 10.9367C12.6843 11.003 12.6873 11.0707 12.7035 11.1358C12.7197 11.201 12.7489 11.2622 12.7893 11.3158C12.8297 11.3694 12.8804 11.4143 12.9385 11.4479C12.9966 11.4815 13.0609 11.503 13.1275 11.5112C13.1941 11.5194 13.2617 11.5142 13.3263 11.4957C13.3908 11.4772 13.4509 11.4459 13.5031 11.4037C13.5553 11.3615 13.5985 11.3092 13.63 11.25L12.7647 10.75ZM3.42667 3.38C3.33243 3.47336 3.27913 3.60033 3.27851 3.73298C3.27788 3.86563 3.32998 3.99309 3.42333 4.08733C3.51669 4.18157 3.64366 4.23487 3.77631 4.23549C3.90896 4.23612 4.03643 4.18402 4.13067 4.09067L3.42667 3.38ZM12.5747 3.42467C10.028 0.878 5.91267 0.852667 3.38267 3.38267L4.08933 4.08867C6.22267 1.956 9.70467 1.96867 11.868 4.132L12.5747 3.42467ZM3.38267 3.38267L2.53867 4.22667L3.24533 4.93333L4.09 4.09L3.38267 3.38267ZM2.88933 5.08067L4.58667 5.08867L4.59133 4.08867L2.89467 4.08067L2.88933 5.08067ZM3.392 4.578L3.38333 2.88067L2.38333 2.886L2.392 4.58267L3.392 4.578ZM8 2.5C9.45869 2.5 10.8576 3.07946 11.8891 4.11091C12.9205 5.14236 13.5 6.54131 13.5 8H14.5C14.5 6.27609 13.8152 4.62279 12.5962 3.40381C11.3772 2.18482 9.72391 1.5 8 1.5V2.5ZM8 13.5C6.54131 13.5 5.14236 12.9205 4.11091 11.8891C3.07946 10.8576 2.5 9.45869 2.5 8H1.5C1.5 9.72391 2.18482 11.3772 3.40381 12.5962C4.62279 13.8152 6.27609 14.5 8 14.5V13.5ZM10.75 12.7647C9.91425 13.2481 8.96548 13.5018 8 13.5V14.5C9.18333 14.5 10.2933 14.1833 11.25 13.63L10.75 12.7647ZM13.5 8C13.5018 8.96548 13.2481 9.91425 12.7647 10.75L13.63 11.25C14.2014 10.2623 14.5016 9.14109 14.5 8H13.5ZM4.13067 4.09067C5.15927 3.06943 6.55054 2.49792 8 2.5V1.5C6.28691 1.49779 4.64263 2.1733 3.42667 3.38L4.13067 4.09067Z" fill="black" fill-opacity="0.6"/>
-                  </svg>
-
-                  <p style={{
-                    margin : 0,
-                    fontSize : 14,
-                    color : 'rgba(0,0,0,0.5)'
-                  }}>Arriving in <span style={{
-                    fontWeight : '800'
-                  }}>5</span> minutes </p>
-                </div>
-
-                <div style={{
-                  height : 7,
-                  width : '100%',
-                  backgroundColor : '#D0D3DA',
-                  borderRadius : 40,
-                }}>
-                  <div style={{
-                    height : 7,
-                    width : "60%",
-                    backgroundColor : '#52B922',
-                    borderRadius : 40,
-                  }}></div>
-                </div>
-
-                <div style={{
-                  display : 'flex',
-                  alignItems : 'center',
-                  justifyContent : 'space-between'
-                }}>
-                  <p style={{
-                    margin : 0,
-                    fontSize : 12,
-                    color : 'rgba(0,0,0,0.5)'
-                  }}>Heading towards Main Library</p>
-                
-                </div>
-
-            </div> */}
             <div style={{
                 display : 'flex',
                 paddingInline: 12,
@@ -544,10 +513,6 @@ function BusStopDetails() {
                     borderRadius : 6,
                     // backgroundColor : '#fafafa'
                 }}>
-                  {/* <p style={{
-                    fontSize : 12,
-                    color : 'rgba(0,0,0,0.5)'
-                  }}>Start</p> */}
                   <p style={{
                     fontSize : 12,
                     //  color : 'rgba(0,0,0,0.5)'
@@ -663,10 +628,12 @@ function BusStopDetails() {
                     alignItems : "center",
                      justifyContent : 'center'
                     // whiteSpace: 'nowrap',
+                    
                 }}>
-                   <p style={{ fontWeight: '500', fontSize: 13, textAlign : 'center' }}>
-                    {startPoint ? startPoint.name : 'No location'}
+                  <p style={{ fontWeight: '500', fontSize: 13, textAlign: 'center' }}>
+                    {closestStopName === startPoint?.name ? dropOff?.name : startPoint?.name ?? dropOff?.name}
                   </p>
+
                   <p style={{
                     fontSize : 11,
                     color : 'rgba(0,0,0,0.5)',
@@ -776,8 +743,6 @@ function BusStopDetails() {
                   
 
                 </div>
-               
-
                   {index < filteredDropPointsForUI.length - 1 && (
                      <div style={{
                       width : 30,
@@ -861,20 +826,22 @@ function BusStopDetails() {
             
       </div>
 
-      {/* <div style={{
+      <div style={{
           backgroundColor : 'white',
           // height : 100,
           position : 'absolute',
-          top : '14%',
-          left : '4%',
+          top : arrived || arriveInTwo === true ?  '4%':'-28%',
+          left :  '2.5%',
           borderRadius : 18,
           display : 'flex',
           flexDirection : 'column',
           gap : 8,
           padding : 12,
-          width : '370px'
+          width : '370px',
+          transition: '0.5s ease',
       }}>
-
+        
+      
         <div style={{
           display : 'flex',
           alignItems : 'center',
@@ -895,7 +862,8 @@ function BusStopDetails() {
           </p>
 
           </div>
-         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+
+         <svg onClick={closeModal} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
             <path d="M4.26659 12.6667L3.33325 11.7334L7.06659 8.00004L3.33325 4.26671L4.26659 3.33337L7.99992 7.06671L11.7333 3.33337L12.6666 4.26671L8.93325 8.00004L12.6666 11.7334L11.7333 12.6667L7.99992 8.93337L4.26659 12.6667Z" fill="#1D1B20"/>
           </svg>
         </div>
@@ -906,15 +874,30 @@ function BusStopDetails() {
           borderRadius : 12,
           backgroundColor : '#fafafa',
         }}>
-          <p style={{
+
+          { arrived === true ? 
+        <p style={{
+            color : 'rgba(0,0,0,0.6)'
+          }}>Your shuttle has arrived at <span style={{
+            fontWeight : 'bold',
+            color : '#000'
+          }}>{startPoint?.name || "your pickup point"}!</span> <br /> Please proceed to board</p>
+
+          :
+
+         <p style={{
             color : 'rgba(0,0,0,0.6)'
           }}>👋 Hey there! The shuttle will arrive at <span style={{
             fontWeight : 'bold',
             color : '#000'
           }}>Brunei</span> in less than 2 minutes!</p>
+
+          }
+
+         
         </div>
 
-      </div> */}
+      </div>
 
     </div>
   );
@@ -923,99 +906,3 @@ function BusStopDetails() {
 export default BusStopDetails;
 
       
-{/* <div style={{
-  display : 'flex',
-  alignItems : 'center',
-  gap : 4,
-  flexDirection : 'column',
-  // width : '100%'
-}}>
-
-  <div style={{
-    display : 'flex',
-    alignItems : 'center',
-    padding : 4,
-    backgroundColor : '#52B922',
-    borderRadius : 40
-  }}>
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 25" fill="none">
-    <path d="M22 7.5V16.5C22 17.21 21.62 17.86 21 18.22V19.75C21 20.16 20.66 20.5 20.25 20.5H19.75C19.34 20.5 19 20.16 19 19.75V18.5H12V19.75C12 20.16 11.66 20.5 11.25 20.5H10.75C10.34 20.5 10 20.16 10 19.75V18.22C9.39 17.86 9 17.21 9 16.5V7.5C9 4.5 12 4.5 15.5 4.5C19 4.5 22 4.5 22 7.5ZM13 15.5C13 14.95 12.55 14.5 12 14.5C11.45 14.5 11 14.95 11 15.5C11 16.05 11.45 16.5 12 16.5C12.55 16.5 13 16.05 13 15.5ZM20 15.5C20 14.95 19.55 14.5 19 14.5C18.45 14.5 18 14.95 18 15.5C18 16.05 18.45 16.5 19 16.5C19.55 16.5 20 16.05 20 15.5ZM20 7.5H11V11.5H20V7.5ZM7 10C6.97 8.62 5.83 7.5 4.45 7.55C3.787 7.56339 3.15647 7.83954 2.69703 8.31773C2.23759 8.79592 1.98687 9.437 2 10.1C2.01306 10.6672 2.2179 11.2132 2.5811 11.6491C2.94431 12.0849 3.44446 12.3849 4 12.5V20.5H5V12.5C6.18 12.26 7 11.21 7 10Z" fill="white" fill-opacity="1"/>
-  </svg>
-  </div>
-
-  <p style={{
-    margin : 0,
-    fontSize : 12
-  }}>Brunei</p>
-
-</div>
-
-<div style={{
-  width : 30,
-  height : 4,
-  borderRadius : 24,
-  backgroundColor : '#52B922'
-}}></div>
-
-<div style={{
-  display : 'flex',
-  alignItems : 'center',
-  gap : 4,
-  flexDirection : 'column',
-  // width : '100%'
-}}>
-
-  <div style={{
-    display : 'flex',
-    alignItems : 'center',
-    padding : 4,
-    // backgroundColor : '#52B922',
-    borderRadius : 40
-  }}>
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 25" fill="none">
-    <path d="M22 7.5V16.5C22 17.21 21.62 17.86 21 18.22V19.75C21 20.16 20.66 20.5 20.25 20.5H19.75C19.34 20.5 19 20.16 19 19.75V18.5H12V19.75C12 20.16 11.66 20.5 11.25 20.5H10.75C10.34 20.5 10 20.16 10 19.75V18.22C9.39 17.86 9 17.21 9 16.5V7.5C9 4.5 12 4.5 15.5 4.5C19 4.5 22 4.5 22 7.5ZM13 15.5C13 14.95 12.55 14.5 12 14.5C11.45 14.5 11 14.95 11 15.5C11 16.05 11.45 16.5 12 16.5C12.55 16.5 13 16.05 13 15.5ZM20 15.5C20 14.95 19.55 14.5 19 14.5C18.45 14.5 18 14.95 18 15.5C18 16.05 18.45 16.5 19 16.5C19.55 16.5 20 16.05 20 15.5ZM20 7.5H11V11.5H20V7.5ZM7 10C6.97 8.62 5.83 7.5 4.45 7.55C3.787 7.56339 3.15647 7.83954 2.69703 8.31773C2.23759 8.79592 1.98687 9.437 2 10.1C2.01306 10.6672 2.2179 11.2132 2.5811 11.6491C2.94431 12.0849 3.44446 12.3849 4 12.5V20.5H5V12.5C6.18 12.26 7 11.21 7 10Z" fill="black" fill-opacity="0.6"/>
-  </svg>
-  </div>
-
-  <p style={{
-    margin : 0,
-    fontSize : 12,
-    color : 'rgba(0,0,0,0.5)'
-  }}>Main Library</p>
-
-</div>
-
-<div style={{
-  width : 30,
-  height : 4,
-  borderRadius : 24,
-  backgroundColor : '#D0D3DA'
-}}></div>
-
-<div style={{
-  display : 'flex',
-  alignItems : 'center',
-  gap : 4,
-  flexDirection : 'column',
-  // width : '100%'
-}}>
-
-  <div style={{
-    display : 'flex',
-    alignItems : 'center',
-    padding : 4,
-    // backgroundColor : '#52B922',
-    borderRadius : 40
-  }}>
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 25" fill="none">
-    <path d="M22 7.5V16.5C22 17.21 21.62 17.86 21 18.22V19.75C21 20.16 20.66 20.5 20.25 20.5H19.75C19.34 20.5 19 20.16 19 19.75V18.5H12V19.75C12 20.16 11.66 20.5 11.25 20.5H10.75C10.34 20.5 10 20.16 10 19.75V18.22C9.39 17.86 9 17.21 9 16.5V7.5C9 4.5 12 4.5 15.5 4.5C19 4.5 22 4.5 22 7.5ZM13 15.5C13 14.95 12.55 14.5 12 14.5C11.45 14.5 11 14.95 11 15.5C11 16.05 11.45 16.5 12 16.5C12.55 16.5 13 16.05 13 15.5ZM20 15.5C20 14.95 19.55 14.5 19 14.5C18.45 14.5 18 14.95 18 15.5C18 16.05 18.45 16.5 19 16.5C19.55 16.5 20 16.05 20 15.5ZM20 7.5H11V11.5H20V7.5ZM7 10C6.97 8.62 5.83 7.5 4.45 7.55C3.787 7.56339 3.15647 7.83954 2.69703 8.31773C2.23759 8.79592 1.98687 9.437 2 10.1C2.01306 10.6672 2.2179 11.2132 2.5811 11.6491C2.94431 12.0849 3.44446 12.3849 4 12.5V20.5H5V12.5C6.18 12.26 7 11.21 7 10Z" fill="black" fill-opacity="0.6"/>
-  </svg>
-  </div>
-
-  <p style={{
-    margin : 0,
-    fontSize : 12,
-    color : 'rgba(0,0,0,0.5)'
-  }}>Pentecost stop</p>
-
-</div> */}

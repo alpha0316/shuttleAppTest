@@ -23,7 +23,7 @@ interface DropPoint {
 }
 
 interface Route {
-  geometry: GeoJSON.Geometry; // Adjust based on Mapbox API response type
+  geometry: GeoJSON.Geometry; 
   distance: number;
   duration: number;
   start: Coordinates;
@@ -70,13 +70,9 @@ function MapGL({
 }: MapGLProps) {
 
 
-  
-
   // const WS_URL = 'ws://localhost:3000'
   // const { driverLocations, shareLocation, isConnected, error } = useDriverWebSocket(WS_URL);
-  const { closest, setClosest, closestBuses, setClosestBuses
-  
- } = useClosestBus();
+  const { closest, setClosest, closestBuses, setClosestBuses} = useClosestBus();
 
   const DEFAULT_LONGITUDE = -1.573568;
   const DEFAULT_LATITUDE = 6.678045;
@@ -104,7 +100,8 @@ function MapGL({
   const [selectedBus, setSelectedBus] = useState<Driver[]>([]);
   const [storedDropPoints, setStoredDropPoints] = useState<DropPoint[]>([]);
   const [startPoint, setStartPoint] = useState<Coordinates | null>(null);
-  // const [busAtStartPoint, setBusAsStartPoint] = useState(false)
+  const [arriveInTwo, setArriveInTwo] = useState(false)
+  const [arrived, setArrived] = useState(false)
 
  
   const [closestDropPoint, setClosestDropPoint] = useState<{
@@ -157,10 +154,9 @@ function MapGL({
   }, []);
 
 
-
-
   useEffect(()=> {
-    // console.log(closest)
+    console.log(arriveInTwo)
+    console.log(arrived)
     console.log(userCoords)
   })
 
@@ -212,12 +208,14 @@ function MapGL({
 
          
        if (newClosestBuses.length > 0 && newClosestBuses[0].driver.coords.latitude === startPoint.latitude && newClosestBuses[0].driver.coords.longitude === startPoint.longitude) {
-        console.log(newClosestBuses[0])
-        // alert (`A bus is now within 500 meters of your location!`)
+        // console.log(arrived)
+        setArrived(true)
+        //  console.log("arrived")
       }
 
       else if (newClosestBuses.length > 0 && newClosestBuses[0].distance <= 0.1) {
-         console.log(true)
+        //  console.log(arriveInTwo)
+         setArriveInTwo(true)
         // alert (`A bus is now within 500 meters of your location!`)
       } 
       

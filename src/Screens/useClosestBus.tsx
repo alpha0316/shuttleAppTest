@@ -31,12 +31,19 @@ interface ClosestBusContextType {
   mapViewState: MapViewState;
   setMapViewState: (state: MapViewState) => void;
   updateMapToFollowBus: (immediately?: boolean) => void;
+  arrived: boolean;
+  setArrived: (value: boolean) => void;
+  arriveInTwo: boolean;
+  setArriveInTwo: (value: boolean) => void;
 }
 
 const DEFAULT_LONGITUDE = -1.573568;
 const DEFAULT_LATITUDE = 6.678045;
 const DEFAULT_ZOOM = 14.95;
 const DEFAULT_TRANSITION_DURATION = 500
+
+const ARRIVED_DISTANCE_KM = 0.1; // 100 meters
+const ARRIVE_IN_TWO_DISTANCE_KM = 0.5; // 500 meters
 
 
 const ClosestBusContext = createContext<ClosestBusContextType>({
@@ -51,7 +58,11 @@ const ClosestBusContext = createContext<ClosestBusContextType>({
     transitionDuration: DEFAULT_TRANSITION_DURATION
   },
   setMapViewState: () => {},
-  updateMapToFollowBus: () => {}
+  updateMapToFollowBus: () => {},
+    arrived: false,
+  setArrived: (_: boolean) => {},
+  arriveInTwo: false,
+  setArriveInTwo: (_: boolean) => {},
 });
 
 interface ClosestBusProviderProps {
@@ -61,12 +72,17 @@ interface ClosestBusProviderProps {
 export const ClosestBusProvider = ({ children }: ClosestBusProviderProps) => {
   const [closest, setClosest] = useState<ClosestBusItem | null>(null);
   const [closestBuses, setClosestBuses] = useState<ClosestBusItem[]>([]);
+
   const [mapViewState, setMapViewState] = useState<MapViewState>({
     longitude: DEFAULT_LONGITUDE,
     latitude: DEFAULT_LATITUDE,
     zoom: DEFAULT_ZOOM,
     transitionDuration: DEFAULT_TRANSITION_DURATION
   });
+
+  const [arrived, setArrived] = useState<boolean>(false);
+  const [arriveInTwo, setArriveInTwo] = useState<boolean>(false);
+  
 
   const updateMapToFollowBus = (immediately: boolean = false) => {
     if (closest?.driver?.coords) {
@@ -86,10 +102,35 @@ export const ClosestBusProvider = ({ children }: ClosestBusProviderProps) => {
     }
   }, [closest]);
 
+    useEffect(() => {
+    if (closest?.distance !== undefined) {
+      // Check if the bus has arrived (within 100 meters)
+      setArrived(closest.distance <= ARRIVED_DISTANCE_KM);
+      
+      // Check if the bus will arrive in approximately 2 minutes (within 500 meters)
+      setArriveInTwo(closest.distance <= ARRIVE_IN_TWO_DISTANCE_KM && closest.distance > ARRIVED_DISTANCE_KM);
+    } else {
+      setArrived(false);
+      setArriveInTwo(false);
+    }
+  }, [closest]);
+
+  
+
   return (
-    <ClosestBusContext.Provider value={{ closest, setClosest, closestBuses, setClosestBuses,  mapViewState,
+   <ClosestBusContext.Provider value={{ 
+      closest, 
+      setClosest, 
+      closestBuses, 
+      setClosestBuses,  
+      mapViewState,
       setMapViewState,
-      updateMapToFollowBus }}>
+      updateMapToFollowBus,
+      arrived,
+      setArrived,
+      arriveInTwo,
+      setArriveInTwo
+    }}>
       {children}
     </ClosestBusContext.Provider>
   );
