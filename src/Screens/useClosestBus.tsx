@@ -59,11 +59,12 @@ const ClosestBusContext = createContext<ClosestBusContextType>({
   },
   setMapViewState: () => {},
   updateMapToFollowBus: () => {},
-    arrived: false,
-  setArrived: (_: boolean) => {},
+   arrived: false,
+  setArrived: () => {},
   arriveInTwo: false,
-  setArriveInTwo: (_: boolean) => {},
+  setArriveInTwo: () => {},
 });
+
 
 interface ClosestBusProviderProps {
   children: ReactNode;

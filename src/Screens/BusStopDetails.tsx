@@ -4,7 +4,7 @@ import MapGl from '../components/MapGL';
 // import { FlyToInterpolator } from 'react-map-gl';
 import useMediaQuery from '../components/useMediaQuery';
 import { useParams, useNavigate, useLocation  } from 'react-router-dom';
-import { useClosestStop  } from "./../Screens/ClosestStopContext";
+import { useClosestStop,   } from "./../Screens/ClosestStopContext";
 import { useClosestBus } from './useClosestBus';
 
 function BusStopDetails() {
@@ -13,8 +13,8 @@ function BusStopDetails() {
   const { id  } = useParams(); 
   const { state } = useLocation();
   const { pickUp, dropOff } = state || {};
-  const { closestStopName } = useClosestStop();
-  const { arrived, arriveInTwo, setArriveInTwo, setArrived } =useClosestBus()
+  const { closestStopName, closestStop } = useClosestStop();
+  const { arrived, arriveInTwo, setArriveInTwo, setArrived, closest } =useClosestBus()
 
   const [startPoint, setStartPoint] = useState<Location | null>(null);
 
@@ -365,14 +365,12 @@ function BusStopDetails() {
   );
 
   useEffect(() => {
-        
 
          if (closestStopName === startPoint?.name){
-          console.log(true);
-
+          console.log('closest bus for speed and time = distance covered', closest);
+         console.log(closestStop)
          }
   })
-
 
 
   return (
@@ -446,9 +444,8 @@ function BusStopDetails() {
                 flexWrap: 'nowrap',
                 overflowX: 'auto',
               }}>
-            
-              
-            
+          
+
                 <div style={{
                   display : 'flex',
                   gap : 8,
@@ -496,7 +493,11 @@ function BusStopDetails() {
                     fontWeight : '500',
                     fontSize : 13,
                     textAlign : 'center' 
-                  }}> {closestStopName  ?? 'Loading...'}</p>
+                  }}>   {
+                            closestStopName === startPoint?.name
+                              ? startPoint?.name
+                              : closestStopName ?? 'Loading...'
+                        }</p>
                   <p style={{
                     fontSize : 11,
                     color : 'rgba(0,0,0,0.5)',
@@ -631,7 +632,7 @@ function BusStopDetails() {
                     
                 }}>
                   <p style={{ fontWeight: '500', fontSize: 13, textAlign: 'center' }}>
-                    {closestStopName === startPoint?.name ? dropOff?.name : startPoint?.name ?? dropOff?.name}
+                    {closestStopName === startPoint?.name ? dropOff?.name : startPoint?.name ?? dropOff?.name ?? 'Unknown stop'}
                   </p>
 
                   <p style={{
@@ -669,7 +670,7 @@ function BusStopDetails() {
               paddingBlock: 12,
               flexDirection: 'column',
               gap: 16,
-             
+            
             }}>
               <p style={{
                 margin: 0,
@@ -882,7 +883,6 @@ function BusStopDetails() {
             fontWeight : 'bold',
             color : '#000'
           }}>{startPoint?.name || "your pickup point"}!</span> <br /> Please proceed to board</p>
-
           :
 
          <p style={{
@@ -890,7 +890,7 @@ function BusStopDetails() {
           }}>👋 Hey there! The shuttle will arrive at <span style={{
             fontWeight : 'bold',
             color : '#000'
-          }}>Brunei</span> in less than 2 minutes!</p>
+          }}>{startPoint?.name || "your pickup point"}i</span> in less than 2 minutes!</p>
 
           }
 

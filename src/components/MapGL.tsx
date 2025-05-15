@@ -4,7 +4,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { solveTSP } from './../components/solveTSP'; 
 // import { useDriverWebSocket } from './../../hooks/useDriverWebSocket'
 import { haversineDistance } from './../../utils/distance'
-import { useClosestStop  } from './../Screens/ClosestStopContext';
+import { useClosestStop, BusStop  } from './../Screens/ClosestStopContext';
 import {useClosestBus } from '../Screens/useClosestBus'
 
 
@@ -123,6 +123,7 @@ function MapGL({
         
         const data = await response.json();
         setDrivers(data.drivers || [])
+
         
       } catch (err) {
         console.error("Error fetching drivers:", err);
@@ -161,10 +162,6 @@ function MapGL({
   })
 
 
-  // const getCloseRange = (
-  //   start : Coordinates, 
-  // )
-
   
 
   useEffect(() => {
@@ -187,6 +184,7 @@ function MapGL({
   { driver : Driver; distance: number }[] => {
     if (!start) return[]
 
+
     return drivers
       .map((driver) => ({
         driver,
@@ -196,10 +194,11 @@ function MapGL({
       .sort((a, b) => a.distance - b.distance)
       .slice(0, limit)
 
+      
 
   }
 
-  const { setClosestStopName } = useClosestStop();
+  const { setClosestStopName, setClosestStop } = useClosestStop();
 
   useEffect(() => {
     if (startPoint && filterDrivers.length > 0 ) {
@@ -218,9 +217,7 @@ function MapGL({
          setArriveInTwo(true)
         // alert (`A bus is now within 500 meters of your location!`)
       } 
-      
-   
-      
+
       else {
         console.log(false)
       }
@@ -350,7 +347,7 @@ function MapGL({
       setClosestDropPoint(nearest);
       // console.log('✅ Closest drop point set:', nearest.name);
       // setClosestBusID(nearest.busID);
-   
+  
     } 
   }, [closest, storedDropPoints, startPoint]);
   
@@ -359,10 +356,16 @@ function MapGL({
 useEffect(() => {
   if (closestDropPoint && setClosestStopName) {
     setClosestStopName(closestDropPoint.name);
+    
+    const busStop: BusStop = {
+      latitude: closestDropPoint.latitude,
+      longitude: closestDropPoint.longitude,
+      name: closestDropPoint.name
+    };
+    
+    setClosestStop(busStop);
   }
 }, [closestDropPoint]);
-
-  
 
   
 useEffect(() => {
