@@ -6,6 +6,9 @@ import useMediaQuery from '../components/useMediaQuery';
 import { useParams, useNavigate, useLocation  } from 'react-router-dom';
 import { useClosestStop,   } from "./../Screens/ClosestStopContext";
 import { useClosestBus } from './useClosestBus';
+import { getDistance } from 'geolib';
+
+
 
 function BusStopDetails() {
 
@@ -13,10 +16,26 @@ function BusStopDetails() {
   const { id  } = useParams(); 
   const { state } = useLocation();
   const { pickUp, dropOff } = state || {};
-  const { closestStopName, closestStop } = useClosestStop();
+  const { closestStopName } = useClosestStop();
   const { arrived, arriveInTwo, setArriveInTwo, setArrived, closest } =useClosestBus()
 
+ 
+
+  interface Coordinates {
+    latitude: number;
+    longitude: number;
+    speed?: number;
+    timestamp?: number | string;
+    // add other properties if needed
+  }
+
   const [startPoint, setStartPoint] = useState<Location | null>(null);
+  const [speed, setSpeed] = useState(null)
+  const [time, setTime] = useState(null)
+  const [previousTime, setPreviousTime] = useState<number | null>(null)
+  const [distanceMade, setDistanceMade] = useState<number | null>(null)
+  const [timeInMinutes, setTimeInMinutes] = useState<number | null>(null);
+
 
   const navigate = useNavigate(); 
 
@@ -36,7 +55,34 @@ function BusStopDetails() {
 
   }, [arriveInTwo,arrived])
 
- 
+
+  useEffect(()=> {
+    // console.log( 'time',  time)
+    // console.log( 'speed', closest?.driver)
+    // If timestamp is not on coords, try closest?.driver?.timestamp or update Coordinates type
+    setTime(closest?.driver?.coords?.timestamp)
+    setSpeed((closest?.driver?.coords as any)?.speed)
+  })
+
+
+
+  useEffect(() => {
+    if (!time || !speed) return;
+
+    const currentTimeStamp = new Date(time).getTime()
+
+    if (previousTime !== null) {
+      const deltaTimeSeconds = (currentTimeStamp - previousTime) / 1000
+      const speedInMps = ( speed * 1000 ) / 3600
+
+      const distanceCovered = speedInMps * deltaTimeSeconds
+      setDistanceMade(distanceCovered)
+
+      console.log("🟢 Distance covered:", distanceCovered, "meters");
+    }
+
+    setPreviousTime(currentTimeStamp)
+  }, [time,speed])
   
   // console.log('Bus Stop ID:', id);
 
@@ -158,6 +204,7 @@ function BusStopDetails() {
   ];
 
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
+  // const [uncoveredDistance, setUncoveredDistance] = useState(null)
 
   
   useEffect(() => {
@@ -364,14 +411,62 @@ function BusStopDetails() {
     (dropPoint: DropPoint) => dropPoint.name !== 'Paa Joe Round About'
   );
 
-  useEffect(() => {
+  // useEffect(() => {
 
-         if (closestStopName === startPoint?.name){
-          console.log('closest bus for speed and time = distance covered', closest);
-         console.log(closestStop)
-         }
-  })
+  //        if (closestStopName === startPoint?.name){
+  //         console.log('closest bus for speed and time = distance covered', closest);
+  //        console.log(closestStop)
+  //        }
+  // })
 
+  const safeLat = (val: number | undefined): number => val ?? 0
+  const safeLng = (val: number | undefined): number => val ?? 0
+
+
+const start = {
+  lat: safeLat(startPoint?.latitude),
+  lng: safeLng(startPoint?.longitude),
+};
+
+const end = {
+  lat: safeLat(dropOff?.latitude),
+  lng: safeLng(dropOff?.longitude),
+};
+
+const distance = getDistance(start, end);
+
+  // console.log(`Distance: ${distance} meters`);
+
+  const barWidth = 130
+  // const actualCovered = 00;
+  const totalDistance = distance || 1
+  const safeCovered = Math.min(distanceMade ?? 0, totalDistance)
+  // const safeCovered = Math.min(actualCovered, totalDistance)
+
+  
+  const coverDistance = (safeCovered/totalDistance) * barWidth
+  const distanceLeft = Math.max(totalDistance - safeCovered, 0);
+  const dynamicDistance = (distanceLeft/totalDistance) * barWidth
+
+useEffect(() => {
+
+    let time = 0;
+
+    time = distance / (speed || 1); 
+    console.log('Time to cover distance:', time, 'seconds');
+
+    const minutes = time / 60; 
+    const fixedMinutes = Math.round(minutes);
+    console.log('Time to cover distance:', fixedMinutes, 'minutes');
+    setTimeInMinutes(fixedMinutes);
+})
+
+  // useEffect(() => {
+  //   console.log('left', dynamicDistance)
+  //   console.log('covered', coverDistance)
+  //   console.log('tota;', coverDistance + dynamicDistance)
+  //   // setUncoveredDistance(dynamicDistance)
+  // })
 
   return (
     <div style={{
@@ -460,7 +555,7 @@ function BusStopDetails() {
                   }}>Bus will arrive in <span style={{
                     fontWeight : '800',
                     color : 'black'
-                  }}>5</span> minutes </p>
+                  }}>{timeInMinutes}</span> minutes </p>
                 </div>
 
               </div>
@@ -514,10 +609,13 @@ function BusStopDetails() {
                     borderRadius : 6,
                     // backgroundColor : '#fafafa'
                 }}>
-                  <p style={{
-                    fontSize : 12,
-                    //  color : 'rgba(0,0,0,0.5)'
-                  }}>8:31 AM</p>
+                    <p style={{
+                    fontSize: 12,
+                    }}>
+                    {closest?.driver?.coords?.timestamp
+                      ? new Date(closest.driver.coords.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                      : '--:--'}
+                    </p>
                 </div>
               </div>
 
@@ -528,9 +626,11 @@ function BusStopDetails() {
 
                 <div style={{
                   height : 2,
-                  width : 30,
+                  width : coverDistance,
+                  // width : `${coverDistance}`,
                   borderRadius : 8,
-                  backgroundColor : '#34A853'
+                  backgroundColor : '#34A853',
+                  transition : 'width 0.5s ease-in-out'
                 }}></div>
 
                   <svg xmlns="http://www.w3.org/2000/svg" width="57" height="36" viewBox="0 0 57 36" fill="none">
@@ -607,13 +707,15 @@ function BusStopDetails() {
                           <path d="M12.4479 23.4976C12.3551 23.6896 12.2622 23.8817 12.1665 24.0796C11.9807 24.0796 11.7949 24.0796 11.6035 24.0796C11.6035 23.9355 11.6035 23.7915 11.6035 23.6431C12.0257 23.4976 12.0257 23.4976 12.4479 23.4976Z" fill="#7E7E7E"/>
                           <path d="M4.00316 12.2944C4.09605 12.2944 4.18893 12.2944 4.28464 12.2944C4.28464 12.5345 4.28464 12.7746 4.28464 13.022C4.09886 13.022 3.91308 13.022 3.72168 13.022C3.84483 12.4581 3.84483 12.4581 4.00316 12.2944Z" fill="#E4E4E4"/>
                         </g>
-                      </svg>
+                  </svg>
 
-                      <div style={{
+                <div style={{
                   height : 6,
-                  width : 100,
+                  width : dynamicDistance,
                   borderRadius : 8,
-                  backgroundColor : 'rgba(0,0,0,0.2)'
+                  backgroundColor : 'rgba(0,0,0,0.2)',
+                  maxWidth : '100%',
+                  transition : 'width 0.5s ease-in-out'
                 }}></div>
 
               </div>
@@ -652,10 +754,17 @@ function BusStopDetails() {
                     // backgroundColor : '#fafafa'
                 }}>
           
-                  <p style={{
+                    <p style={{
                     fontSize : 12,
-                    //  color : 'rgba(0,0,0,0.5)'
-                  }}>8:45 AM</p>
+                    }}>
+                    {closest?.driver?.coords?.timestamp && timeInMinutes
+                      ? (() => {
+                        const startTime = new Date(closest.driver.coords.timestamp);
+                        const arrivalTime = new Date(startTime.getTime() + (Number(timeInMinutes) * 60 * 1000));
+                        return arrivalTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                      })()
+                      : '--:--'}
+                    </p>
                 </div>
               </div>
               
@@ -692,9 +801,9 @@ function BusStopDetails() {
           {filteredDropPointsForUI?.map((dropPoint: DropPoint, index: number) => (
                 <div key={dropPoint.name}
                   style={{
-                    display : 'flex',
-                    alignItems : 'center',
-                    gap : 4
+                  display : 'flex',
+                  alignItems : 'center',
+                  gap : 4
                   }}
                 >
                   <div style={{
@@ -703,54 +812,191 @@ function BusStopDetails() {
                   gap : 4,
                   flexDirection : 'column',
                   minWidth: 60,
-                  // backgroundColor : 'red',
                   justifyContent : 'center',
-
                 }}>
 
-                  <div style={{
-                    display : 'flex',
-                    alignItems : 'center',
-                    padding : 4,
-                    backgroundColor : '#52B922',
-                    borderRadius : 40,
-                  
-                  }}>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 25" fill="none">
-                    <path d="M22 7.5V16.5C22 17.21 21.62 17.86 21 18.22V19.75C21 20.16 20.66 20.5 20.25 20.5H19.75C19.34 20.5 19 20.16 19 19.75V18.5H12V19.75C12 20.16 11.66 20.5 11.25 20.5H10.75C10.34 20.5 10 20.16 10 19.75V18.22C9.39 17.86 9 17.21 9 16.5V7.5C9 4.5 12 4.5 15.5 4.5C19 4.5 22 4.5 22 7.5ZM13 15.5C13 14.95 12.55 14.5 12 14.5C11.45 14.5 11 14.95 11 15.5C11 16.05 11.45 16.5 12 16.5C12.55 16.5 13 16.05 13 15.5ZM20 15.5C20 14.95 19.55 14.5 19 14.5C18.45 14.5 18 14.95 18 15.5C18 16.05 18.45 16.5 19 16.5C19.55 16.5 20 16.05 20 15.5ZM20 7.5H11V11.5H20V7.5ZM7 10C6.97 8.62 5.83 7.5 4.45 7.55C3.787 7.56339 3.15647 7.83954 2.69703 8.31773C2.23759 8.79592 1.98687 9.437 2 10.1C2.01306 10.6672 2.2179 11.2132 2.5811 11.6491C2.94431 12.0849 3.44446 12.3849 4 12.5V20.5H5V12.5C6.18 12.26 7 11.21 7 10Z" fill="white" fill-opacity="1"/>
-                  </svg>
-                  </div>
+                  {(() => {
+                  // Calculate distance from driver to this dropPoint
+                  let iconColor = "white";
+                  let iconBg = "#52B922";
+
+                  let busHasPassed = false;
+                  if (closest?.driver?.coords && dropPoint && filteredDropPointsForUI && startPoint) {
+                    const driverPos = {
+                    latitude: closest.driver.coords.latitude,
+                    longitude: closest.driver.coords.longitude,
+                    };
+                    const dropPoints = filteredDropPointsForUI;
+                    const thisIndex = dropPoints.findIndex(dp => dp.name === dropPoint.name);
+
+                    // Calculate cumulative distance from start to this stop
+                    let stopDistance = 0;
+                    for (let i = 0; i <= thisIndex; i++) {
+                    const prev = i === 0 ? startPoint : dropPoints[i - 1];
+                    const curr = dropPoints[i];
+                    stopDistance += getDistance(
+                      { latitude: prev.latitude, longitude: prev.longitude },
+                      { latitude: curr.latitude, longitude: curr.longitude }
+                    );
+                    }
+
+                    // Calculate distance from start to driver
+                    const driverDistance = getDistance(
+                    { latitude: startPoint.latitude, longitude: startPoint.longitude },
+                    driverPos
+                    );
+
+                    // If driverDistance > stopDistance, bus has passed this stop
+                    busHasPassed = driverDistance > stopDistance;
+
+                    // If bus is within 100m of this stop, keep green
+                    const dropPos = {
+                    latitude: dropPoint.latitude,
+                    longitude: dropPoint.longitude,
+                    };
+                    const dist = getDistance(driverPos, dropPos);
+                    if (dist <= 100) {
+                    iconColor = "white";
+                    iconBg = "#52B922";
+                    } else if (busHasPassed) {
+                    iconColor = "rgba(0,0,0,.5)";
+                    iconBg = "rgba(0,0,0,0.2)";
+                    } else {
+                    iconColor = "rgba(0,0,0,.5)";
+                    iconBg = "#fafafa";
+                    }
+                  }
+
+                  return (
+                    <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      padding: 4,
+                      backgroundColor: iconBg,
+                      borderRadius: 40,
+                      transition: "background 0.3s",
+                    }}
+                    >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 25"
+                      fill="none"
+                    >
+                      <path
+                      d="M22 7.5V16.5C22 17.21 21.62 17.86 21 18.22V19.75C21 20.16 20.66 20.5 20.25 20.5H19.75C19.34 20.5 19 20.16 19 19.75V18.5H12V19.75C12 20.16 11.66 20.5 11.25 20.5H10.75C10.34 20.5 10 20.16 10 19.75V18.22C9.39 17.86 9 17.21 9 16.5V7.5C9 4.5 12 4.5 15.5 4.5C19 4.5 22 4.5 22 7.5ZM13 15.5C13 14.95 12.55 14.5 12 14.5C11.45 14.5 11 14.95 11 15.5C11 16.05 11.45 16.5 12 16.5C12.55 16.5 13 16.05 13 15.5ZM20 15.5C20 14.95 19.55 14.5 19 14.5C18.45 14.5 18 14.95 18 15.5C18 16.05 18.45 16.5 19 16.5C19.55 16.5 20 16.05 20 15.5ZM20 7.5H11V11.5H20V7.5ZM7 10C6.97 8.62 5.83 7.5 4.45 7.55C3.787 7.56339 3.15647 7.83954 2.69703 8.31773C2.23759 8.79592 1.98687 9.437 2 10.1C2.01306 10.6672 2.2179 11.2132 2.5811 11.6491C2.94431 12.0849 3.44446 12.3849 4 12.5V20.5H5V12.5C6.18 12.26 7 11.21 7 10Z"
+                      fill={iconColor}
+                      fillOpacity="1"
+                      />
+                    </svg>
+                    </div>
+                  );
+                  })()}
 
                   <div style={{
-                    display : 'flex',
-                    flexDirection : 'column',
-                    gap : 2,
-                    alignItems : 'center',
-                    width :'auto'
+                  display : 'flex',
+                  flexDirection : 'column',
+                  gap : 2,
+                  alignItems : 'center',
+                  width :'auto'
                   }}>
-                       <p style={{
-                    margin : 0,
-                    fontSize : 12,
-                    textAlign: 'center',
-                    whiteSpace: 'nowrap',
-                  }}>{dropPoint.name}</p>
                      <p style={{
-                    fontSize : 11,
-                    color : 'rgba(0,0,0,0.5)'
-                  }}>8:31 AM</p>
+                  margin : 0,
+                  fontSize : 12,
+                  textAlign: 'center',
+                  whiteSpace: 'nowrap',
+                  }}>{dropPoint.name}</p>
+                  <p style={{
+                    fontSize: 11,
+                    color: 'rgba(0,0,0,0.5)'
+                  }}>
+                    {(() => {
+                    // Calculate the ETA for this stop
+                    if (!(closest?.driver?.coords as Coordinates)?.timestamp || !startPoint) return '--:--';
+
+                    // Find the index of this dropPoint in the filtered list
+                    const dropPoints = filteredDropPointsForUI || [];
+                    const thisIndex = dropPoints.findIndex(dp => dp.name === dropPoint.name);
+
+                    // Calculate cumulative distance from start to this stop
+                    let cumulativeDistance = 0;
+                    for (let i = 0; i <= thisIndex; i++) {
+                      const prev = i === 0 ? startPoint : dropPoints[i - 1];
+                      const curr = dropPoints[i];
+                      cumulativeDistance += getDistance(
+                      { latitude: prev.latitude, longitude: prev.longitude },
+                      { latitude: curr.latitude, longitude: curr.longitude }
+                      );
+                    }
+
+                    // Use current speed or fallback to 20km/h if not available
+                    const speed = (closest.driver.coords as Coordinates).speed || 20; // in km/h
+                    const speedMps = (speed * 1000) / 3600; // convert to m/s
+                    const seconds = speedMps > 0 ? cumulativeDistance / speedMps : 0;
+
+                    // Add seconds to current time
+                    /**
+                     * Represents the starting time as a Date object, derived from the timestamp
+                     * property of the driver's coordinates in the closest object.
+                     *
+                     * @remarks
+                     * This value is typically used to indicate when the driver's location was last updated.
+                     *
+                     * @example
+                     * // Accessing the start time of the closest driver's coordinates
+                     * const startTime = new Date(closest.driver.coords.timestamp);
+                     */
+                    const startTime = new Date(closest.driver.coords.timestamp);
+                    const eta = new Date(startTime.getTime() + seconds * 1000);
+
+                    return eta.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    })()}
+                  </p>
 
                   </div>
-               
-                  
+                 
 
                 </div>
                   {index < filteredDropPointsForUI.length - 1 && (
-                     <div style={{
-                      width : 30,
-                      height : 4,
-                      borderRadius : 24,
-                      backgroundColor : '#52B922'
-                    }}></div>
+                   <div style={{
+                    width : 30,
+                    height : 4,
+                    borderRadius : 24,
+                    backgroundColor : (() => {
+                    // Use green if bus hasn't passed, else faded
+                    let busHasPassed = false;
+                    if (closest?.driver?.coords && dropPoint && filteredDropPointsForUI && startPoint) {
+                      const driverPos = {
+                      latitude: closest.driver.coords.latitude,
+                      longitude: closest.driver.coords.longitude,
+                      };
+                      const dropPoints = filteredDropPointsForUI;
+                      const thisIndex = dropPoints.findIndex(dp => dp.name === dropPoint.name);
+
+                      // Calculate cumulative distance from start to this stop
+                      let stopDistance = 0;
+                      for (let i = 0; i <= thisIndex; i++) {
+                      const prev = i === 0 ? startPoint : dropPoints[i - 1];
+                      const curr = dropPoints[i];
+                      stopDistance += getDistance(
+                        { latitude: prev.latitude, longitude: prev.longitude },
+                        { latitude: curr.latitude, longitude: curr.longitude }
+                      );
+                      }
+
+                      // Calculate distance from start to driver
+                      const driverDistance = getDistance(
+                      { latitude: startPoint.latitude, longitude: startPoint.longitude },
+                      driverPos
+                      );
+
+                      busHasPassed = driverDistance > stopDistance;
+                    }
+                    return busHasPassed ? 'rgba(0,0,0,0.2)' : '#52B922';
+                    })()
+                  }}></div>
                   )}
                 </div>
               ))}
@@ -797,7 +1043,38 @@ function BusStopDetails() {
                       margin: 0,
                       fontSize: 12,
                       color: 'rgba(0,0,0,0.6)'
-                    }}>7:32</p> 
+                    }}>
+                      {(() => {
+                      // Calculate the ETA for this stop
+                      if (!closest?.driver?.coords?.timestamp || !startPoint) return '--:--';
+
+                      // Find the index of this dropPoint in the filtered list
+                      const dropPoints = filteredDropPointsForUI || [];
+                      const thisIndex = dropPoints.findIndex(dp => dp.name === dropPoint.name);
+
+                      // Calculate cumulative distance from start to this stop
+                      let cumulativeDistance = 0;
+                      for (let i = 0; i <= thisIndex; i++) {
+                        const prev = i === 0 ? startPoint : dropPoints[i - 1];
+                        const curr = dropPoints[i];
+                        cumulativeDistance += getDistance(
+                        { latitude: prev.latitude, longitude: prev.longitude },
+                        { latitude: curr.latitude, longitude: curr.longitude }
+                        );
+                      }
+
+                      // Use current speed or fallback to 20km/h if not available
+                      const speed = closest.driver.coords.speed || 20; // in km/h
+                      const speedMps = (speed * 1000) / 3600; // convert to m/s
+                      const seconds = speedMps > 0 ? cumulativeDistance / speedMps : 0;
+
+                      // Add seconds to current time
+                      const startTime = new Date(closest.driver.coords.timestamp);
+                      const eta = new Date(startTime.getTime() + seconds * 1000);
+
+                      return eta.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                      })()}
+                    </p>
                 </div>
 
                   {index < filteredDropPointsForUI.length - 1 && (
