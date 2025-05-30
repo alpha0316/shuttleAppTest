@@ -29,9 +29,11 @@ function BusStopDetails() {
     // add other properties if needed
   }
 
+  
+
   const [startPoint, setStartPoint] = useState<Location | null>(null);
-  const [speed, setSpeed] = useState(null)
-  const [time, setTime] = useState(null)
+  const [speed, setSpeed] = useState<number | null>(null);
+  const [time, setTime] = useState<string | number | Date | undefined>(undefined);
   const [previousTime, setPreviousTime] = useState<number | null>(null)
   const [distanceMade, setDistanceMade] = useState<number | null>(null)
   const [timeInMinutes, setTimeInMinutes] = useState<number | null>(null);
@@ -93,6 +95,7 @@ function BusStopDetails() {
     latitude: number;
     longitude: number;
     dropPoints: DropPoint[];
+    
   }
 
   
@@ -410,14 +413,6 @@ function BusStopDetails() {
   const filteredDropPointsForUI = selectedLocation?.dropPoints?.filter(
     (dropPoint: DropPoint) => dropPoint.name !== 'Paa Joe Round About'
   );
-
-  // useEffect(() => {
-
-  //        if (closestStopName === startPoint?.name){
-  //         console.log('closest bus for speed and time = distance covered', closest);
-  //        console.log(closestStop)
-  //        }
-  // })
 
   const safeLat = (val: number | undefined): number => val ?? 0
   const safeLng = (val: number | undefined): number => val ?? 0
@@ -931,24 +926,11 @@ useEffect(() => {
                       );
                     }
 
-                    // Use current speed or fallback to 20km/h if not available
-                    const speed = (closest.driver.coords as Coordinates).speed || 20; // in km/h
+                    const speed = (closest?.driver.coords as Coordinates).speed || 20; // in km/h
                     const speedMps = (speed * 1000) / 3600; // convert to m/s
                     const seconds = speedMps > 0 ? cumulativeDistance / speedMps : 0;
 
-                    // Add seconds to current time
-                    /**
-                     * Represents the starting time as a Date object, derived from the timestamp
-                     * property of the driver's coordinates in the closest object.
-                     *
-                     * @remarks
-                     * This value is typically used to indicate when the driver's location was last updated.
-                     *
-                     * @example
-                     * // Accessing the start time of the closest driver's coordinates
-                     * const startTime = new Date(closest.driver.coords.timestamp);
-                     */
-                    const startTime = new Date(closest.driver.coords.timestamp);
+                    const startTime = new Date(closest?.driver?.coords?.timestamp ?? Date.now());
                     const eta = new Date(startTime.getTime() + seconds * 1000);
 
                     return eta.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -1094,7 +1076,16 @@ useEffect(() => {
         </div>
 
         <MapGl      
-          selectedLocation={selectedLocation}
+          selectedLocation={
+            selectedLocation
+              ? {
+                  latitude: selectedLocation.latitude,
+                  longitude: selectedLocation.longitude,
+                  speed: undefined,
+                  timestamp: undefined,
+                }
+              : null
+          }
           dropPoints={selectedLocation?.dropPoints || []}
           pickUpLocation={pickUp}
           dropOffLocation={dropOff}

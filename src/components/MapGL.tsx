@@ -10,9 +10,11 @@ import {useClosestBus } from '../Screens/useClosestBus'
 
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoidGhlbG9jYWxnb2RkIiwiYSI6ImNtMm9ocHFhYTBmczQya3NnczhoampiZ3gifQ.lPNutwk6XRi_kH_1R1ebiw';
 
-interface Coordinates {
-  longitude: number;
+export interface Coordinates {
   latitude: number;
+  longitude: number;
+  speed?: number;        // Make speed optional to match usage
+  timestamp?: number;    // Make timestamp optional to match usage
 }
 
 interface DropPoint {
@@ -135,7 +137,16 @@ function MapGL({
 
   useEffect(() => {
     setStoredDropPoints(dropPoints);
-    setStartPoint(storedDropPoints[0])
+    if (dropPoints.length > 0) {
+      setStartPoint({
+        latitude: dropPoints[0].latitude,
+        longitude: dropPoints[0].longitude,
+        speed: 0,
+        timestamp: Date.now(),
+      });
+    } else {
+      setStartPoint(null);
+    }
     // console.log('yes', dropOffLocation);
   }, [dropPoints]);
 
@@ -187,8 +198,17 @@ function MapGL({
 
     return drivers
       .map((driver) => ({
-        driver,
-        distance: haversineDistance(start, driver.coords, 'km')
+        driver: {
+          ...driver,
+          coords: {
+            ...driver.coords,
+            speed: driver.coords.speed !== undefined ? driver.coords.speed : 0, // Ensure speed is always a number
+          },
+        },
+        distance: haversineDistance(start, {
+          latitude: driver.coords.latitude,
+          longitude: driver.coords.longitude,
+        }, 'km')
       }))
       .filter((item) => item.distance !== null && !isNaN(item.distance))
       .sort((a, b) => a.distance - b.distance)
@@ -209,7 +229,7 @@ function MapGL({
        if (newClosestBuses.length > 0 && newClosestBuses[0].driver.coords.latitude === startPoint.latitude && newClosestBuses[0].driver.coords.longitude === startPoint.longitude) {
         // console.log(arrived)
         setArrived(true)
-        //  console.log("arrived")
+
       }
 
       else if (newClosestBuses.length > 0 && newClosestBuses[0].distance <= 0.1) {
@@ -371,17 +391,25 @@ useEffect(() => {
 useEffect(() => {
   if (!isHomepage && selectedLocation && pickUpLocation && dropOffLocation) {
     const allWaypoints = [
-      selectedLocation,
+      { ...selectedLocation, speed: selectedLocation.speed ?? 0, timestamp: selectedLocation.timestamp ?? Date.now() },
       ...dropPoints.map((point) => ({
         longitude: point.longitude,
         latitude: point.latitude,
+        speed: 0,
+        timestamp: Date.now(),
       })),
-      pickUpLocation,
-      dropOffLocation,
+      { ...pickUpLocation, speed: pickUpLocation.speed ?? 0, timestamp: pickUpLocation.timestamp ?? Date.now() },
+      { ...dropOffLocation, speed: dropOffLocation.speed ?? 0, timestamp: dropOffLocation.timestamp ?? Date.now() },
     ];
 
     const optimalWaypoints = solveTSP(allWaypoints);
-    fetchRouteWithWaypoints(optimalWaypoints, setRoute);
+    // Ensure all waypoints have speed and timestamp
+    const completeWaypoints = optimalWaypoints.map((point) => ({
+      ...point,
+      speed: point.speed ?? 0,
+      timestamp: point.timestamp ?? Date.now(),
+    }));
+    fetchRouteWithWaypoints(completeWaypoints, setRoute);
   }
 }, [selectedLocation, dropOffLocation, isHomepage, pickUpLocation, dropPoints]);
 

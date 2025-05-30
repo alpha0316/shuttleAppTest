@@ -3,6 +3,8 @@ import React, { createContext, useContext, useState } from 'react';
 export interface Coordinates {
   latitude: number;
   longitude: number;
+  speed?: number;        
+  timestamp?: number;  
 }
 
 export interface Driver {

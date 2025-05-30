@@ -1,6 +1,8 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 export interface Coordinates {
+  speed: number;
+  timestamp: string | number | Date;
   latitude: number;
   longitude: number;
 }
