@@ -253,7 +253,7 @@ function BusStopDetails() {
 
       if (pickUp.name === 'Brunei' && dropOff.name === 'KSB') {
         updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== '' && dropPoint.name !== 'Bomso Busstop' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Commercial Area'  && dropPoint.name !== 'SRC Busstop'  && dropPoint.name !== 'Hall 7'
+          (dropPoint) => dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Bomso Busstop' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Commercial Area'  && dropPoint.name !== 'SRC Busstop'  && dropPoint.name !== 'Hall 7'
         );
       } 
 
@@ -350,7 +350,7 @@ function BusStopDetails() {
       
       if (pickUp.name === 'KSB' && dropOff.name === 'Commercial Area') {
         updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Main Library' && dropPoint.name !== 'Bomso Busstop' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== ''  && dropPoint.name !== ''
+          (dropPoint) => dropPoint.name !== 'Main Library' && dropPoint.name !== 'Bomso Busstop' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Pentecost Busstop'  && dropPoint.name !== ''
         );
       } 
 
