@@ -616,6 +616,10 @@ useEffect(() => {
                 }}>
                     <p style={{
                     fontSize: 12,
+                    // color: 'rgba(0,0,0,0.5)',
+                    textAlign: 'center',
+                    whiteSpace: 'nowrap',
+                    minWidth: 48,
                     }}>
                     {closest?.driver?.coords?.timestamp
                       ? new Date(closest.driver.coords.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
@@ -759,8 +763,12 @@ useEffect(() => {
                     // backgroundColor : '#fafafa'
                 }}>
           
-                    <p style={{
-                    fontSize : 12,
+                    <p style={{  
+                    fontSize: 12,
+                    // color: 'rgba(0,0,0,0.5)',
+                    textAlign: 'center',
+                    whiteSpace: 'nowrap',
+                    minWidth: 48,
                     }}>
                     {closest?.driver?.coords?.timestamp && timeInMinutes
                       ? (() => {
@@ -923,35 +931,71 @@ useEffect(() => {
                   }}>{dropPoint.name}</p>
                   <p style={{
                   fontSize: 11,
-                  color: 'rgba(0,0,0,0.5)'
+                  color: 'rgba(0,0,0,0.5)',
+                   textAlign: 'center',
+                   whiteSpace: 'nowrap',
                   }}>
                   {(() => {
-                  // Calculate the ETA for this stop
-                  if (!(closest?.driver?.coords as Coordinates)?.timestamp || !startPoint) return '--:--';
+                    // If this is the start point, show the actual driver time (like top left)
+                    if (
+                      dropPoint.latitude === startPoint?.latitude &&
+                      dropPoint.longitude === startPoint?.longitude
+                    ) {
+                      if (closest?.driver?.coords?.timestamp) {
+                        return new Date(closest.driver.coords.timestamp).toLocaleTimeString([], {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        });
+                      }
+                      return '--:--';
+                    }
 
-                  // Find the index of this dropPoint in the filtered list
-                  const dropPoints = filteredDropPointsForUI || [];
-                  const thisIndex = dropPoints.findIndex(dp => dp.name === dropPoint.name);
+                    // If this is the end point, show the arrival time (like top right)
+                    if (
+                      dropPoint.latitude === dropOff?.latitude &&
+                      dropPoint.longitude === dropOff?.longitude &&
+                      closest?.driver?.coords?.timestamp &&
+                      timeInMinutes
+                    ) {
+                      const startTime = new Date(closest.driver.coords.timestamp);
+                      const arrivalTime = new Date(
+                        startTime.getTime() + Number(timeInMinutes) * 60 * 1000
+                      );
+                      return arrivalTime.toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      });
+                    }
 
-                  // Calculate cumulative distance from start to this stop
-                  let cumulativeDistance = 0;
-                  for (let i = 0; i <= thisIndex; i++) {
-                    const prev = i === 0 ? startPoint : dropPoints[i - 1];
-                    const curr = dropPoints[i];
-                    cumulativeDistance += getDistance(
-                    { latitude: prev.latitude, longitude: prev.longitude },
-                    { latitude: curr.latitude, longitude: curr.longitude }
+                    // Otherwise, calculate ETA for this stop
+                    if (!(closest?.driver?.coords as Coordinates)?.timestamp || !startPoint)
+                      return '--:--';
+
+                    // Find the index of this dropPoint in the filtered list
+                    const dropPoints = filteredDropPointsForUI || [];
+                    const thisIndex = dropPoints.findIndex(
+                      (dp) => dp.name === dropPoint.name
                     );
-                  }
 
-                  const speed = (closest?.driver.coords as Coordinates).speed || 20; // in km/h
-                  const speedMps = (speed * 1000) / 3600; // convert to m/s
-                  const seconds = speedMps > 0 ? cumulativeDistance / speedMps : 0;
+                    // Calculate cumulative distance from start to this stop
+                    let cumulativeDistance = 0;
+                    for (let i = 0; i <= thisIndex; i++) {
+                      const prev = i === 0 ? startPoint : dropPoints[i - 1];
+                      const curr = dropPoints[i];
+                      cumulativeDistance += getDistance(
+                        { latitude: prev.latitude, longitude: prev.longitude },
+                        { latitude: curr.latitude, longitude: curr.longitude }
+                      );
+                    }
 
-                  const startTime = new Date(closest?.driver?.coords?.timestamp ?? Date.now());
-                  const eta = new Date(startTime.getTime() + seconds * 1000);
+                    const speed = (closest?.driver.coords as Coordinates).speed || 20; // in km/h
+                    const speedMps = (speed * 1000) / 3600; // convert to m/s
+                    const seconds = speedMps > 0 ? cumulativeDistance / speedMps : 0;
 
-                  return eta.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    const startTime = new Date(closest?.driver?.coords?.timestamp ?? Date.now());
+                    const eta = new Date(startTime.getTime() + seconds * 1000);
+
+                    return eta.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                   })()}
                   </p>
 
@@ -1120,35 +1164,71 @@ useEffect(() => {
                   }}>{dropPoint.name}</p>
                   <p style={{
                   fontSize: 11,
-                  color: 'rgba(0,0,0,0.5)'
+                  color: 'rgba(0,0,0,0.5)',
+                   textAlign: 'center',
+                   whiteSpace: 'nowrap',
                   }}>
                   {(() => {
-                  // Calculate the ETA for this stop
-                  if (!(closest?.driver?.coords as Coordinates)?.timestamp || !startPoint) return '--:--';
+                    // If this is the start point, show the actual driver time (like top left)
+                    if (
+                      dropPoint.latitude === startPoint?.latitude &&
+                      dropPoint.longitude === startPoint?.longitude
+                    ) {
+                      if (closest?.driver?.coords?.timestamp) {
+                        return new Date(closest.driver.coords.timestamp).toLocaleTimeString([], {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        });
+                      }
+                      return '--:--';
+                    }
 
-                  // Find the index of this dropPoint in the filtered list
-                  const dropPoints = filteredDropPointsForUI || [];
-                  const thisIndex = dropPoints.findIndex(dp => dp.name === dropPoint.name);
+                    // If this is the end point, show the arrival time (like top right)
+                    if (
+                      dropPoint.latitude === dropOff?.latitude &&
+                      dropPoint.longitude === dropOff?.longitude &&
+                      closest?.driver?.coords?.timestamp &&
+                      timeInMinutes
+                    ) {
+                      const startTime = new Date(closest.driver.coords.timestamp);
+                      const arrivalTime = new Date(
+                        startTime.getTime() + Number(timeInMinutes) * 60 * 1000
+                      );
+                      return arrivalTime.toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      });
+                    }
 
-                  // Calculate cumulative distance from start to this stop
-                  let cumulativeDistance = 0;
-                  for (let i = 0; i <= thisIndex; i++) {
-                    const prev = i === 0 ? startPoint : dropPoints[i - 1];
-                    const curr = dropPoints[i];
-                    cumulativeDistance += getDistance(
-                    { latitude: prev.latitude, longitude: prev.longitude },
-                    { latitude: curr.latitude, longitude: curr.longitude }
+                    // Otherwise, calculate ETA for this stop
+                    if (!(closest?.driver?.coords as Coordinates)?.timestamp || !startPoint)
+                      return '--:--';
+
+                    // Find the index of this dropPoint in the filtered list
+                    const dropPoints = filteredDropPointsForUI || [];
+                    const thisIndex = dropPoints.findIndex(
+                      (dp) => dp.name === dropPoint.name
                     );
-                  }
 
-                  const speed = (closest?.driver.coords as Coordinates).speed || 20; // in km/h
-                  const speedMps = (speed * 1000) / 3600; // convert to m/s
-                  const seconds = speedMps > 0 ? cumulativeDistance / speedMps : 0;
+                    // Calculate cumulative distance from start to this stop
+                    let cumulativeDistance = 0;
+                    for (let i = 0; i <= thisIndex; i++) {
+                      const prev = i === 0 ? startPoint : dropPoints[i - 1];
+                      const curr = dropPoints[i];
+                      cumulativeDistance += getDistance(
+                        { latitude: prev.latitude, longitude: prev.longitude },
+                        { latitude: curr.latitude, longitude: curr.longitude }
+                      );
+                    }
 
-                  const startTime = new Date(closest?.driver?.coords?.timestamp ?? Date.now());
-                  const eta = new Date(startTime.getTime() + seconds * 1000);
+                    const speed = (closest?.driver.coords as Coordinates).speed || 20; // in km/h
+                    const speedMps = (speed * 1000) / 3600; // convert to m/s
+                    const seconds = speedMps > 0 ? cumulativeDistance / speedMps : 0;
 
-                  return eta.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    const startTime = new Date(closest?.driver?.coords?.timestamp ?? Date.now());
+                    const eta = new Date(startTime.getTime() + seconds * 1000);
+
+                    return eta.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                   })()}
                   </p>
 
@@ -1200,6 +1280,8 @@ useEffect(() => {
                 
                 }
 
+   
+                 
 
                 </div>
               )
