@@ -2,10 +2,10 @@ import { useState, useEffect, useRef, } from 'react';
 import Map, { Marker, Source, Layer, GeolocateControl, ViewState as MapViewState } from 'react-map-gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { solveTSP } from './../components/solveTSP'; 
-// import { useDriverWebSocket } from './../../hooks/useDriverWebSocket'
 import { haversineDistance } from './../../utils/distance'
 import { useClosestStop, BusStop  } from './../Screens/ClosestStopContext';
 import {useClosestBus } from '../Screens/useClosestBus'
+import {useShuttleSocket} from './../../hooks/useShuttleSocket'
 
 
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoidGhlbG9jYWxnb2RkIiwiYSI6ImNtMm9ocHFhYTBmczQya3NnczhoampiZ3gifQ.lPNutwk6XRi_kH_1R1ebiw';
@@ -113,6 +113,13 @@ function MapGL({
   } | null>(null);
 
   const BASE_CUSTOMER_URL = "https://shuttle-backend-0.onrender.com/api/v1"
+
+
+
+useShuttleSocket();
+
+
+
   
   useEffect(() => {
     const fetchDrivers = async () => {
@@ -125,7 +132,6 @@ function MapGL({
         
         const data = await response.json();
         setDrivers(data.drivers || [])
-
         
       } catch (err) {
         console.error("Error fetching drivers:", err);
@@ -832,6 +838,8 @@ const renderBusMarkers = () => {
         showUserLocation={true}
         style={{ display: 'none' }} 
       />
+
+
 
       <button
         onClick={() => geolocateControlRef.current?.trigger()} // Trigger geolocation
