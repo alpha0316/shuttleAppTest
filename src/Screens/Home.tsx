@@ -27,33 +27,6 @@ interface Location {
 
 function Home() {
 
-  // const BASE_CUSTOMER_URL = "https://shuttle-backend-0.onrender.com/api/v1";
-  //   const [drivers, setDrivers] = useState<Bus[]>([]);
-  
-
-
-  // useEffect(() => {
-  //   const fetchDrivers = async () => {
-  //     try {
-  //       const response = await fetch(`${BASE_CUSTOMER_URL}/drivers/drivers`);
-  //       // console.log(response);
-
-  //       if (!response.ok) {
-  //         throw new Error("Failed to fetch drivers");
-  //       }
-        
-  //       const data = await response.json();
-  //       setDrivers(data)
-
-  //       console.log(drivers);
-  //     } catch (err) {
-  //       console.error("Error fetching drivers:", err);
-  //     }
-  //   };
-
-  //   fetchDrivers();
-  // }, []);
-
   const isMobile = useMediaQuery('(max-width: 768px)');
   const navigate = useNavigate();
 
@@ -61,8 +34,8 @@ function Home() {
     { id: '1', name: 'Main Library', description: 'On Campus', latitude: 6.675033566213408, longitude: -1.5723546778455368,
       dropPoints: [ 
         { name: 'Brunei', latitude: 6.670465091472612, longitude: -1.5741574445526254 },
-        { name: 'Pentecost Busstop', latitude: 6.674545299373284, longitude: -1.5675650457295751 },
         { name: 'KSB', latitude: 6.669314250173885, longitude: -1.567181795001016 },
+        { name: 'Pentecost Busstop', latitude: 6.674545299373284, longitude: -1.5675650457295751 },
         { name: 'SRC Busstop', latitude: 6.675223889340042, longitude: -1.5678831412482812 },
         { name: 'Main Library', latitude: 6.675033566213408, longitude: -1.5723546778455368 },
       ]
@@ -138,6 +111,7 @@ function Home() {
         { name: 'Brunei', latitude: 6.670465091472612, longitude: -1.5741574445526254 },
         { name: 'Main Library', latitude: 6.675033566213408, longitude: -1.5723546778455368 },
         { name: 'Conti Busstop', latitude: 6.679644223364716, longitude: -1.572967657880401 },
+        { name: 'Hall 7', latitude: 6.679295619563862, longitude: -1.572807677030472 },
         { name: 'Commercial Area', latitude: 6.682756553904525, longitude: -1.576990347851461 },
         { name: 'Pentecost Busstop', latitude: 6.674545299373284, longitude: -1.567565045729575 },
         { name: 'SRC Busstop', latitude: 6.675223889340042, longitude: -1.5678831412482812 },

@@ -26,18 +26,16 @@ function BusStopDetails() {
     longitude: number;
     speed?: number;
     timestamp?: number | string;
-    // add other properties if needed
+    
   }
-
-  
 
   const [startPoint, setStartPoint] = useState<Location | null>(null);
   const [speed, setSpeed] = useState<number | null>(null);
   const [time, setTime] = useState<string | number | Date | undefined>(undefined);
   const [previousTime, setPreviousTime] = useState<number | null>(null)
-  const [distanceMade, setDistanceMade] = useState<number | null>(null)
+  const [distanceMade, setDistanceMade] = useState(0)
   const [timeInMinutes, setTimeInMinutes] = useState<number | null>(null);
-
+  
 
   const navigate = useNavigate(); 
 
@@ -64,7 +62,7 @@ function BusStopDetails() {
     // If timestamp is not on coords, try closest?.driver?.timestamp or update Coordinates type
     setTime(closest?.driver?.coords?.timestamp)
     setSpeed((closest?.driver?.coords as any)?.speed)
-  })
+  }, [closest?.driver?.coords])
 
 
 
@@ -76,7 +74,6 @@ function BusStopDetails() {
     if (previousTime !== null) {
       const deltaTimeSeconds = (currentTimeStamp - previousTime) / 1000
       const speedInMps = ( speed * 1000 ) / 3600
-
       const distanceCovered = speedInMps * deltaTimeSeconds
       setDistanceMade(distanceCovered)
 
@@ -84,9 +81,9 @@ function BusStopDetails() {
     }
 
     setPreviousTime(currentTimeStamp)
-  }, [time,speed])
+  }, [time,speed, previousTime])
   
-  // console.log('Bus Stop ID:', id);
+
 
   interface Location {
     id: string;
@@ -98,7 +95,6 @@ function BusStopDetails() {
     
   }
 
-  
 
   interface DropPoint {
     name: string;
@@ -127,19 +123,21 @@ function BusStopDetails() {
     },
     { id: '3', name: 'Commercial Area', description: 'On Campus', latitude: 6.682751297721754, longitude: -1.5769726260262382,
       dropPoints: [ 
-        { name: 'Pentecost Busstop', latitude: 6.674545299373284, longitude: -1.5675650457295751 },
         { name: 'KSB', latitude: 6.669314250173885, longitude: -1.567181795001016 },
+        { name: 'Pentecost Busstop', latitude: 6.674545299373284, longitude: -1.5675650457295751 },
         { name: 'SRC Busstop', latitude: 6.675223889340042, longitude: -1.5678831412482812 },
         { name: 'Conti Busstop', latitude: 6.679644223364716, longitude: -1.572967657880401 },
+        { name: 'Hall 7', latitude: 6.679295619563862, longitude: -1.572807677030472 },
         { name: 'Commerical Area', latitude: 6.682751297721754, longitude: -1.5769726260262382, },
       ]
     },
+
     { id: '4', name: 'Hall 7', description: 'Hub for student activities', latitude: 6.679295619563862, longitude: -1.572807677030472,
       dropPoints: [ 
         { name: 'Pentecost Busstop', latitude: 6.674545299373284, longitude: -1.567565045729575 },
         { name: 'KSB', latitude: 6.669314250173885, longitude: -1.567181795001016 },
         { name: 'Paa Joe Round About', latitude: 6.678596454119355, longitude: -1.5709606375024159 },
-        { name: 'Commerical Area', latitude: 6.682751297721754, longitude: -1.5769726260262382, },
+        { name: 'Commercial Area', latitude: 6.682751297721754, longitude: -1.5769726260262382, },
         { name: 'Hall 7', latitude: 6.679295619563862, longitude: -1.572807677030472 }
       ]
     },
@@ -166,12 +164,13 @@ function BusStopDetails() {
     },
     { id: '8', name: 'Pentecost Busstop', description: 'On Campus', latitude: 6.674545299373284, longitude: -1.5675650457295751,
       dropPoints: [ 
-        // { name: 'Paa Joe Round About', latitude: 6.675187511866504, longitude: -1.570775090040308 },
-        // { name: 'Hall 7', latitude: 6.679295619563862, longitude: -1.572807677030472 },
         { name: 'Brunei', latitude: 6.670465091472612, longitude: -1.5741574445526254 },
         { name: 'KSB', latitude: 6.669314250173885, longitude: -1.567181795001016 },
         { name: 'Main Library', latitude: 6.675033566213408, longitude: -1.5723546778455368 },
-        { name: 'Pentecost Busstop', latitude: 6.674545299373284, longitude: -1.567565045729575 }
+        { name: 'Hall 7', latitude: 6.679295619563862, longitude: -1.572807677030472 },
+        { name: 'Pentecost Busstop', latitude: 6.674545299373284, longitude: -1.567565045729575 },
+        { name: 'Paa Joe Round About', latitude: 6.675187511866504, longitude: -1.570775090040308 }
+
       ] 
     },
     { id: '9', name: 'SRC Busstop', description: 'On Campus', latitude: 6.675223889340042, longitude: -1.5678831412482812, 
@@ -187,9 +186,9 @@ function BusStopDetails() {
       dropPoints: [ 
         { name: 'Brunei', latitude: 6.670465091472612, longitude: -1.5741574445526254 },
         { name: 'Main Library', latitude: 6.675033566213408, longitude: -1.5723546778455368 },
+        { name: 'Commercial Area', latitude: 6.682756553904525, longitude: -1.576990347851461 },
         { name: 'Hall 7', latitude: 6.679295619563862, longitude: -1.572807677030472 },
         { name: 'Conti Busstop', latitude: 6.679644223364716, longitude: -1.572967657880401 },
-        { name: 'Commercial Area', latitude: 6.682756553904525, longitude: -1.576990347851461 },
         { name: 'Pentecost Busstop', latitude: 6.674545299373284, longitude: -1.567565045729575 },
         { name: 'SRC Busstop', latitude: 6.675223889340042, longitude: -1.5678831412482812 },
         { name: 'Conti Busstop', latitude: 6.679644223364716, longitude: -1.572967657880401 },
@@ -218,17 +217,17 @@ function BusStopDetails() {
   
       if (pickUp.name === 'Main Library' && dropOff.name === 'Brunei') {
         updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'KSB' && dropPoint.name !== 'SRC Busstop' && dropPoint.name !== 'Pentecost Busstop' 
+          (dropPoint) => dropPoint.name !== 'KSB' && dropPoint.name !== 'SRC Busstop' && dropPoint.name !== 'Pentecost Busstop' && dropPoint.name !== 'Hall 7' && dropPoint.name !== 'Commercial Area' && dropPoint.name !== 'Conti Busstop'
         );
       } 
       if (pickUp.name === 'Main Library' && dropOff.name === 'KSB') {
         updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Brunei' && dropPoint.name !== 'Bomso Busstop' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'SRC Busstop'
+          (dropPoint) => dropPoint.name !== 'Brunei' && dropPoint.name !== 'Commercial Area' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'SRC Busstop'  && dropPoint.name !== 'Hall 7' && dropPoint.name !== 'Commercial Area'
         );
       } 
       if (pickUp.name === 'Main Library' && dropOff.name === 'Pentecost Busstop') {
         updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Brunei' && dropPoint.name !== 'Bomso Busstop' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'KSB'
+          (dropPoint) => dropPoint.name !== 'Brunei' && dropPoint.name !== 'Commercial Area' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'KSB'
         );
       } 
 
@@ -316,7 +315,6 @@ function BusStopDetails() {
           (dropPoint) => dropPoint.name !== 'Main Library' && dropPoint.name !== 'Pentecost Busstop' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Brunei'  && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'KSB' && dropPoint.name !== 'Paa Joe Round About'
         );
       } 
-
 
       if (pickUp.name === 'Conti Busstop' && dropOff.name === 'Commercial Area') {
         updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
@@ -432,6 +430,8 @@ const distance = getDistance(start, end);
 
   // console.log(`Distance: ${distance} meters`);
 
+  
+
   const barWidth = 130
   // const actualCovered = 00;
   const totalDistance = distance || 1
@@ -456,12 +456,6 @@ useEffect(() => {
     setTimeInMinutes(fixedMinutes);
 })
 
-  // useEffect(() => {
-  //   console.log('left', dynamicDistance)
-  //   console.log('covered', coverDistance)
-  //   console.log('tota;', coverDistance + dynamicDistance)
-  //   // setUncoveredDistance(dynamicDistance)
-  // })
 
   return (
     <div style={{
@@ -763,7 +757,6 @@ useEffect(() => {
                 </div>
               </div>
               
-
             </div>
 
             <div style={{
@@ -1156,7 +1149,7 @@ useEffect(() => {
           }}>👋 Hey there! The shuttle will arrive at <span style={{
             fontWeight : 'bold',
             color : '#000'
-          }}>{startPoint?.name || "your pickup point"}i</span> in less than 2 minutes!</p>
+          }}>{startPoint?.name || "your pickup point"}</span> in less than 2 minutes!</p>
 
           }
 
