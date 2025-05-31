@@ -1,11 +1,12 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
-export interface Coordinates {
-  speed: number;
-  timestamp: string | number | Date;
+interface Coordinates {
   latitude: number;
   longitude: number;
+  speed?: number; // make optional
+  timestamp: number;
 }
+
 
 export interface Driver {
   busID: string;

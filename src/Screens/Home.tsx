@@ -613,10 +613,37 @@ const LocationList: React.FC<LocationListProps> = ({
         <ErrorBoundary fallback={<div className="map-error">Map loading failed. Please refresh.</div>}>
         <MapGl 
           isHomepage={true}
-          selectedLocation={selectedLocation}
+          selectedLocation={
+            selectedLocation
+              ? {
+                  latitude: selectedLocation.latitude,
+                  longitude: selectedLocation.longitude,
+                  speed: 0,
+                  timestamp: Date.now(),
+                }
+              : null
+          }
           dropPoints={selectedLocation?.dropPoints || []}
-          pickUpLocation={pickUpDetails}  // Add this
-          dropOffLocation={dropOff} 
+          pickUpLocation={
+            pickUpDetails
+              ? {
+                  latitude: pickUpDetails.latitude,
+                  longitude: pickUpDetails.longitude,
+                  speed: 0,
+                  timestamp: Date.now(),
+                }
+              : null
+          }
+          dropOffLocation={
+            dropOff
+              ? {
+                  latitude: dropOff.latitude,
+                  longitude: dropOff.longitude,
+                  speed: 0,
+                  timestamp: Date.now(),
+                }
+              : null
+          }
         />
         </ErrorBoundary>
 

@@ -10,7 +10,7 @@ import {useClosestBus } from '../Screens/useClosestBus'
 
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoidGhlbG9jYWxnb2RkIiwiYSI6ImNtMm9ocHFhYTBmczQya3NnczhoampiZ3gifQ.lPNutwk6XRi_kH_1R1ebiw';
 
-export interface Coordinates {
+interface Coordinates {
   latitude: number;
   longitude: number;
   speed?: number;        // Make speed optional to match usage
@@ -203,6 +203,7 @@ function MapGL({
           coords: {
             ...driver.coords,
             speed: driver.coords.speed !== undefined ? driver.coords.speed : 0, // Ensure speed is always a number
+            timestamp: driver.coords.timestamp !== undefined ? driver.coords.timestamp : Date.now(), // Ensure timestamp is always a number
           },
         },
         distance: haversineDistance(start, {
@@ -223,7 +224,21 @@ function MapGL({
   useEffect(() => {
     if (startPoint && filterDrivers.length > 0 ) {
       const newClosestBuses = getClosestBuses(startPoint, filterDrivers);
-      setClosestBuses(newClosestBuses);
+     const validDrivers = newClosestBuses.filter(item => 
+        item.driver?.coords?.timestamp !== undefined
+      );
+      setClosestBuses(
+        validDrivers.map(item => ({
+          ...item,
+          driver: {
+            ...item.driver,
+            coords: {
+              ...item.driver.coords,
+              timestamp: item.driver.coords.timestamp ?? Date.now(),
+            },
+          },
+        }))
+      );
 
          
        if (newClosestBuses.length > 0 && newClosestBuses[0].driver.coords.latitude === startPoint.latitude && newClosestBuses[0].driver.coords.longitude === startPoint.longitude) {

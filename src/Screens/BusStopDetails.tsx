@@ -1081,8 +1081,6 @@ useEffect(() => {
               ? {
                   latitude: selectedLocation.latitude,
                   longitude: selectedLocation.longitude,
-                  speed: undefined,
-                  timestamp: undefined,
                 }
               : null
           }
