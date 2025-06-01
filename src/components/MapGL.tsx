@@ -5,23 +5,25 @@ import { solveTSP } from './../components/solveTSP';
 import { haversineDistance } from './../../utils/distance'
 import { useClosestStop, BusStop  } from './../Screens/ClosestStopContext';
 import {useClosestBus } from '../Screens/useClosestBus'
-import {useShuttleSocket} from './../../hooks/useShuttleSocket'
+// import {useShuttleSocket} from './../../hooks/useShuttleSocket'
+import { io, Socket } from 'socket.io-client';
 
 
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoidGhlbG9jYWxnb2RkIiwiYSI6ImNtMm9ocHFhYTBmczQya3NnczhoampiZ3gifQ.lPNutwk6XRi_kH_1R1ebiw';
+const SOCKET_SERVER_URL = 'wss://shuttle-backend-0.onrender.com';
+
 
 interface Coordinates {
   latitude: number;
   longitude: number;
-  speed?: number;        // Make speed optional to match usage
-  timestamp?: number;    // Make timestamp optional to match usage
+  speed?: number;        
+  timestamp?: number;    
 }
 
 interface DropPoint {
   name: string;
   latitude: number;
   longitude: number;
-  // coords: Coordinates;
 }
 
 interface Route {
@@ -62,6 +64,8 @@ interface DropPoint {
 }
 
 
+
+
 function MapGL({
   selectedLocation,
   dropOffLocation,
@@ -71,7 +75,75 @@ function MapGL({
   // onClosestStopChange 
 }: MapGLProps) {
 
+  
+  useEffect(() => {
+    // Initialize socket connection
+    const socket: Socket = io(SOCKET_SERVER_URL, {
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+      transports: ['websocket'],
+    });
 
+    // When socket connects
+    socket.on('connect', () => {
+      console.log('✅ Connected to server with ID:', socket.id);
+
+      const userData = {
+        name: "Test User",
+        busStopId: "BUS-STOP-001",
+        busStopName: "Main Campus Stop",
+      };
+
+      console.log("🚏 Connecting as user at bus stop:", userData);
+      socket.emit("user-connect", userData);
+    });
+
+    socket.on("user-connected", (response) => {
+      console.log("✅ Received response after user-connect:", response);
+    });
+
+        socket.on("shuttle-locations", (shuttles) => {
+      console.log("\nReceived shuttle locations:");
+      shuttles.forEach((shuttle: any) => {
+        console.log(`- Shuttle ${shuttle.shuttleId} (${shuttle.name}):`);
+        console.log(`  Location: ${JSON.stringify(shuttle.location)}`);
+        console.log(`  Route: ${shuttle.route}`);
+      });
+    });
+
+      // Listen for shuttle status updates
+      socket.on("shuttle-status-update", (shuttles) => {
+        console.log("\nReceived shuttle status update:");
+        shuttles.forEach((shuttle: any) => {
+          console.log(`- Shuttle ${shuttle.shuttleId} (${shuttle.name})`);
+          console.log(`  Status: ${shuttle.location ? "Moving" : "Stationary"}`);
+        });
+      });
+
+
+    // Listen for shuttle location updates
+    socket.on("shuttle-locations", (shuttles) => {
+      console.log("\n📍 Received shuttle locations:");
+      shuttles.forEach((shuttle: { shuttleId: any; name: any; location: any; route: any; }) => {
+        console.log(`- Shuttle ${shuttle.shuttleId} (${shuttle.name}):`);
+        console.log(`  Location: ${JSON.stringify(shuttle.location)}`);
+        console.log(`  Route: ${shuttle.route}`);
+      });
+    });
+
+    // Optional: disconnect and error handlers
+    socket.on('disconnect', () => console.log('❌ Disconnected from server'));
+    socket.on('error', (error) => console.error('⚠️ Socket error:', error.message));
+
+    // Cleanup on unmount
+    return () => {
+      console.log('🧹 Cleaning up socket connection');
+      socket.disconnect();
+    };
+  }, []);
+
+  
   // const WS_URL = 'ws://localhost:3000'
   // const { driverLocations, shareLocation, isConnected, error } = useDriverWebSocket(WS_URL);
   const { closest, setClosest, closestBuses, setClosestBuses} = useClosestBus();
@@ -116,10 +188,6 @@ function MapGL({
 
 
 
-useShuttleSocket();
-
-
-
   
   useEffect(() => {
     const fetchDrivers = async () => {
@@ -156,7 +224,38 @@ useShuttleSocket();
     // console.log('yes', dropOffLocation);
   }, [dropPoints]);
 
+  useEffect(() => {
+    // Example: update driver coords from websocket data
+    // Suppose useShuttleSocket returns an array of live locations: [{ busID, latitude, longitude, speed, timestamp }]
+    // You may need to adjust this logic based on your actual websocket hook implementation
 
+    // Example: get live locations from context or hook
+    // const { liveLocations } = useShuttleSocket(); // Uncomment and adjust if your hook provides this
+
+    // For demonstration, assume liveLocations is available
+    // if (!liveLocations || liveLocations.length === 0) return;
+
+    // setDrivers(prevDrivers =>
+    //   prevDrivers.map(driver => {
+    //     const live = liveLocations.find(l => l.busID === driver.busID);
+    //     if (live) {
+    //       return {
+    //         ...driver,
+    //         coords: {
+    //           latitude: live.latitude,
+    //           longitude: live.longitude,
+    //           speed: live.speed ?? driver.coords.speed,
+    //           timestamp: live.timestamp ?? driver.coords.timestamp,
+    //         },
+    //       };
+    //     }
+    //     return driver;
+    //   })
+    // );
+
+    // If your useShuttleSocket hook provides live locations, use the above logic.
+    // Otherwise, replace with your actual websocket data update logic.
+  }, [/* liveLocations */]);
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(

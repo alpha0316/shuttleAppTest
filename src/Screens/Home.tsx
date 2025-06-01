@@ -146,10 +146,6 @@ function Home() {
 
   const [closestStopName] = useState< string | null> (null)
 
-  // const handleClosestStopChange = (name : string) => {
-  //   setClosestStopName(name)
-  // }
-
   console.log(closestStopName)
 
 
