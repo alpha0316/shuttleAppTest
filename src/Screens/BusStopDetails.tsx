@@ -36,11 +36,19 @@ function BusStopDetails() {
   const [distanceMade, setDistanceMade] = useState(0)
   const [timeInMinutes, setTimeInMinutes] = useState<number | null>(null);
   const [reached, setReached] = useState(true);
+  const [availableBus, SetAvailableBus] = useState(true)
 
   const navigate = useNavigate(); 
 
     useEffect(() => {
-      console.log('Reached pickup point');
+      console.log('closest', closest?.isStartInRoute);
+      // Replace 'isStartInRoute' with a valid property or add a proper check
+      if (closest && closest.driver && closest.driver.coords && closest.isStartInRoute ) {
+        SetAvailableBus(true)
+        console.log('yes wai')
+      } else {
+        SetAvailableBus(false)
+      }
   }, );
 
   useEffect(() => {
@@ -61,8 +69,8 @@ function BusStopDetails() {
 
 
   useEffect(()=> {
-    // console.log( 'time',  time)
-    // console.log( 'speed', closest?.driver)
+    console.log( 'closest',  closest?.driver?.coords)
+    console.log( 'speed')
     // If timestamp is not on coords, try closest?.driver?.timestamp or update Coordinates type
     setTime(closest?.driver?.coords?.timestamp)
     setSpeed((closest?.driver?.coords as any)?.speed)
@@ -414,12 +422,6 @@ function BusStopDetails() {
     
   );
 
-
-
-  
-
-
-
   const safeLat = (val: number | undefined): number => val ?? 0
   const safeLng = (val: number | undefined): number => val ?? 0
 
@@ -452,7 +454,7 @@ useEffect(() => {
     let time = 0;
 
     time = distance / (speed || 1); 
-    console.log('Time to cover distance:', time, 'seconds');
+    // console.log('Time to cover distance:', time, 'seconds');
     const minutes = time / 60; 
     const fixedMinutes = Math.round(minutes);
     setTimeInMinutes(fixedMinutes);
@@ -493,7 +495,7 @@ useEffect(() => {
           borderRadius: 24,
           gap: 16,
           flexDirection: 'column',
-          width: isMobile ? '100%' : 370,
+          width: isMobile ? '100%' : 390,
           minHeight: isMobile ? 310 : 'auto',
           height: isMobile ? 300 : 'auto',
           zIndex: 11111,
@@ -547,15 +549,38 @@ useEffect(() => {
                   alignItems : 'center'
                 }}>
                
+               
+               {
 
-                  <p style={{
+                  availableBus === true ? 
+
+                     
+                 <p style={{
                     margin : 0,
                     fontSize : 14,
                     color : 'rgba(0,0,0,0.5)'
                   }}>Bus will arrive in <span style={{
                     fontWeight : '800',
                     color : 'black'
-                  }}>{timeInMinutes}</span> minutes </p>
+                  }}>{timeInMinutes}</span> minutes </p> 
+                  :
+
+                  <p style={{
+                    margin : 0,
+                    fontSize : 14,
+                    color : 'rgba(0,0,0,0.5)'
+                  }}>There is no availabale bus </p>
+
+               }
+
+                  {/* <p style={{
+                    margin : 0,
+                    fontSize : 14,
+                    color : 'rgba(0,0,0,0.5)'
+                  }}>Bus will arrive in <span style={{
+                    fontWeight : '800',
+                    color : 'black'
+                  }}>{timeInMinutes}</span> minutes </p> */}
                 </div>
 
               </div>

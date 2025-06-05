@@ -61,6 +61,7 @@ interface ExtendedViewState extends Partial<MapViewState> {
 
 interface DropPoint {
   name: string;
+  
 }
 
 
@@ -177,6 +178,7 @@ function MapGL({
   const [arriveInTwo, setArriveInTwo] = useState(false)
   const [arrived, setArrived] = useState(false)
 
+
  
   const [closestDropPoint, setClosestDropPoint] = useState<{
     latitude: number;
@@ -275,6 +277,7 @@ function MapGL({
     console.log(arriveInTwo)
     console.log(arrived)
     console.log(userCoords)
+    // console.log(closest)
   })
 
 
@@ -292,43 +295,54 @@ function MapGL({
     }
   }, [drivers]);
   
- const getClosestBuses = (
-  start : Coordinates,
-  drivers : Driver[],
+const getClosestBuses = (
+  startPoint: { name: string; coordinates: Coordinates }, // Assuming startPoint has a name and coordinates
+  end: Coordinates,
+  drivers: Driver[],
   limit: number = 3,
- ) : 
-  { driver : Driver; distance: number }[] => {
-    if (!start) return[]
+): { driver: Driver; distance: number; isStartInRoute: boolean }[] => {
+  if (!startPoint || !end) return [];
 
+  return drivers
+    .map(driver => {
+      const isStartInRoute = driver.busRoute?.some(route => 
+        route.stops?.some(stop => stop === startPoint.name)
+      ) ?? false;
 
-    return drivers
-      .map((driver) => ({
+      return {
         driver: {
           ...driver,
           coords: {
             ...driver.coords,
-            speed: driver.coords.speed !== undefined ? driver.coords.speed : 0, // Ensure speed is always a number
-            timestamp: driver.coords.timestamp !== undefined ? driver.coords.timestamp : Date.now(), // Ensure timestamp is always a number
+            speed: driver.coords.speed !== undefined ? driver.coords.speed : 0,
+            timestamp: driver.coords.timestamp !== undefined ? driver.coords.timestamp : Date.now(),
           },
         },
-        distance: haversineDistance(start, {
+        distance: haversineDistance(startPoint.coordinates, {
           latitude: driver.coords.latitude,
           longitude: driver.coords.longitude,
-        }, 'km')
-      }))
-      .filter((item) => item.distance !== null && !isNaN(item.distance))
-      .sort((a, b) => a.distance - b.distance)
-      .slice(0, limit)
-
-      
-
-  }
+        }, 'km'),
+        isStartInRoute,
+      };
+    })
+    .filter(item => item.distance !== null && !isNaN(item.distance))
+    .sort((a, b) => a.distance - b.distance)
+    .slice(0, limit);
+};
 
   const { setClosestStopName, setClosestStop } = useClosestStop();
 
   useEffect(() => {
     if (startPoint && filterDrivers.length > 0 ) {
-      const newClosestBuses = getClosestBuses(startPoint, filterDrivers);
+      // Use startPoint for both start and end if you don't have a separate end point, or replace with the correct end point variable
+      const newClosestBuses = getClosestBuses(
+        {
+          name: storedDropPoints[0]?.name || 'Unknown',
+          coordinates: startPoint
+        },
+        startPoint,
+        filterDrivers
+      );
      const validDrivers = newClosestBuses.filter(item => 
         item.driver?.coords?.timestamp !== undefined
       );
@@ -427,7 +441,7 @@ function MapGL({
     setIsManuallyAdjusted(true);
   };
   
-  
+
 
 
   useEffect(() => {

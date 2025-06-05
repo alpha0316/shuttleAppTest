@@ -16,6 +16,7 @@ export interface Driver {
 export interface ClosestBusItem {
   driver: Driver;
   distance: number;
+  isStartInRoute : boolean;
 }
 
 
