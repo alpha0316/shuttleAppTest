@@ -296,7 +296,7 @@ function MapGL({
   }, [drivers]);
   
 const getClosestBuses = (
-  startPoint: { name: string; coordinates: Coordinates }, // Assuming startPoint has a name and coordinates
+  startPoint: { name: string; coordinates: Coordinates },
   end: Coordinates,
   drivers: Driver[],
   limit: number = 3,
@@ -325,7 +325,12 @@ const getClosestBuses = (
         isStartInRoute,
       };
     })
-    .filter(item => item.distance !== null && !isNaN(item.distance))
+    .filter(item => {
+      return item.distance !== null && 
+             !isNaN(item.distance) && 
+             item.driver?.coords?.timestamp !== undefined &&
+             item.isStartInRoute; 
+    })
     .sort((a, b) => a.distance - b.distance)
     .slice(0, limit);
 };

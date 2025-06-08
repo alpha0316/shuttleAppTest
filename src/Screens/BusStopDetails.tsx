@@ -236,7 +236,7 @@ function BusStopDetails() {
       } 
       if (pickUp.name === 'Main Library' && dropOff.name === 'Pentecost Busstop') {
         updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Brunei' && dropPoint.name !== 'Commercial Area' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'KSB'
+          (dropPoint) => dropPoint.name !== 'Brunei' && dropPoint.name !== 'Commercial Area' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'KSB' && dropPoint.name !== 'Hall 7'
         );
       } 
 
@@ -491,7 +491,7 @@ useEffect(() => {
           paddingInline: 16,
           paddingBlock: 16,
           backgroundColor: 'white',
-          // marginLeft: 16,
+          marginLeft: isMobile ? 0 : 16,
           borderRadius: 24,
           gap: 16,
           flexDirection: 'column',
@@ -511,9 +511,7 @@ useEffect(() => {
             <div style={{
               display : 'flex',
               alignItems : 'center',
-              // justifyContent : 'space-between',
-              gap : '16',
-              // width: '100%', 
+              gap : '16', 
               boxSizing: 'border-box',
             }}>
               
