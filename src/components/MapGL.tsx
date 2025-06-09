@@ -173,13 +173,13 @@ function MapGL({
   const [drivers, setDrivers] = useState<Driver[]>([]);
 
   const geolocateControlRef = useRef<any>(null);
-  const [userCoords, setUserCoords] = useState<{ latitude: number; longitude: number } | null>(null);
+  const [, setUserCoords] = useState<{ latitude: number; longitude: number } | null>(null);
   const [filterDrivers, setFilterDrivers] = useState<Driver[]>([]);
   const [selectedBus, setSelectedBus] = useState<Driver[]>([]);
   const [storedDropPoints, setStoredDropPoints] = useState<DropPoint[]>([]);
   const [startPoint, setStartPoint] = useState<Coordinates | null>(null);
-  const [arriveInTwo, setArriveInTwo] = useState(false)
-  const [arrived, setArrived] = useState(false)
+  const [, setArriveInTwo] = useState(false)
+  const [, setArrived] = useState(false)
 
 
  
@@ -276,12 +276,12 @@ function MapGL({
   }, []);
 
 
-  useEffect(()=> {
-    console.log(arriveInTwo)
-    console.log(arrived)
-    console.log(userCoords)
-    // console.log(closest)
-  })
+  // useEffect(()=> {
+  //   console.log(arriveInTwo)
+  //   console.log(arrived)
+  //   console.log(userCoords)
+  //   // console.log(closest)
+  // })
 
 
   

@@ -383,10 +383,6 @@ const LocationList: React.FC<LocationListProps> = ({
         
         >
 
-
-         {/* <div style={{ textAlign: 'center', marginBottom: '8px', display : isMobile ? 'block' : 'none' }}>
-            <div style={{ width: '40px', height: '4px', backgroundColor: '#ccc', borderRadius: '2px', margin: '0 auto' }}></div>
-         </div> */}
          <div className='flex items-center justify-between'>
 
           <p className='text-[20px] font-bold m-0'>
