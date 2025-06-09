@@ -205,7 +205,6 @@ function MapGL({
         
         const data = await response.json();
         setDrivers(data.drivers || [])
-        // console.log(data)
         
       } catch (err) {
         console.error("Error fetching drivers:", err);
@@ -292,7 +291,6 @@ function MapGL({
     
     if (drivers.length > 0) {
       const active = drivers.filter((bus) => bus.active === true);
-      // const driverStopsNames = drivers.busRoute[0]?.stops.map((stops) => stops.name)
       setFilterDrivers(active); 
     } else {
       setFilterDrivers([]); 
@@ -394,10 +392,8 @@ const getClosestBuses = (
   
   useEffect(() => {
     if (closestBuses.length > 0) {
-      // console.log('All close buses:', closestBuses);
       setClosest(closestBuses[0]);
     } else if (startPoint && filterDrivers.length > 0) {
-      // console.log('No closest bus found');
       setClosest(null);
     }
   }, [closestBuses, startPoint, filterDrivers, setClosest]);
@@ -856,9 +852,6 @@ function calculateBearing(start: Coordinates, end: Coordinates): number {
 const renderBusMarkers = () => {
   
   const getPrevCoords = (bus: Driver) => {
-    // If you have historical positions, use them here.
-    // For now, just simulate a small offset for demonstration.
-    // Replace with actual previous coordinates if available.
     const offset = 0.1;
     return {
       latitude: bus.coords.latitude - offset,

@@ -125,10 +125,10 @@ function BusStopDetails() {
     },
     { id: '2', name: 'Brunei', description: 'Hub for student activities', latitude: 6.670465091472612, longitude: -1.5741574445526254, 
       dropPoints: [ 
-        { name: 'SRC Busstop', latitude: 6.675223889340042, longitude: -1.5678831412482812 },
-        { name: 'Main Library', latitude: 6.675033566213408, longitude: -1.5723546778455368 },
         { name: 'KSB', latitude: 6.669314250173885, longitude: -1.567181795001016 },
+        { name: 'SRC Busstop', latitude: 6.675223889340042, longitude: -1.5678831412482812 },
         { name: 'Pentecost Busstop', latitude: 6.674545299373284, longitude: -1.567565045729575 },
+        { name: 'Main Library', latitude: 6.675033566213408, longitude: -1.5723546778455368 },
         { name: 'Brunei', latitude: 6.670465091472612, longitude: -1.5741574445526254 }
       ] 
     },
@@ -841,7 +841,6 @@ useEffect(() => {
                 }}>
 
                   {(() => {
-                  // Calculate distance from driver to this dropPoint
                   let iconColor = "white";
                   let iconBg = "#52B922";
 
