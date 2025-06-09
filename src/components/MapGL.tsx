@@ -7,6 +7,8 @@ import { useClosestStop, BusStop  } from './../Screens/ClosestStopContext';
 import {useClosestBus } from '../Screens/useClosestBus'
 // import {useShuttleSocket} from './../../hooks/useShuttleSocket'
 import { io, Socket } from 'socket.io-client';
+import useMediaQuery from '../components/useMediaQuery';
+
 
 
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoidGhlbG9jYWxnb2RkIiwiYSI6ImNtMm9ocHFhYTBmczQya3NnczhoampiZ3gifQ.lPNutwk6XRi_kH_1R1ebiw';
@@ -76,6 +78,7 @@ function MapGL({
   // onClosestStopChange 
 }: MapGLProps) {
 
+  const isMobile = useMediaQuery('(max-width: 768px)');
   
   useEffect(() => {
     // Initialize socket connection
@@ -581,7 +584,7 @@ useEffect(() => {
     }
   };
 
-  // Reusable Marker Icon Component
+
   const MarkerIcon = ({ color }: { color: string }) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -830,40 +833,74 @@ useEffect(() => {
 
 
 
-const renderBusMarkers = () => {
-  // If no drop points selected, show all active buses
-  if (storedDropPoints.length === 0) {
-    return filterDrivers.map((bus) => (
-      <Marker
-        key={bus.busID}
-        longitude={bus.coords.longitude}
-        latitude={bus.coords.latitude}
-      >
-        <BusIcon />
-      </Marker>
-    ));
-  }
-  
-  
-  if (selectedBus.length > 0) {
+// Utility function to calculate bearing (heading) between two coordinates
+function calculateBearing(start: Coordinates, end: Coordinates): number {
+  const toRadians = (deg: number) => (deg * Math.PI) / 180;
+  const toDegrees = (rad: number) => (rad * 180) / Math.PI;
 
+  const lat1 = toRadians(start.latitude);
+  const lat2 = toRadians(end.latitude);
+  const dLon = toRadians(end.longitude - start.longitude);
+
+  const y = Math.sin(dLon) * Math.cos(lat2);
+  const x =
+    Math.cos(lat1) * Math.sin(lat2) -
+    Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
+
+  let brng = Math.atan2(y, x);
+  brng = toDegrees(brng);
+  return (brng + 360) % 360; 
+}
+
+const renderBusMarkers = () => {
+  
+  const getPrevCoords = (bus: Driver) => {
+    // If you have historical positions, use them here.
+    // For now, just simulate a small offset for demonstration.
+    // Replace with actual previous coordinates if available.
+    const offset = 0.0001;
+    return {
+      latitude: bus.coords.latitude - offset,
+      longitude: bus.coords.longitude - offset,
+    };
+  };
+
+  if (storedDropPoints.length === 0) {
+    return filterDrivers.map((bus) => {
+      const prev = getPrevCoords(bus);
+      const heading = calculateBearing(prev, bus.coords);
+      return (
+        <Marker
+          key={bus.busID}
+          longitude={bus.coords.longitude}
+          latitude={bus.coords.latitude}
+          rotation={heading}
+        >
+          <BusIcon />
+        </Marker>
+      );
+    });
+  }
+
+  if (selectedBus.length > 0) {
     const closestBusID = closest?.driver?.busID;
 
-    return selectedBus.map((bus) => (
-      <Marker
-        key={bus.busID}
-        longitude={bus.coords.longitude}
-        latitude={bus.coords.latitude}
-      >
+    return selectedBus.map((bus) => {
+      const prev = getPrevCoords(bus);
+      const heading = calculateBearing(prev, bus.coords);
+      return (
+        <Marker
+          key={bus.busID}
+          longitude={bus.coords.longitude}
+          latitude={bus.coords.latitude}
+          rotation={heading}
+        >
           <div style={{ cursor: 'pointer' }}>
-          {bus.busID === closestBusID ? (
-              <ClosestBusIcon />
-            ) : (
-              <BusIcon />
-            )}
+            {bus.busID === closestBusID ? <ClosestBusIcon /> : <BusIcon />}
           </div>
-      </Marker>
-    ));
+        </Marker>
+      );
+    });
   }
   return null;
 };
@@ -963,7 +1000,7 @@ const renderBusMarkers = () => {
         onClick={() => geolocateControlRef.current?.trigger()} // Trigger geolocation
         style={{
           position: 'absolute',
-          top: '5vw',
+          top: isMobile ? '5vw' : '2vw',
           right: '30px',
           backgroundColor: 'white',
           border: 'none',
