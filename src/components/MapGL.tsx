@@ -205,6 +205,7 @@ function MapGL({
         
         const data = await response.json();
         setDrivers(data.drivers || [])
+        // console.log(data)
         
       } catch (err) {
         console.error("Error fetching drivers:", err);
@@ -858,7 +859,7 @@ const renderBusMarkers = () => {
     // If you have historical positions, use them here.
     // For now, just simulate a small offset for demonstration.
     // Replace with actual previous coordinates if available.
-    const offset = 0.0001;
+    const offset = 0.1;
     return {
       latitude: bus.coords.latitude - offset,
       longitude: bus.coords.longitude - offset,
@@ -874,7 +875,7 @@ const renderBusMarkers = () => {
           key={bus.busID}
           longitude={bus.coords.longitude}
           latitude={bus.coords.latitude}
-          rotation={heading}
+          rotation={heading} 
         >
           <BusIcon />
         </Marker>
