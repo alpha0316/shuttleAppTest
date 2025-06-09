@@ -1696,7 +1696,7 @@ useEffect(() => {
             // height : 100,
             position : 'absolute',
             top : arrived || arriveInTwo === true ?  '4%':'-28%',
-            left : isMobile ?  '2.5%' : '40vw',
+            left : isMobile ?  '40vw' : '40vw',
             borderRadius : 18,
             display : 'flex',
             flexDirection : 'column',

@@ -963,7 +963,7 @@ const renderBusMarkers = () => {
         onClick={() => geolocateControlRef.current?.trigger()} // Trigger geolocation
         style={{
           position: 'absolute',
-          top: '20px',
+          top: '5vw',
           right: '30px',
           backgroundColor: 'white',
           border: 'none',
