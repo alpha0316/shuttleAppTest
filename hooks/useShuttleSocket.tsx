@@ -1,9 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 
 const SOCKET_SERVER_URL = 'wss://shuttle-backend-0.onrender.com';
 
 export const useShuttleSocket = () => {
+  const [shuttles, setShuttles] = useState<any[]>([])
+  
   useEffect(() => {
     // Initialize socket connection
     const socket: Socket = io(SOCKET_SERVER_URL, {
@@ -33,13 +35,17 @@ export const useShuttleSocket = () => {
 
 
     // Listen for shuttle location updates
+    // Store shuttle locations in state
+    // You can lift this state up or use a context for global access
+    // For now, let's use a callback or setter passed as an argument (see below for usage)
     socket.on("shuttle-locations", (shuttles) => {
-      console.log("\n📍 Received shuttle locations:");
       shuttles.forEach((shuttle: { shuttleId: any; name: any; location: any; route: any; }) => {
-        console.log(`- Shuttle ${shuttle.shuttleId} (${shuttle.name}):`);
-        console.log(`  Location: ${JSON.stringify(shuttle.location)}`);
-        console.log(`  Route: ${shuttle.route}`);
+      console.log(`  Location: ${JSON.stringify(shuttle.location)}`);
       });
+      // If you have a setter, call it here
+      if (typeof setShuttles === "function") {
+        setShuttles(shuttles);
+      }
     });
 
     // Optional: disconnect and error handlers
@@ -52,4 +58,6 @@ export const useShuttleSocket = () => {
       socket.disconnect();
     };
   }, []);
+
+  return shuttles
 };

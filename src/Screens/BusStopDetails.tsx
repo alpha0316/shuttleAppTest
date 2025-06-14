@@ -7,6 +7,7 @@ import { useParams, useNavigate, useLocation  } from 'react-router-dom';
 import { useClosestStop,   } from "./../Screens/ClosestStopContext";
 import { useClosestBus } from './useClosestBus';
 import { getDistance } from 'geolib';
+import {useShuttleSocket} from './../../hooks/useShuttleSocket'
 
 
 
@@ -25,8 +26,7 @@ function BusStopDetails() {
     latitude: number;
     longitude: number;
     speed?: number;
-    timestamp?: number | string;
-    
+    timestamp?: number | string;   
   }
 
   const [startPoint, setStartPoint] = useState<Location | null>(null);
@@ -39,6 +39,8 @@ function BusStopDetails() {
   const [availableBus, SetAvailableBus] = useState(true)
 
   const navigate = useNavigate(); 
+
+  useShuttleSocket()
 
     useEffect(() => {
       // console.log('closest', closest?.isStartInRoute);
