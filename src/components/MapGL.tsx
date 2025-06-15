@@ -20,6 +20,7 @@ interface Coordinates {
   longitude: number;
   speed?: number;        
   timestamp?: number;    
+  heading?: number; 
 }
 
 interface DropPoint {
@@ -49,7 +50,7 @@ interface MapGLProps {
 }
 
 
-interface Driver  {
+export interface Driver  {
   busID: string; 
   active: boolean; 
   busRoute: Route[];
@@ -121,20 +122,27 @@ function MapGL({
 
   useEffect(() => {
   if (Array.isArray(shuttles) && shuttles.length > 0) {
-    const mappedDrivers: Driver[] = shuttles.map((shuttle: any) => ({
-      busID: shuttle.driverId || shuttle.shuttleId || shuttle.id || '',
-      active: shuttle.isActive ?? true,
-      busRoute: [], // You can parse shuttle.route if you want to use it
-      coords: {
-        latitude: shuttle.location?.latitude ??  0,
-        longitude: shuttle.location?.longitude ??  0,
-        speed: shuttle.location?.speed ?? 0,
-        timestamp: shuttle.location?.timestamp ?? Date.now(),
-      },
-    }));
+ const mappedDrivers: Driver[] = shuttles.map((shuttle: any) => {
+  const innerLocation = shuttle.location?.location || {}; // fallback safety
+  return {
+    busID: shuttle.driverId || shuttle.shuttleId || shuttle.id || '',
+    active: shuttle.isActive ?? true,
+    busRoute: [],
+    coords: {
+      latitude: innerLocation.latitude ?? 0,
+      longitude: innerLocation.longitude ?? 0,
+      speed: innerLocation.speed ?? 0,
+      heading: innerLocation.heading ?? 0,
+      timestamp: innerLocation.timestamp
+        ? new Date(innerLocation.timestamp).getTime()
+        : Date.now(),
+    },
+  };
+});
+
     setDrivers(mappedDrivers);
-    console.log('Mapped Drivers:', drivers);
-    console.log('Drivers:', mappedDrivers);
+    console.log(' Drivers:', drivers);
+    console.log('Mapped Drivers:', mappedDrivers);
   }
   console.log('Mapped Drivers:', shuttles);
 }, [shuttles]);
@@ -749,45 +757,18 @@ useEffect(() => {
 
 
 
-// Utility function to calculate bearing (heading) between two coordinates
-function calculateBearing(start: Coordinates, end: Coordinates): number {
-  const toRadians = (deg: number) => (deg * Math.PI) / 180;
-  const toDegrees = (rad: number) => (rad * 180) / Math.PI;
-
-  const lat1 = toRadians(start.latitude);
-  const lat2 = toRadians(end.latitude);
-  const dLon = toRadians(end.longitude - start.longitude);
-
-  const y = Math.sin(dLon) * Math.cos(lat2);
-  const x =
-    Math.cos(lat1) * Math.sin(lat2) -
-    Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
-
-  let brng = Math.atan2(y, x);
-  brng = toDegrees(brng);
-  return (brng + 360) % 360; 
-}
-
 const renderBusMarkers = () => {
   
-  const getPrevCoords = (bus: Driver) => {
-    const offset = 0.1;
-    return {
-      latitude: bus.coords.latitude - offset,
-      longitude: bus.coords.longitude - offset,
-    };
-  };
 
   if (storedDropPoints.length === 0) {
     return filterDrivers.map((bus) => {
-      const prev = getPrevCoords(bus);
-      const heading = calculateBearing(prev, bus.coords);
+      // const heading = calculateBearing(prev, bus.coords);
       return (
         <Marker
           key={bus.busID}
           longitude={bus.coords.longitude}
           latitude={bus.coords.latitude}
-          rotation={heading} 
+          rotation={bus.coords.heading} 
         >
           <BusIcon />
         </Marker>
@@ -799,14 +780,13 @@ const renderBusMarkers = () => {
     const closestBusID = closest?.driver?.busID;
 
     return selectedBus.map((bus) => {
-      const prev = getPrevCoords(bus);
-      const heading = calculateBearing(prev, bus.coords);
+      // const heading = calculateBearing(prev, bus.coords);
       return (
         <Marker
           key={bus.busID}
           longitude={bus.coords.longitude}
           latitude={bus.coords.latitude}
-          rotation={heading}
+          rotation={bus.coords.heading} 
         >
           <div style={{ cursor: 'pointer' }}>
             {bus.busID === closestBusID ? <ClosestBusIcon /> : <BusIcon />}

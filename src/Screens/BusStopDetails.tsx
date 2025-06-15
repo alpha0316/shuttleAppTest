@@ -1,5 +1,5 @@
 import { useState, useEffect,  } from 'react';
-import MapGl from '../components/MapGL';
+import MapGl, { Driver } from '../components/MapGL';
 
 // import { FlyToInterpolator } from 'react-map-gl';
 import useMediaQuery from '../components/useMediaQuery';
@@ -37,10 +37,11 @@ function BusStopDetails() {
   const [timeInMinutes, setTimeInMinutes] = useState<number | null>(null);
   const [reached, setReached] = useState(true);
   const [availableBus, SetAvailableBus] = useState(true)
+  const [drivers, setDrivers] = useState<Driver[]>([]);
 
   const navigate = useNavigate(); 
 
-  useShuttleSocket()
+   const shuttles = useShuttleSocket();
 
     useEffect(() => {
       // console.log('closest', closest?.isStartInRoute);
@@ -66,6 +67,33 @@ function BusStopDetails() {
     }
 
   }, [arriveInTwo,arrived])
+
+   useEffect(() => {
+  if (Array.isArray(shuttles) && shuttles.length > 0) {
+ const mappedDrivers: Driver[] = shuttles.map((shuttle: any) => {
+  const innerLocation = shuttle.location?.location || {}; // fallback safety
+  return {
+    busID: shuttle.driverId || shuttle.shuttleId || shuttle.id || '',
+    active: shuttle.isActive ?? true,
+    busRoute: [],
+    coords: {
+      latitude: innerLocation.latitude ?? 0,
+      longitude: innerLocation.longitude ?? 0,
+      speed: innerLocation.speed ?? 0,
+      heading: innerLocation.heading ?? 0,
+      timestamp: innerLocation.timestamp
+        ? new Date(innerLocation.timestamp).getTime()
+        : Date.now(),
+    },
+  };
+});
+
+    setDrivers(mappedDrivers);
+    console.log(' Drivers:', drivers);
+    console.log('Mapped Drivers:', mappedDrivers);
+  }
+  console.log('Mapped Drivers:', shuttles);
+}, [shuttles]);
 
 
   useEffect(()=> {
