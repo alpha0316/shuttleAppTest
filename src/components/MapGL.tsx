@@ -127,7 +127,7 @@ function MapGL({
   return {
     busID: shuttle.driverId || shuttle.shuttleId || shuttle.id || '',
     active: shuttle.isActive ?? true,
-    busRoute: [],
+    busRoute: shuttle.busRoute || [],
     coords: {
       latitude: innerLocation.latitude ?? 0,
       longitude: innerLocation.longitude ?? 0,
@@ -147,6 +147,10 @@ function MapGL({
   console.log('Mapped Drivers:', shuttles);
 }, [shuttles]);
 
+
+useEffect(() => { 
+  console.log('selectedbus:', closestBuses);
+}, [drivers]);
 
  
   const [closestDropPoint, setClosestDropPoint] = useState<{
@@ -169,7 +173,7 @@ function MapGL({
         
         const data = await response.json();
         setDrivers(data.drivers || [])
-        console.log('farkkk', drivers)
+        console.log('farkkk', data)
 
       } catch (err) {
         console.error("Error fetching drivers:", err);
