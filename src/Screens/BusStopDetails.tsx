@@ -38,6 +38,7 @@ function BusStopDetails() {
   const [reached, setReached] = useState(true);
   const [availableBus, SetAvailableBus] = useState(true)
   const [drivers, setDrivers] = useState<Driver[]>([]);
+  const [busRoute, setBusRoute] = useState([])
 
   const navigate = useNavigate(); 
 
@@ -68,32 +69,32 @@ function BusStopDetails() {
 
   }, [arriveInTwo,arrived])
 
-   useEffect(() => {
-  if (Array.isArray(shuttles) && shuttles.length > 0) {
- const mappedDrivers: Driver[] = shuttles.map((shuttle: any) => {
-  const innerLocation = shuttle.location?.location || {}; // fallback safety
-  return {
-    busID: shuttle.driverId || shuttle.shuttleId || shuttle.id || '',
-    active: shuttle.isActive ?? true,
-    busRoute: [],
-    coords: {
-      latitude: innerLocation.latitude ?? 0,
-      longitude: innerLocation.longitude ?? 0,
-      speed: innerLocation.speed ?? 0,
-      heading: innerLocation.heading ?? 0,
-      timestamp: innerLocation.timestamp
-        ? new Date(innerLocation.timestamp).getTime()
-        : Date.now(),
-    },
-  };
-});
+//    useEffect(() => {
+//   if (Array.isArray(shuttles) && shuttles.length > 0) {
+//  const mappedDrivers: Driver[] = shuttles.map((shuttle: any) => {
+//   const innerLocation = shuttle.location?.location || {}; // fallback safety
+//   return {
+//     busID: shuttle.driverId || shuttle.shuttleId || shuttle.id || '',
+//     active: shuttle.isActive ?? true,
+//     busRoute: [],
+//     coords: {
+//       latitude: innerLocation.latitude ?? 0,
+//       longitude: innerLocation.longitude ?? 0,
+//       speed: innerLocation.speed ?? 0,
+//       heading: innerLocation.heading ?? 0,
+//       timestamp: innerLocation.timestamp
+//         ? new Date(innerLocation.timestamp).getTime()
+//         : Date.now(),
+//     },
+//   };
+// });
 
-    setDrivers(mappedDrivers);
-    console.log(' Drivers:', drivers);
-    console.log('Mapped Drivers:', mappedDrivers);
-  }
-  console.log('Mapped Drivers:', shuttles);
-}, [shuttles]);
+//     setDrivers(mappedDrivers);
+//     console.log(' Drivers:', drivers);
+//     console.log('Mapped Drivers:', mappedDrivers);
+//   }
+//   console.log('Mapped Drivers:', shuttles);
+// }, [shuttles]);
 
 
   useEffect(()=> {

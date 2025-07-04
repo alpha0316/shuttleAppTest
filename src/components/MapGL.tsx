@@ -118,16 +118,46 @@ function MapGL({
   const [startPoint, setStartPoint] = useState<Coordinates | null>(null);
   const [, setArriveInTwo] = useState(false)
   const [, setArrived] = useState(false)
+  const [busRoute, setBusRoute] = useState([])
   // const [heading, setHeading] = useState<number | null>(null);
 
   useEffect(() => {
   if (Array.isArray(shuttles) && shuttles.length > 0) {
  const mappedDrivers: Driver[] = shuttles.map((shuttle: any) => {
   const innerLocation = shuttle.location?.location || {}; // fallback safety
+  type BusRouteItem = { busID: string; busRoute: any[] };
+  const matchedRoute = Array.isArray(busRoute)
+    ? (busRoute as BusRouteItem[]).find(
+        (route) =>
+          (route.busID && (shuttle.driverId || shuttle.shuttleId || shuttle.id) &&
+            route.busID.replace(/\D/g, '') === (shuttle.driverId || shuttle.shuttleId || shuttle.id).replace(/\D/g, ''))
+      )
+    : undefined;
+ 
+
+  if (
+    Array.isArray(busRoute) &&
+    busRoute.length > 0 &&
+    typeof busRoute[0] === 'object' &&
+    busRoute[0] !== null &&
+    'busRoute' in busRoute[0] &&
+    Array.isArray((busRoute[0] as any).busRoute) &&
+    (busRoute[0] as { busRoute: any[] }).busRoute.length > 0 &&
+    Array.isArray((busRoute[0] as { busRoute: any[] }).busRoute[0].stops)
+  ) {
+ 
+  } else {
+
+  }
+
+
+
   return {
     busID: shuttle.driverId || shuttle.shuttleId || shuttle.id || '',
     active: shuttle.isActive ?? true,
-    busRoute: shuttle.busRoute || [],
+    busRoute: matchedRoute && Array.isArray(matchedRoute.busRoute) && matchedRoute.busRoute.length > 0
+      ? matchedRoute.busRoute[0].stops
+      : [],
     coords: {
       latitude: innerLocation.latitude ?? 0,
       longitude: innerLocation.longitude ?? 0,
@@ -141,15 +171,15 @@ function MapGL({
 });
 
     setDrivers(mappedDrivers);
-    console.log(' Drivers:', drivers);
-    console.log('Mapped Drivers:', mappedDrivers);
+
+    console.log('Mapped Drivers:', drivers);
   }
-  console.log('Mapped Drivers:', shuttles);
+  console.log('Websocket Drivers:', shuttles);
 }, [shuttles]);
 
 
 useEffect(() => { 
-  console.log('selectedbus:', closestBuses);
+  console.log('closetbus:', closestBuses);
 }, [drivers]);
 
  
@@ -172,8 +202,18 @@ useEffect(() => {
         }
         
         const data = await response.json();
+        // console.log('data', data)
         setDrivers(data.drivers || [])
-        console.log('farkkk', data)
+        // Store an array of { busID, busRoute } for each driver
+        if (Array.isArray(data.drivers)) {
+          const busRoutes = data.drivers.map((driver: any) => ({
+            busID: driver.busID,
+            busRoute: driver.busRoute,
+          }));
+          setBusRoute(busRoutes);
+          // console.log('selected Routes', busRoute)
+        }
+
 
       } catch (err) {
         console.error("Error fetching drivers:", err);
@@ -238,32 +278,42 @@ const getClosestBuses = (
 
   return drivers
     .map(driver => {
-      const isStartInRoute = driver.busRoute?.some(route => 
-        route.stops?.some(stop => stop === startPoint.name)
-      ) ?? false;
+      const coords = {
+        latitude: driver.coords.latitude,
+        longitude: driver.coords.longitude,
+        speed: driver.coords.speed ?? 0,
+        heading: driver.coords.heading ?? 0,
+        timestamp: driver.coords.timestamp ?? Date.now(),
+      };
+
+      let isStartInRoute = false;
+      if (Array.isArray(driver.busRoute)) {
+        if (typeof driver.busRoute[0] === 'string') {
+          // busRoute is string[]
+          isStartInRoute = (driver.busRoute as unknown as string[]).includes(startPoint.name);
+        } else {
+          // busRoute is array of route objects
+          isStartInRoute = driver.busRoute.some((route: any) =>
+            Array.isArray(route.stops) && route.stops.includes(startPoint.name)
+          );
+        }
+      }
 
       return {
         driver: {
           ...driver,
-          coords: {
-            ...driver.coords,
-            speed: driver.coords.speed !== undefined ? driver.coords.speed : 0,
-            timestamp: driver.coords.timestamp !== undefined ? driver.coords.timestamp : Date.now(),
-          },
+          coords,
         },
-        distance: haversineDistance(startPoint.coordinates, {
-          latitude: driver.coords.latitude,
-          longitude: driver.coords.longitude,
-        }, 'km'),
+        distance: haversineDistance(startPoint.coordinates, coords, 'km'),
         isStartInRoute,
       };
     })
-    .filter(item => {
-      return item.distance !== null && 
-             !isNaN(item.distance) && 
-             item.driver?.coords?.timestamp !== undefined &&
-             item.isStartInRoute; 
-    })
+    .filter(item =>
+      item.distance !== null &&
+      !isNaN(item.distance) &&
+      item.driver?.coords?.timestamp !== undefined &&
+      item.isStartInRoute
+    )
     .sort((a, b) => a.distance - b.distance)
     .slice(0, limit);
 };
@@ -381,23 +431,47 @@ const getClosestBuses = (
 
 
   useEffect(() => {
+    // Only run if there are drop points and drivers
     if (storedDropPoints.length === 0 || filterDrivers.length === 0) {
       setSelectedBus([]);
       return;
     }
-  
-    const matchingDrivers: Driver[] = filterDrivers.filter((driver) => {
-      
-      const allStopNames = driver.busRoute
-        .flatMap(route => route.stops); 
-  
-      return storedDropPoints.some((point) => 
-        allStopNames.includes(point.name)
-      );
-    });
-  
-    setSelectedBus(matchingDrivers);
 
+    // Defensive: Only filter if busRoute is an array and has stops
+    const matchingDrivers: Driver[] = filterDrivers.filter((driver) => {
+      if (!Array.isArray(driver.busRoute)) return false;
+
+      // Handle both: busRoute as array of stops (string[]) or array of route objects
+      let allStopNames: string[] = [];
+      if (typeof driver.busRoute[0] === 'string') {
+        // busRoute is string[]
+        allStopNames = driver.busRoute as unknown as string[];
+      } else {
+        // busRoute is array of route objects
+        allStopNames = driver.busRoute.flatMap((route: any) =>
+          Array.isArray(route.stops) ? route.stops : []
+        );
+      }
+
+      // If no stops, skip this driver
+      if (!allStopNames.length) return false;
+
+      // At least one drop point matches a stop
+      return storedDropPoints.some((point) => allStopNames.includes(point.name));
+    });
+
+    // Only update if the result is different to avoid flicker
+    setSelectedBus((prev) => {
+      const prevIds = prev.map(d => d.busID).sort().join(',');
+      const newIds = matchingDrivers.map(d => d.busID).sort().join(',');
+      if (prevIds === newIds) return prev;
+      return matchingDrivers;
+    });
+
+    // Debug: log only when matchingDrivers changes
+    if (matchingDrivers.length > 0) {
+      console.log('select', matchingDrivers);
+    }
   }, [storedDropPoints, filterDrivers]);
   
   useEffect(() => {
@@ -779,6 +853,8 @@ const renderBusMarkers = () => {
       );
     });
   }
+
+
 
   if (selectedBus.length > 0) {
     const closestBusID = closest?.driver?.busID;
