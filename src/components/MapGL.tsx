@@ -121,65 +121,75 @@ function MapGL({
   const [busRoute, setBusRoute] = useState([])
   // const [heading, setHeading] = useState<number | null>(null);
 
-  useEffect(() => {
+useEffect(() => {
   if (Array.isArray(shuttles) && shuttles.length > 0) {
- const mappedDrivers: Driver[] = shuttles.map((shuttle: any) => {
-  const innerLocation = shuttle.location?.location || {}; // fallback safety
-  type BusRouteItem = { busID: string; busRoute: any[] };
-  const matchedRoute = Array.isArray(busRoute)
-    ? (busRoute as BusRouteItem[]).find(
-        (route) =>
-          (route.busID && (shuttle.driverId || shuttle.shuttleId || shuttle.id) &&
-            route.busID.replace(/\D/g, '') === (shuttle.driverId || shuttle.shuttleId || shuttle.id).replace(/\D/g, ''))
-      )
-    : undefined;
- 
+    const mappedDrivers: Driver[] = shuttles
+      .map((shuttle: any) => {
+        const innerLocation = shuttle.location?.location || {};
+        
+        type BusRouteItem = { busID: string; busRoute: any[] };
+        
+        const matchedRoute = Array.isArray(busRoute)
+          ? (busRoute as BusRouteItem[]).find((route) => {
+              const shuttleId = shuttle.driverId || shuttle.shuttleId || shuttle.id;
+              if (!route.busID || !shuttleId) return false;
+              
+              return route.busID.replace(/\D/g, '') === shuttleId.replace(/\D/g, '');
+            })
+          : undefined;
 
-  if (
-    Array.isArray(busRoute) &&
-    busRoute.length > 0 &&
-    typeof busRoute[0] === 'object' &&
-    busRoute[0] !== null &&
-    'busRoute' in busRoute[0] &&
-    Array.isArray((busRoute[0] as any).busRoute) &&
-    (busRoute[0] as { busRoute: any[] }).busRoute.length > 0 &&
-    Array.isArray((busRoute[0] as { busRoute: any[] }).busRoute[0].stops)
-  ) {
- 
-  } else {
+        let stops: any[] = [];
+        if (matchedRoute && 
+            Array.isArray(matchedRoute.busRoute) && 
+            matchedRoute.busRoute.length > 0 &&
+            Array.isArray(matchedRoute.busRoute[0].stops)) {
+          stops = matchedRoute.busRoute[0].stops;
+        }
 
-  }
-
-
-
-  return {
-    busID: shuttle.driverId || shuttle.shuttleId || shuttle.id || '',
-    active: shuttle.isActive ?? true,
-    busRoute: matchedRoute && Array.isArray(matchedRoute.busRoute) && matchedRoute.busRoute.length > 0
-      ? matchedRoute.busRoute[0].stops
-      : [],
-    coords: {
-      latitude: innerLocation.latitude ?? 0,
-      longitude: innerLocation.longitude ?? 0,
-      speed: innerLocation.speed ?? 0,
-      heading: innerLocation.heading ?? 0,
-      timestamp: innerLocation.timestamp
-        ? new Date(innerLocation.timestamp).getTime()
-        : Date.now(),
-    },
-  };
-});
+        return {
+          busID: shuttle.driverId || shuttle.shuttleId || shuttle.id || '',
+          active: shuttle.isActive ?? true,
+          busRoute: stops,
+          coords: {
+            latitude: innerLocation.latitude ?? 0,
+            longitude: innerLocation.longitude ?? 0,
+            speed: innerLocation.speed ?? 0,
+            heading: innerLocation.heading ?? 0,
+            timestamp: innerLocation.timestamp
+              ? new Date(innerLocation.timestamp).getTime()
+              : Date.now(),
+          },
+        };
+      })
+      .filter((driver) => {
+        return driver.coords.latitude !== 0 || driver.coords.longitude !== 0;
+      })
+      .reduce((unique: Driver[], driver) => {
+        const numericId = driver.busID.replace(/\D/g, '');
+        const existing = unique.find(d => d.busID.replace(/\D/g, '') === numericId);
+        
+  if (!existing) {
+  unique.push(driver);
+} else if (
+  typeof driver.coords.timestamp === 'number' &&
+  typeof existing.coords.timestamp === 'number' &&
+  driver.coords.timestamp > existing.coords.timestamp
+) {
+  const index = unique.findIndex(d => d.busID.replace(/\D/g, '') === numericId);
+  unique[index] = driver;
+}
+        
+        return unique;
+      }, []);
 
     setDrivers(mappedDrivers);
-
-    console.log('Mapped Drivers:', drivers);
+    // console.log('Latest reassigned coords only:', drivers);
   }
-  console.log('Websocket Drivers:', shuttles);
-}, [shuttles]);
+}, [shuttles, busRoute]);
 
 
 useEffect(() => { 
-  console.log('closetbus:', closestBuses);
+  // console.log('closetbus:', closestBuses);
 }, [drivers]);
 
  
@@ -202,7 +212,7 @@ useEffect(() => {
         }
         
         const data = await response.json();
-        // console.log('data', data)
+        console.log('data', data.drivers)
         setDrivers(data.drivers || [])
         // Store an array of { busID, busRoute } for each driver
         if (Array.isArray(data.drivers)) {
@@ -211,6 +221,7 @@ useEffect(() => {
             busRoute: driver.busRoute,
           }));
           setBusRoute(busRoutes);
+          console.log('data', data)
           // console.log('selected Routes', busRoute)
         }
 
@@ -262,7 +273,8 @@ useEffect(() => {
     if (drivers.length > 0) {
       const active = drivers.filter((bus) => bus.active === true);
       setFilterDrivers(active); 
-      // console.log('Active Drivers:', active);
+      console.log('Drivers:', active);
+      console.log('Active Drivers:', drivers);
     } else {
       setFilterDrivers([]); 
     }
@@ -841,6 +853,7 @@ const renderBusMarkers = () => {
   if (storedDropPoints.length === 0) {
     return filterDrivers.map((bus) => {
       // const heading = calculateBearing(prev, bus.coords);
+      console.log('filtered' , filterDrivers)
       return (
         <Marker
           key={bus.busID}
