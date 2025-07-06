@@ -516,7 +516,7 @@ useEffect(() => {
           paddingInline: 16,
           paddingBlock: 16,
           backgroundColor: 'white',
-          marginLeft: isMobile ? 0 : 16,
+          left: isMobile ? 0 : 16,
           borderRadius: 24,
           gap: 16,
           flexDirection: 'column',
@@ -524,7 +524,7 @@ useEffect(() => {
           minHeight: isMobile ? 310 : 'auto',
           height: isMobile ? 300 : 'auto',
           zIndex: 11111,
-          marginTop: 12,
+          marginTop: 24,
           border: '1px solid rgba(0,0,0,0.1)',
           margin: isMobile ? '16px auto' : '16px 16px 16px 0',
           position : 'fixed',
@@ -1787,6 +1787,7 @@ useEffect(() => {
           padding : 12,
           borderRadius : 12,
           backgroundColor : '#fafafa',
+          zIndex : 1000
         }}>
 
           { arrived === true ? 
