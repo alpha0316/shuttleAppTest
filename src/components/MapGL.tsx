@@ -183,13 +183,13 @@ useEffect(() => {
       }, []);
 
     setDrivers(mappedDrivers);
-    // console.log('Latest reassigned coords only:', drivers);
+
   }
 }, [shuttles, busRoute]);
 
 
 useEffect(() => { 
-  // console.log('closetbus:', closestBuses);
+
 }, [drivers]);
 
  
