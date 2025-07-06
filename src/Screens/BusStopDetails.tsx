@@ -1,5 +1,5 @@
 import { useState, useEffect,  } from 'react';
-import MapGl, { Driver } from '../components/MapGL';
+import MapGl from '../components/MapGL';
 
 // import { FlyToInterpolator } from 'react-map-gl';
 import useMediaQuery from '../components/useMediaQuery';
@@ -7,7 +7,7 @@ import { useParams, useNavigate, useLocation  } from 'react-router-dom';
 import { useClosestStop,   } from "./../Screens/ClosestStopContext";
 import { useClosestBus } from './useClosestBus';
 import { getDistance } from 'geolib';
-import {useShuttleSocket} from './../../hooks/useShuttleSocket'
+
 
 
 
@@ -37,12 +37,10 @@ function BusStopDetails() {
   const [timeInMinutes, setTimeInMinutes] = useState<number | null>(null);
   const [reached, setReached] = useState(true);
   const [availableBus, SetAvailableBus] = useState(true)
-  const [drivers, setDrivers] = useState<Driver[]>([]);
-  const [busRoute, setBusRoute] = useState([])
+  // const [drivers, setDrivers] = useState<Driver[]>([]);
+  // const [busRoute, setBusRoute] = useState([])
 
   const navigate = useNavigate(); 
-
-   const shuttles = useShuttleSocket();
 
     useEffect(() => {
       // console.log('closest', closest?.isStartInRoute);
