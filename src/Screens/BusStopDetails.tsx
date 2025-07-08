@@ -36,6 +36,7 @@ function BusStopDetails() {
   const [distanceMade, setDistanceMade] = useState(0)
   const [timeInMinutes, setTimeInMinutes] = useState<number | null>(null);
   const [reached, setReached] = useState(true);
+  const [final, setFinal] = useState(true);
   const [availableBus, SetAvailableBus] = useState(true)
   // const [drivers, setDrivers] = useState<Driver[]>([]);
   // const [busRoute, setBusRoute] = useState([])
@@ -493,6 +494,15 @@ useEffect(() => {
     setReached(false);
   }
 }, [closest?.driver?.coords?.latitude, closest?.driver?.coords?.longitude, startPoint?.latitude, startPoint?.longitude])
+
+useEffect(() => {
+  if ( closest?.driver?.coords?.latitude === dropOff?.latitude && 
+       closest?.driver?.coords?.longitude === dropOff?.longitude) {
+    setFinal(true);   
+  } else {
+    setFinal(false);
+  }
+}, [closest?.driver?.coords?.latitude, closest?.driver?.coords?.longitude, dropOff?.latitude, dropOff?.longitude])
 
 
   return (
@@ -1790,25 +1800,32 @@ useEffect(() => {
           zIndex : 1000
         }}>
 
-          { arrived === true ? 
-        <p style={{
-        color : 'rgba(0,0,0,0.6)'
-          }}>Your shuttle has arrived at <span style={{
-        fontWeight : 'bold',
-        color : '#000'
-          }}>{startPoint?.name || "your pickup point"}!</span> <br /> Please proceed to board</p>
-          :
+     {arrived ? (
+        <p style={{ color: 'rgba(0,0,0,0.6)' }}>
+          Your shuttle has arrived at <span style={{ fontWeight: 'bold', color: '#000' }}>
+            {startPoint?.name || "your pickup point"}
+          </span>! <br /> Please proceed to board
+        </p>
+      ) : final ? (
+        <p style={{ color: 'rgba(0,0,0,0.6)' }}>
+          🏁 The shuttle is arriving at your drop-off point: <span style={{ fontWeight: 'bold', color: '#000' }}>
+            {dropOff?.name || "your destination"}
+          </span>. Please prepare to alight.
+        </p>
+      ) : (
+        <p style={{ color: 'rgba(0,0,0,0.6)' }}>
+          👋 Hey there! The shuttle will arrive at <span style={{ fontWeight: 'bold', color: '#000' }}>
+            {startPoint?.name || "your pickup point"}
+          </span> in less than 2 minutes!
+        </p>
+      )}
 
-         <p style={{
-        color : 'rgba(0,0,0,0.6)'
-          }}>👋 Hey there! The shuttle will arrive at <span style={{
-        fontWeight : 'bold',
-        color : '#000'
-          }}>{startPoint?.name || "your pickup point"}</span> in less than 2 minutes!</p>
 
-          }
+ 
 
-         
+          
+
+         {/* final */}
         </div>
 
       </div>

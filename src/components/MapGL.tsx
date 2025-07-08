@@ -119,8 +119,10 @@ function MapGL({
   const [, setArriveInTwo] = useState(false)
   const [, setArrived] = useState(false)
   const [busRoute, setBusRoute] = useState([])
-  // const [heading, setHeading] = useState<number | null>(null);
 
+
+
+//// here is where I join the bus routes from the drivers/drivers to websocket data
 useEffect(() => {
   if (Array.isArray(shuttles) && shuttles.length > 0) {
     const mappedDrivers: Driver[] = shuttles
@@ -129,6 +131,7 @@ useEffect(() => {
         
         type BusRouteItem = { busID: string; busRoute: any[] };
         
+        /// compared the IDs of the API to the Websocket
         const matchedRoute = Array.isArray(busRoute)
           ? (busRoute as BusRouteItem[]).find((route) => {
               const shuttleId = shuttle.driverId || shuttle.shuttleId || shuttle.id;
@@ -188,9 +191,7 @@ useEffect(() => {
 }, [shuttles, busRoute]);
 
 
-useEffect(() => { 
 
-}, [drivers]);
 
  
   const [closestDropPoint, setClosestDropPoint] = useState<{
@@ -202,6 +203,7 @@ useEffect(() => {
   const BASE_CUSTOMER_URL = "https://shuttle-backend-0.onrender.com/api/v1"
 
 
+  //// here is where I fetched the drivers
   useEffect(() => {
     const fetchDrivers = async () => {
       try {
@@ -235,7 +237,7 @@ useEffect(() => {
   }, []);
 
 
-
+  ////stored user dropPoints based on start and stop bus stops
   useEffect(() => {
     setStoredDropPoints(dropPoints);
     if (dropPoints.length > 0) {
@@ -252,7 +254,7 @@ useEffect(() => {
   }, [dropPoints]);
 
 
-
+  //// button to set current location
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
@@ -268,7 +270,7 @@ useEffect(() => {
 
 
   
-
+/// here is the logic for filter out inactive buses
   useEffect(() => {    
     if (drivers.length > 0) {
       const active = drivers.filter((bus) => bus.active === true);
@@ -279,7 +281,9 @@ useEffect(() => {
       setFilterDrivers([]); 
     }
   }, [drivers]);
-  
+
+
+  /// here I get the closest bus of the selected point
 const getClosestBuses = (
   startPoint: { name: string; coordinates: Coordinates },
   end: Coordinates,
@@ -393,6 +397,8 @@ const getClosestBuses = (
 
   const [isManuallyAdjusted, setIsManuallyAdjusted] = useState(false);
 
+
+  /// map logic
   useEffect(() => {
     if (isManuallyAdjusted) return; // Don’t override manual adjustments
   
