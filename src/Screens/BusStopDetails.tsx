@@ -38,6 +38,7 @@ function BusStopDetails() {
   const [reached, setReached] = useState(true);
   const [final, setFinal] = useState(true);
   const [availableBus, SetAvailableBus] = useState(true)
+  const [stoppedBus, setStoppedBus] = useState(false)
   // const [drivers, setDrivers] = useState<Driver[]>([]);
   // const [busRoute, setBusRoute] = useState([])
 
@@ -99,7 +100,7 @@ function BusStopDetails() {
   useEffect(()=> {
     // If timestamp is not on coords, try closest?.driver?.timestamp or update Coordinates type
     setTime(closest?.driver?.coords?.timestamp)
-    setSpeed((closest?.driver?.coords as any)?.speed)
+    setSpeed(closest?.driver?.coords?.speed ?? 0);
   }, [closest?.driver?.coords])
 
 
@@ -116,9 +117,20 @@ function BusStopDetails() {
       setDistanceMade(distanceCovered)
 
     }
+    console.log('speed', speed)
 
     setPreviousTime(currentTimeStamp)
   }, [time,speed, previousTime])
+
+useEffect(() => {
+  if ((speed ?? 0) <= 1) {
+    setStoppedBus(true);
+  } else {
+    setStoppedBus(false);
+  }
+}, [speed]);
+
+
   
 
 
@@ -587,8 +599,17 @@ useEffect(() => {
 
                   availableBus === true ? 
 
-                     
-                 <p style={{
+                  (
+                    stoppedBus === true ? 
+                         <p style={{
+                    margin : 0,
+                    fontSize : 14,
+                    color : 'rgba(0,0,0,0.5)'
+                  }}>Traffic ahead is causing some delays</p> 
+
+                  :
+
+                     <p style={{
                     margin : 0,
                     fontSize : 14,
                     color : 'rgba(0,0,0,0.5)'
@@ -596,6 +617,10 @@ useEffect(() => {
                     fontWeight : '800',
                     color : 'black'
                   }}>{timeInMinutes}</span> minutes </p> 
+
+                  )
+                     
+              
                   :
 
                   <p style={{
