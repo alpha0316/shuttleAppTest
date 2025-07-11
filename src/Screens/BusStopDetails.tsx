@@ -609,7 +609,15 @@ useEffect(() => {
 
                   :
 
-                     <p style={{
+                  (
+                    arrived ? 
+                  <p style={{
+                    margin : 0,
+                    fontSize : 14,
+                    color : 'rgba(0,0,0,0.5)'
+                  }}> Bus has arrived at {startPoint?.name} </p> 
+                    :
+                    <p style={{
                     margin : 0,
                     fontSize : 14,
                     color : 'rgba(0,0,0,0.5)'
@@ -617,6 +625,9 @@ useEffect(() => {
                     fontWeight : '800',
                     color : 'black'
                   }}>{timeInMinutes}</span> minutes </p> 
+
+                  )
+             
 
                   )
                      
