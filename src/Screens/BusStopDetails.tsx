@@ -600,22 +600,23 @@ useEffect(() => {
                   availableBus === true ? 
 
                   (
-                    stoppedBus === true ? 
-                         <p style={{
-                    margin : 0,
-                    fontSize : 14,
-                    color : 'rgba(0,0,0,0.5)'
-                  }}>Traffic ahead is causing some delays</p> 
-
-                  :
-
-                  (
-                    arrived ? 
-                  <p style={{
+                     arrived === true ? 
+                        <p style={{
                     margin : 0,
                     fontSize : 14,
                     color : 'rgba(0,0,0,0.5)'
                   }}> Bus has arrived at {startPoint?.name} </p> 
+
+                  :
+
+                  (
+                    stoppedBus ? 
+            
+                  <p style={{
+                    margin : 0,
+                    fontSize : 14,
+                    color : 'rgba(0,0,0,0.5)'
+                  }}>Traffic ahead is causing some delays</p> 
                     :
                     <p style={{
                     margin : 0,
