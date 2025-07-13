@@ -244,7 +244,7 @@ const handleStartPointClick = (location: Location) => {
 
     setInputFocused(false);
     if (!pickUp && !dropOff) {
-      setDropDown(false); 
+      setDropDown(true); 
     }
   };
 
