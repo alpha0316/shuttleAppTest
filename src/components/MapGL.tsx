@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, } from 'react';
-import Map, { Marker, Source, Layer, GeolocateControl, ViewState as MapViewState } from 'react-map-gl/mapbox';
+import Map, { Marker, Source, Layer, GeolocateControl, ViewState as MapViewState } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { solveTSP } from './../components/solveTSP'; 
 import { haversineDistance } from './../../utils/distance'
@@ -449,23 +449,23 @@ const getClosestBuses = (
 
 
   useEffect(() => {
-    // Only run if there are drop points and drivers
+    // check for dropPoints
     if (storedDropPoints.length === 0 || filterDrivers.length === 0) {
       setSelectedBus([]);
       return;
     }
 
-    // Defensive: Only filter if busRoute is an array and has stops
+    
     const matchingDrivers: Driver[] = filterDrivers.filter((driver) => {
       if (!Array.isArray(driver.busRoute)) return false;
 
-      // Handle both: busRoute as array of stops (string[]) or array of route objects
+      
       let allStopNames: string[] = [];
       if (typeof driver.busRoute[0] === 'string') {
-        // busRoute is string[]
+      
         allStopNames = driver.busRoute as unknown as string[];
       } else {
-        // busRoute is array of route objects
+        /// here is where I check if the stop between the selected and the driver
         allStopNames = driver.busRoute.flatMap((route: any) =>
           Array.isArray(route.stops) ? route.stops : []
         );
@@ -486,11 +486,22 @@ const getClosestBuses = (
       return matchingDrivers;
     });
 
-    // Debug: log only when matchingDrivers changes
-    if (matchingDrivers.length > 0) {
-      console.log('select', matchingDrivers);
-    }
+
   }, [storedDropPoints, filterDrivers]);
+
+  useEffect(() => {
+
+  setSelectedBus((prevSelected) => {
+    const updated = prevSelected.map((bus) => {
+      const live = filterDrivers.find((d) => d.busID === bus.busID);
+      return live ? { ...bus, coords: live.coords } : bus;
+    });
+    return updated;
+  });
+}, [filterDrivers]);
+
+
+
   
   useEffect(() => {
     if (!closest || storedDropPoints.length === 0) {
@@ -508,7 +519,6 @@ const getClosestBuses = (
         point.name !== 'Paa Joe Round About'
 
     );
-
 
     if (filtered.length === 0) {
       setClosestDropPoint(null);
@@ -861,14 +871,16 @@ const renderBusMarkers = () => {
       // const heading = calculateBearing(prev, bus.coords);
       console.log('filtered' , filterDrivers)
       return (
-        <Marker
-          key={bus.busID}
-          longitude={bus.coords.longitude}
-          latitude={bus.coords.latitude}
-          rotation={bus.coords.heading} 
-        >
+      <Marker
+        key={bus.busID}
+        longitude={bus.coords.longitude}
+        latitude={bus.coords.latitude}
+      >
+        <div style={{ transform: `rotate(${bus.coords.heading || 0}deg)` }}>
           <BusIcon />
-        </Marker>
+        </div>
+      </Marker>
+
       );
     });
   }
@@ -881,34 +893,49 @@ const renderBusMarkers = () => {
     return selectedBus.map((bus) => {
       // const heading = calculateBearing(prev, bus.coords);
       return (
-        <Marker
-          key={bus.busID}
-          longitude={bus.coords.longitude}
-          latitude={bus.coords.latitude}
-          rotation={bus.coords.heading} 
+   <Marker
+        key={bus.busID}
+        longitude={bus.coords.longitude}
+        latitude={bus.coords.latitude}
+      >
+        <div
+          style={{
+            cursor: 'pointer',
+            transform: `rotate(${bus.coords.heading || 0}deg)`,
+            transition: 'transform 0.3s ease',
+          }}
         >
-          <div style={{ cursor: 'pointer' }}>
-            {bus.busID === closestBusID ? <ClosestBusIcon /> : <BusIcon />}
-          </div>
-        </Marker>
+          {bus.busID === closestBusID ? <ClosestBusIcon /> : <BusIcon />}
+        </div>
+      </Marker>
+
       );
     });
   }
   return null;
 };
 
+// const handleViewportChange = (newViewState: any) => {
+//   setViewState((prevState) => ({
+//     ...prevState,
+//     longitude: newViewState.longitude,
+//     latitude: newViewState.latitude,
+//     zoom: newViewState.zoom ?? prevState.zoom,
+//   }));
+//   setIsManuallyAdjusted(true);
+// };
 
 
 
 
   return (
     <Map
-      mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
-       {...viewState}
-      style={{ width: '100vw', height: '100vh', position: 'absolute' }}
-      mapStyle="mapbox://styles/mapbox/streets-v11"
-      {...transitionOptions}
-      onMove={handleViewStateChange}
+        mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
+  {...viewState}
+  style={{ width: '100vw', height: '100vh', position: 'absolute' }}
+  mapStyle="mapbox://styles/mapbox/streets-v11"
+  {...transitionOptions}
+  onMove={handleViewStateChange}
     >
   
       {isHomepage && selectedLocation && (
@@ -981,7 +1008,7 @@ const renderBusMarkers = () => {
         ref={geolocateControlRef}
         positionOptions={{ enableHighAccuracy: true }}
         trackUserLocation={true}
-        showAccuracyCircle={true}
+        // showAccuracyCircle={true}
         showUserLocation={true}
         style={{ display: 'none' }} 
       />
@@ -1015,6 +1042,5 @@ const renderBusMarkers = () => {
 }
 
 export default MapGL;
-
 
 
