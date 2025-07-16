@@ -940,7 +940,7 @@ const renderBusMarkers = () => {
         mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
         {...viewState}
         style={{ width: '100vw', height: '100vh', position: 'absolute' }}
-        mapStyle="mapbox://styles/mapbox/streets-v12"
+        mapStyle="mapbox://styles/mapbox/streets-v11"
         {...transitionOptions}
         onMove={handleViewStateChange}
     >
