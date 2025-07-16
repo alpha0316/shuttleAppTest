@@ -97,7 +97,7 @@ function MapGL({
   const DEFAULT_LATITUDE = 6.678045;
   const DEFAULT_ZOOM = 14.95;
   const TRANSITION_DURATION = 500;
-  const SELECTEDBUS_ZOOM = 16.95;
+  const SELECTEDBUS_ZOOM = 17.95;
 
 const [viewState, setViewState] = useState<MapViewState>({
   longitude: DEFAULT_LONGITUDE,
@@ -940,7 +940,7 @@ const renderBusMarkers = () => {
         mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
         {...viewState}
         style={{ width: '100vw', height: '100vh', position: 'absolute' }}
-        mapStyle="mapbox://styles/mapbox/streets-v11"
+        mapStyle="mapbox://styles/mapbox/streets-v12"
         {...transitionOptions}
         onMove={handleViewStateChange}
     >
