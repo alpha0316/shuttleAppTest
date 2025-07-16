@@ -8,6 +8,8 @@ import {useClosestBus } from '../Screens/useClosestBus'
 import {useShuttleSocket} from './../../hooks/useShuttleSocket'
 // import { io, Socket } from 'socket.io-client';
 import useMediaQuery from '../components/useMediaQuery';
+// import { ViewportProps } from 'react-map-gl';
+
 
 
 
@@ -57,9 +59,10 @@ export interface Driver  {
   coords : Coordinates
 }
 
-interface ExtendedViewState extends Partial<MapViewState> {
-  transitionDuration?: number;
-}
+
+// interface ExtendedViewState extends Partial<MapViewState> {
+//   transitionDuration?: number;
+// }
 
 
 interface DropPoint {
@@ -96,11 +99,14 @@ function MapGL({
   const DEFAULT_ZOOM = 14.95;
   const TRANSITION_DURATION = 500;
 
-  const [viewState, setViewState] = useState<ExtendedViewState>({
-    longitude: DEFAULT_LONGITUDE,
-    latitude: DEFAULT_LATITUDE,
-    zoom: DEFAULT_ZOOM,
-  });
+
+const [viewState, setViewState] = useState<MapViewState>({
+  longitude: DEFAULT_LONGITUDE,
+  latitude: DEFAULT_LATITUDE,
+  zoom: DEFAULT_ZOOM,
+  bearing: 0,
+  pitch: 0,
+});
   
   const [transitionOptions, setTransitionOptions] = useState({
     transitionDuration: TRANSITION_DURATION
@@ -434,16 +440,18 @@ const getClosestBuses = (
     setTransitionOptions({ transitionDuration: TRANSITION_DURATION });
   }, [closest, selectedLocation, pickUpLocation, isHomepage, isManuallyAdjusted]);
 
-  const handleViewStateChange = (evt: { viewState: MapViewState }) => {
-    const { longitude, latitude, zoom } = evt.viewState;
-    setViewState(prevState => ({
-      ...prevState,
-      longitude,
-      latitude,
-      zoom: zoom || prevState.zoom,
-    }));
-    setIsManuallyAdjusted(true);
-  };
+const handleViewStateChange = (evt: { viewState: MapViewState }) => {
+  const { longitude, latitude, zoom } = evt.viewState;
+  setViewState((prevState: MapViewState) => ({
+    ...prevState,
+    longitude,
+    latitude,
+    zoom: zoom || prevState.zoom,
+  }));
+  setIsManuallyAdjusted(true);
+};
+
+
   
 
 
@@ -930,12 +938,15 @@ const renderBusMarkers = () => {
 
   return (
     <Map
-        mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
+     mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN}
   {...viewState}
-  style={{ width: '100vw', height: '100vh', position: 'absolute' }}
+    width="100vw"
+  height="100vh"
   mapStyle="mapbox://styles/mapbox/streets-v11"
   {...transitionOptions}
-  onMove={handleViewStateChange}
+  onViewStateChange={handleViewStateChange}
+  transitionDuration={0} // or your desired value
+
     >
   
       {isHomepage && selectedLocation && (
