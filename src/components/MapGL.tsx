@@ -59,7 +59,6 @@ export interface Driver  {
   coords : Coordinates
 }
 
-
 // interface ExtendedViewState extends Partial<MapViewState> {
 //   transitionDuration?: number;
 // }
@@ -98,7 +97,7 @@ function MapGL({
   const DEFAULT_LATITUDE = 6.678045;
   const DEFAULT_ZOOM = 14.95;
   const TRANSITION_DURATION = 500;
-
+  const SELECTEDBUS_ZOOM = 16.95;
 
 const [viewState, setViewState] = useState<MapViewState>({
   longitude: DEFAULT_LONGITUDE,
@@ -106,6 +105,7 @@ const [viewState, setViewState] = useState<MapViewState>({
   zoom: DEFAULT_ZOOM,
   bearing: 0,
   pitch: 0,
+   padding: { top: 0, bottom: 0, left: 0, right: 0 } 
 });
   
   const [transitionOptions, setTransitionOptions] = useState({
@@ -405,40 +405,42 @@ const getClosestBuses = (
 
 
   /// map logic
-  useEffect(() => {
-    if (isManuallyAdjusted) return; // Don’t override manual adjustments
-  
-    if (closest?.driver?.coords) {
-      setViewState({
-        longitude: closest.driver.coords.longitude,
-        latitude: closest.driver.coords.latitude,
-        zoom: DEFAULT_ZOOM,
-      });
-      setTransitionOptions({ transitionDuration: TRANSITION_DURATION });
-      // console.log('Updating map view to follow closest bus:', closest.driver);
-      return;
-    }
-  
+useEffect(() => {
+  if (isManuallyAdjusted) return; // Don't override manual adjustments
 
-    const centerLocation = isHomepage ? selectedLocation : pickUpLocation;
-    if (centerLocation) {
-      setViewState({
-        longitude: centerLocation.longitude,
-        latitude: centerLocation.latitude,
-        zoom: DEFAULT_ZOOM,
-      });
-      setTransitionOptions({ transitionDuration: TRANSITION_DURATION });
-      return;
-    }
-  
-    // Priority 3: Default to DEFAULT_LONGITUDE and DEFAULT_LATITUDE
-    setViewState({
-      longitude: DEFAULT_LONGITUDE,
-      latitude: DEFAULT_LATITUDE,
-      zoom: DEFAULT_ZOOM,
-    });
+  if (closest?.driver?.coords) {
+    setViewState(prevState => ({
+      ...prevState,
+      longitude: closest.driver.coords.longitude,
+      latitude: closest.driver.coords.latitude,
+      zoom: SELECTEDBUS_ZOOM,
+    }));
     setTransitionOptions({ transitionDuration: TRANSITION_DURATION });
-  }, [closest, selectedLocation, pickUpLocation, isHomepage, isManuallyAdjusted]);
+    // console.log('Updating map view to follow closest bus:', closest.driver);
+    return;
+  }
+
+  const centerLocation = isHomepage ? selectedLocation : pickUpLocation;
+  if (centerLocation) {
+    setViewState(prevState => ({
+      ...prevState,
+      longitude: centerLocation.longitude,
+      latitude: centerLocation.latitude,
+      zoom: DEFAULT_ZOOM,
+    }));
+    setTransitionOptions({ transitionDuration: TRANSITION_DURATION });
+    return;
+  }
+
+  // Priority 3: Default to DEFAULT_LONGITUDE and DEFAULT_LATITUDE
+  setViewState(prevState => ({
+    ...prevState,
+    longitude: DEFAULT_LONGITUDE,
+    latitude: DEFAULT_LATITUDE,
+    zoom: DEFAULT_ZOOM,
+  }));
+  setTransitionOptions({ transitionDuration: TRANSITION_DURATION });
+}, [closest, selectedLocation, pickUpLocation, isHomepage, isManuallyAdjusted]);
 
 const handleViewStateChange = (evt: { viewState: MapViewState }) => {
   const { longitude, latitude, zoom } = evt.viewState;
@@ -450,7 +452,6 @@ const handleViewStateChange = (evt: { viewState: MapViewState }) => {
   }));
   setIsManuallyAdjusted(true);
 };
-
 
   
 
@@ -872,8 +873,6 @@ useEffect(() => {
 
 
 const renderBusMarkers = () => {
-  
-
   if (storedDropPoints.length === 0) {
     return filterDrivers.map((bus) => {
       // const heading = calculateBearing(prev, bus.coords);
@@ -938,15 +937,12 @@ const renderBusMarkers = () => {
 
   return (
     <Map
-     mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN}
-  {...viewState}
-    width="100vw"
-  height="100vh"
-  mapStyle="mapbox://styles/mapbox/streets-v11"
-  {...transitionOptions}
-  onViewStateChange={handleViewStateChange}
-  transitionDuration={0} // or your desired value
-
+        mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
+        {...viewState}
+        style={{ width: '100vw', height: '100vh', position: 'absolute' }}
+        mapStyle="mapbox://styles/mapbox/streets-v11"
+        {...transitionOptions}
+        onMove={handleViewStateChange}
     >
   
       {isHomepage && selectedLocation && (
