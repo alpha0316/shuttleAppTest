@@ -110,8 +110,8 @@ const [viewState, setViewState] = useState<MapViewState>({
   const [selectedBus, setSelectedBus] = useState<Driver[]>([]);
   const [storedDropPoints, setStoredDropPoints] = useState<DropPoint[]>([]);
   const [startPoint, setStartPoint] = useState<Coordinates | null>(null);
-  // const [, setArriveInTwo] = useState(false)
-  // const [, setArrived] = useState(false)
+  const [, setArriveInTwo] = useState(false)
+  const [, setArrived] = useState(false)
   const [busRoute, setBusRoute] = useState([])
 
 
@@ -360,22 +360,22 @@ const getClosestBuses = (
 
       
          
-      //  if (closest?.driver?.coords?.latitude === startPoint?.latitude &&
-      //     closest?.driver?.coords?.longitude === startPoint?.longitude) {
-      //   console.log('close', newClosestBuses)
-      //   setArrived(true)
+       if (closest?.driver?.coords?.latitude === startPoint?.latitude &&
+          closest?.driver?.coords?.longitude === startPoint?.longitude) {
+        console.log('close', newClosestBuses)
+        setArrived(true)
 
-      // }
+      }
 
-      // else if (newClosestBuses.length > 0 && newClosestBuses[0].distance <= 0.1) {
-      //   //  console.log(arriveInTwo)
-      //    setArriveInTwo(true)
-      //   // alert (`A bus is now within 500 meters of your location!`)
-      // } 
+      else if (newClosestBuses.length > 0 && newClosestBuses[0].distance <= 0.1) {
+        //  console.log(arriveInTwo)
+         setArriveInTwo(true)
+        // alert (`A bus is now within 500 meters of your location!`)
+      } 
 
-      // else {
-      //   console.log(false)
-      // }
+      else {
+        console.log(false)
+      }
     } 
     
     else {
@@ -914,7 +914,7 @@ const renderBusMarkers = () => {
         <div
           style={{
             cursor: 'pointer',
-            transform: `rotate(${(bus.coords.heading || 0) - 90 }deg)`, // Adjust by -90 degrees
+            transform: `rotate(${(bus.coords.heading || 0) }deg)`, // Adjust by -90 degrees
             transition: 'transform 0.3s ease',
           }}
         >

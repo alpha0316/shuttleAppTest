@@ -241,9 +241,8 @@ useEffect(() => {
         { name: 'Commercial Area', latitude: 6.682756553904525, longitude: -1.576990347851461 },
         { name: 'Hall 7', latitude: 6.679295619563862, longitude: -1.572807677030472 },
         { name: 'Conti Busstop', latitude: 6.679644223364716, longitude: -1.572967657880401 },
-        { name: 'Pentecost Busstop', latitude: 6.674545299373284, longitude: -1.567565045729575 },
         { name: 'SRC Busstop', latitude: 6.675223889340042, longitude: -1.5678831412482812 },
-        { name: 'Conti Busstop', latitude: 6.679644223364716, longitude: -1.572967657880401 },
+        { name: 'Pentecost Busstop', latitude: 6.674545299373284, longitude: -1.567565045729575 },
         { name: 'KSB', latitude: 6.669314250173885, longitude: -1.567181795001016 },
         { name: 'Paa Joe Round About', latitude: 6.675187511866504, longitude: -1.570775090040308 }
       ] 
@@ -283,7 +282,7 @@ useEffect(() => {
 
       if (pickUp.name === 'Hall 7' && dropOff.name === 'KSB') {
         updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Brunei' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Main Library' 
+          (dropPoint) => dropPoint.name !== 'Brunei' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Main Library' && dropPoint.name !== 'Pentecost Busstop' 
         );
       } 
 
@@ -504,6 +503,7 @@ useEffect(() => {
     time = distance / (speed || 1); 
     console.log(' to cover distance:', coverDistance);
         console.log(' to spped:', speed);
+          console.log(' total:', totalDistance);
 
     const minutes = time / 60; 
     const fixedMinutes = Math.round(minutes);
@@ -1420,7 +1420,7 @@ useEffect(() => {
                   reached === false
                     ? (filteredDropPointsForUI ? filteredDropPointsForUI.slice().reverse() : []).map((dropPoint: DropPoint, index: number) => {
                         // Calculate ETA for each stop based on cumulative distance and speed
-                        let eta = '--:--';
+                        // let eta = '--:--';
                         if (closest?.driver?.coords?.timestamp && startPoint) {
                           const dropPoints = filteredDropPointsForUI ? filteredDropPointsForUI.slice().reverse() : [];
                           const thisIndex = dropPoints.findIndex(dp => dp.name === dropPoint.name);
@@ -1433,11 +1433,11 @@ useEffect(() => {
                               { latitude: curr.latitude, longitude: curr.longitude }
                             );
                           }
-                          const speed = closest.driver.coords.speed || 20; // km/h
-                          const speedMps = (speed * 1000) / 3600;
-                          const seconds = speedMps > 0 ? cumulativeDistance / speedMps : 0;
-                          const startTime = new Date(closest.driver.coords.timestamp);
-                          eta = new Date(startTime.getTime() + seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                          // const speed = closest.driver.coords.speed || 20; // km/h
+                          // const speedMps = (speed * 1000) / 3600;
+                          // const seconds = speedMps > 0 ? cumulativeDistance / speedMps : 0;
+                          // const startTime = new Date(closest.driver.coords.timestamp);
+                          // eta = new Date(startTime.getTime() + seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                         }
                         return (
                           <div key={dropPoint.name}>
@@ -1826,7 +1826,7 @@ useEffect(() => {
       <div style={{
           backgroundColor : 'white',
         position : 'absolute',
-        top : reached || arriveInTwo === true ? (isMobile ? '4vw' : '2vw') : '-28%',
+        top : arrived || arriveInTwo === true ? (isMobile ? '4vw' : '2vw') : '-28%',
         left : isMobile ?  '2.5%' : '40vw',
         borderRadius : 18,
         display : 'flex',
