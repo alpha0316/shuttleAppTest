@@ -1,4 +1,4 @@
-import { useState, useEffect,  } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import MapGl from '../components/MapGL';
 
 // import { FlyToInterpolator } from 'react-map-gl';
@@ -114,6 +114,9 @@ function BusStopDetails() {
       const deltaTimeSeconds = (currentTimeStamp - previousTime) / 1000
       const speedInMps = ( speed * 1000 ) / 3600
       const distanceCovered = speedInMps * deltaTimeSeconds
+      console.log('distance', distanceCovered)
+      console.log('time', deltaTimeSeconds)
+        console.log('speed convert', speedInMps)
       setDistanceMade(distanceCovered)
 
     }
@@ -154,10 +157,10 @@ useEffect(() => {
   const locations: Location[]  = [
     { id: '1', name: 'Main Library', description: 'On Campus', latitude: 6.675033566213408, longitude: -1.5723546778455368,
       dropPoints: [ 
-        { name: 'Brunei', latitude: 6.670465091472612, longitude: -1.5741574445526254 },
-        { name: 'Pentecost Busstop', latitude: 6.674545299373284, longitude: -1.5675650457295751 },
         { name: 'KSB', latitude: 6.669314250173885, longitude: -1.567181795001016 },
+        { name: 'Pentecost Busstop', latitude: 6.674545299373284, longitude: -1.5675650457295751 },
         { name: 'SRC Busstop', latitude: 6.675223889340042, longitude: -1.5678831412482812 },
+        { name: 'Brunei', latitude: 6.670465091472612, longitude: -1.5741574445526254 },
         { name: 'Main Library', latitude: 6.675033566213408, longitude: -1.5723546778455368 },
       ]
     },
@@ -264,12 +267,12 @@ useEffect(() => {
   
       if (pickUp.name === 'Main Library' && dropOff.name === 'Brunei') {
         updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'KSB' && dropPoint.name !== 'SRC Busstop' && dropPoint.name !== 'Pentecost Busstop' && dropPoint.name !== 'Hall 7' && dropPoint.name !== 'Commercial Area' && dropPoint.name !== 'Conti Busstop'
+          (dropPoint) => dropPoint.name !== '' && dropPoint.name !== 'SRC Busstop' && dropPoint.name !== '' && dropPoint.name !== 'Hall 7' && dropPoint.name !== 'Commercial Area' && dropPoint.name !== 'Conti Busstop'
         );
       } 
       if (pickUp.name === 'Main Library' && dropOff.name === 'KSB') {
         updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Brunei' && dropPoint.name !== 'Commercial Area' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'SRC Busstop'  && dropPoint.name !== 'Hall 7' && dropPoint.name !== 'Commercial Area'
+          (dropPoint) => dropPoint.name !== 'Commercial Area' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'SRC Busstop'  && dropPoint.name !== 'Hall 7' && dropPoint.name !== 'Commercial Area'
         );
       } 
       if (pickUp.name === 'Main Library' && dropOff.name === 'Pentecost Busstop') {
@@ -280,21 +283,21 @@ useEffect(() => {
 
       if (pickUp.name === 'Hall 7' && dropOff.name === 'KSB') {
         updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Brunei' && dropPoint.name !== 'Commercial Area' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Main Library' && dropPoint.name !== 'SRC Busstop'
+          (dropPoint) => dropPoint.name !== 'Brunei' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Main Library' 
         );
       } 
 
       
       if (pickUp.name === 'Hall 7' && dropOff.name === 'Pentecost Busstop') {
         updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Brunei' && dropPoint.name !== 'Commercial Area' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Main Library' && dropPoint.name !== 'SRC Busstop' && dropPoint.name !== 'KSB'
+          (dropPoint) => dropPoint.name !== 'Brunei' && dropPoint.name !== 'Commercial Area'  && dropPoint.name !== 'Main Library' && dropPoint.name !== 'SRC Busstop' && dropPoint.name !== 'KSB'
         );
       } 
 
 
       if (pickUp.name === 'Pentecost Busstop' && dropOff.name === 'KSB') {
         updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Brunei' && dropPoint.name !== 'Bomso Busstop' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Main Library'  && dropPoint.name !== 'SRC Busstop'  && dropPoint.name !== '' && dropPoint.name !== 'Hall 7'  && dropPoint.name !== 'Commercial Area' && dropPoint.name !== 'Paa Joe Round About'
+          (dropPoint) =>  dropPoint.name !== 'Bomso Busstop' && dropPoint.name !== 'Conti Busstop'  && dropPoint.name !== 'SRC Busstop'  && dropPoint.name !== '' && dropPoint.name !== ''  && dropPoint.name !== '' && dropPoint.name !== 'Paa Joe Round About'
         );
       } 
 
@@ -312,7 +315,7 @@ useEffect(() => {
 
       if (pickUp.name === 'SRC Busstop' && dropOff.name === 'Main Library') {
         updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Brunei' && dropPoint.name !== 'Bomso Busstop' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'KSB'  && dropPoint.name !== 'Pentecost Busstop'
+          (dropPoint) => dropPoint.name !== '' && dropPoint.name !== 'Bomso Busstop' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== ''  && dropPoint.name !== 'Pentecost Busstop'
         );
       } 
 
@@ -330,7 +333,7 @@ useEffect(() => {
 
       if (pickUp.name === 'Brunei' && dropOff.name === 'Main Library') {
         updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Pentecost Busstop' && dropPoint.name !== 'Bomso Busstop' && dropPoint.name !== 'KSB' && dropPoint.name !== 'Commercial Area'  && dropPoint.name !== 'SRC Busstop'  && dropPoint.name !== 'Hall 7'
+          (dropPoint) => dropPoint.name !== '' && dropPoint.name !== 'Bomso Busstop' && dropPoint.name !== '' && dropPoint.name !== 'Commercial Area'  && dropPoint.name !== 'SRC Busstop'  && dropPoint.name !== 'Hall 7'
         );
       } 
 
@@ -383,7 +386,7 @@ useEffect(() => {
 
       if (pickUp.name === 'Brunei' && dropOff.name === 'KSB') {
         updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== '' && dropPoint.name !== 'Bomso Busstop' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Commercial Area'  && dropPoint.name !== 'SRC Busstop'  && dropPoint.name !== 'Hall 7'
+          (dropPoint) => dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Commercial Area' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Commercial Area'  && dropPoint.name !== 'SRC Busstop'  && dropPoint.name !== 'Hall 7'
         );
       } 
 
@@ -398,6 +401,12 @@ useEffect(() => {
       if (pickUp.name === 'KSB' && dropOff.name === 'Commercial Area') {
         updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
           (dropPoint) => dropPoint.name !== 'Main Library' && dropPoint.name !== 'Bomso Busstop' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Pentecost Busstop'  && dropPoint.name !== ''
+        );
+      } 
+
+        if (pickUp.name === 'KSB' && dropOff.name === 'SRC Busstop') {
+        updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
+          (dropPoint) => dropPoint.name !== 'Main Library' && dropPoint.name !== 'Commercial Area' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Pentecost Busstop'  && dropPoint.name !== 'Brunei'
         );
       } 
 
@@ -480,6 +489,7 @@ const distance = getDistance(start, end);
   const barWidth = 130
   const totalDistance = distance || 1
   const safeCovered = Math.min(distanceMade ?? 0, totalDistance)
+  console.log('safe distance', distanceMade)
 
 
   
@@ -492,20 +502,44 @@ useEffect(() => {
     let time = 0;
 
     time = distance / (speed || 1); 
-    // console.log('Time to cover distance:', time, 'seconds');
+    console.log(' to cover distance:', coverDistance);
+        console.log(' to spped:', speed);
+
     const minutes = time / 60; 
     const fixedMinutes = Math.round(minutes);
     setTimeInMinutes(fixedMinutes);
 })
 
+const hasReachedNotified = useRef(false);
+
 useEffect(() => {
-  if ( closest?.driver?.coords?.latitude === startPoint?.latitude && 
-       closest?.driver?.coords?.longitude === startPoint?.longitude) {
-    setReached(true);   
-  } else {
-    setReached(false);
+  const reached =
+    closest?.driver?.coords?.latitude === startPoint?.latitude &&
+    closest?.driver?.coords?.longitude === startPoint?.longitude;
+  
+  if (reached && !hasReachedNotified.current) {
+    setReached(true);
+    hasReachedNotified.current = true;
+    console.log('bus', reached, closest?.driver?.coords?.latitude, startPoint?.latitude, closest?.driver?.coords?.longitude, startPoint?.longitude);
+
+    // Reset state after 5 seconds
+    const timer = setTimeout(() => {
+      setReached(false);
+    }, 5000);
+
+    return () => clearTimeout(timer);
   }
-}, [closest?.driver?.coords?.latitude, closest?.driver?.coords?.longitude, startPoint?.latitude, startPoint?.longitude])
+
+  if (!reached) {
+    hasReachedNotified.current = false;
+  }
+}, [
+  closest?.driver?.coords?.latitude,
+  closest?.driver?.coords?.longitude,
+  startPoint?.latitude,
+  startPoint?.longitude,
+]);
+
 
 useEffect(() => {
   if ( closest?.driver?.coords?.latitude === dropOff?.latitude && 
@@ -1251,7 +1285,7 @@ useEffect(() => {
                       }}>
                         {dropPoint.name}
                       </p>
-                      <p style={{
+                      {/* <p style={{
                         fontSize: 11,
                          color:
                           dropPoint.latitude === closest?.driver?.coords?.latitude &&
@@ -1323,7 +1357,7 @@ useEffect(() => {
 
                           return eta.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                         })()}
-                      </p>
+                      </p> */}
                     </div>
                   </div>
                   {index < (filteredDropPointsForUI ?? []).length - 1 && (
@@ -1416,6 +1450,7 @@ useEffect(() => {
                                 display: 'flex',
                                 gap: 8,
                                 paddingRight: 8,
+                                alignItems : 'center'
                               }}>
                              
                                   {(() => {
@@ -1513,7 +1548,7 @@ useEffect(() => {
                             : 'rgba(0,0,0,0.6)',
                                 }}>{dropPoint.name}</p>
                               </div>
-                              <p style={{
+                              {/* <p style={{
                                 margin: 0,
                                 fontSize: 12,
                                 color:
@@ -1523,7 +1558,7 @@ useEffect(() => {
                             : 'rgba(0,0,0,0.6)',
                               }}>
                                 {eta}
-                              </p>
+                              </p> */}
                             </div>
                              {index < (filteredDropPointsForUI ?? []).length - 1 && (
                               <div style={{
@@ -1791,7 +1826,7 @@ useEffect(() => {
       <div style={{
           backgroundColor : 'white',
         position : 'absolute',
-        top : arrived || arriveInTwo === true ? (isMobile ? '4vw' : '2vw') : '-28%',
+        top : reached || arriveInTwo === true ? (isMobile ? '4vw' : '2vw') : '-28%',
         left : isMobile ?  '2.5%' : '40vw',
         borderRadius : 18,
         display : 'flex',
@@ -1837,7 +1872,7 @@ useEffect(() => {
           zIndex : 1000
         }}>
 
-     {arrived ? (
+     {reached === true ? (
         <p style={{ color: 'rgba(0,0,0,0.6)' }}>
           Your shuttle has arrived at <span style={{ fontWeight: 'bold', color: '#000' }}>
             {startPoint?.name || "your pickup point"}
