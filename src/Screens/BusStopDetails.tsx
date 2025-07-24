@@ -101,6 +101,8 @@ function BusStopDetails() {
     // If timestamp is not on coords, try closest?.driver?.timestamp or update Coordinates type
     setTime(closest?.driver?.coords?.timestamp)
     setSpeed(closest?.driver?.coords?.speed ?? 0);
+    // console.log('time', time)
+    // console.log('time', speed)
   }, [closest?.driver?.coords])
 
 
@@ -116,7 +118,7 @@ function BusStopDetails() {
       const distanceCovered = speedInMps * deltaTimeSeconds
       console.log('distance', distanceCovered)
       console.log('time', deltaTimeSeconds)
-        console.log('speed convert', speedInMps)
+      console.log('speed convert', speedInMps)
       setDistanceMade(distanceCovered)
 
     }
@@ -186,36 +188,39 @@ useEffect(() => {
 
     { id: '4', name: 'Hall 7', description: 'Hub for student activities', latitude: 6.679295619563862, longitude: -1.572807677030472,
       dropPoints: [ 
-        { name: 'Pentecost Busstop', latitude: 6.674545299373284, longitude: -1.567565045729575 },
         { name: 'KSB', latitude: 6.669314250173885, longitude: -1.567181795001016 },
-        { name: 'Paa Joe Round About', latitude: 6.678596454119355, longitude: -1.5709606375024159 },
+        { name: 'Pentecost Busstop', latitude: 6.674545299373284, longitude: -1.567565045729575 },
         { name: 'Commercial Area', latitude: 6.682751297721754, longitude: -1.5769726260262382, },
-        { name: 'Hall 7', latitude: 6.679295619563862, longitude: -1.572807677030472 }
+        { name: 'Hall 7', latitude: 6.679295619563862, longitude: -1.572807677030472 },
+        { name: 'Paa Joe Round About', latitude: 6.675187511866504, longitude: -1.570775090040308 }
+        
       ]
     },
-    { id: '5', name: 'Gaza', description: 'Off Campus', latitude: 6.687618867462474, longitude: -1.5570359730017378, 
+    { id: '5', name: 'Gaza', description: 'Off Campus', latitude: 6.686603046574587, longitude: -1.556854180379707, 
       dropPoints: [ 
         { name: 'Pharmacy Busstop', latitude: 6.67480379472123, longitude: -1.5663873751176354 },
         { name: 'Medical Village', latitude: 6.6800787890749245, longitude: -1.549747261104641 },
-        { name: 'Gaza', latitude: 6.687618867462474, longitude: -1.5570359730017378 }
+        { name: 'Gaza', latitude: 6.686603046574587, longitude: -1.556854180379707 },
+        // 6.686603046574587, -1.5565200861528035
       ]
     },
     { id: '6', name: 'Medical Village', description: 'Hub for student activities', latitude: 6.6800787890749245, longitude: -1.549747261104641,   
       dropPoints: [ 
+        { name: 'Gaza', latitude: 6.686603046574587, longitude: -1.556854180379707 },
         { name: 'Pharmacy Busstop', latitude: 6.67480379472123, longitude: -1.5663873751176354 },
-        { name: 'Gaza', latitude: 6.687618867462474, longitude: -1.5570359730017378 },
         { name: 'Medical Village', latitude: 6.6800787890749245, longitude: -1.549747261104641 }
       ] 
     },
     { id: '7', name: 'Pharmacy Busstop', description: 'On Campus', latitude: 6.67480379472123, longitude: -1.5663873751176354,
       dropPoints: [ 
         { name: 'Medical Village', latitude: 6.6800787890749245, longitude: -1.549747261104641 },
-        { name: 'Gaza', latitude: 6.687618867462474, longitude: -1.5570359730017378 },
+        { name: 'Gaza', latitude: 6.686603046574587, longitude: -1.556854180379707 },
         { name: 'Pharmacy Busstop', latitude: 6.67480379472123, longitude: -1.5663873751176354 }
       ] 
     },
     { id: '8', name: 'Pentecost Busstop', description: 'On Campus', latitude: 6.674545299373284, longitude: -1.5675650457295751,
       dropPoints: [ 
+        { name: 'Commercial Area', latitude: 6.682751297721754, longitude: -1.5769726260262382, },
         { name: 'Brunei', latitude: 6.670465091472612, longitude: -1.5741574445526254 },
         { name: 'KSB', latitude: 6.669314250173885, longitude: -1.567181795001016 },
         { name: 'Main Library', latitude: 6.675033566213408, longitude: -1.5723546778455368 },
@@ -289,7 +294,7 @@ useEffect(() => {
       
       if (pickUp.name === 'Hall 7' && dropOff.name === 'Pentecost Busstop') {
         updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Brunei' && dropPoint.name !== 'Commercial Area'  && dropPoint.name !== 'Main Library' && dropPoint.name !== 'SRC Busstop' && dropPoint.name !== 'KSB'
+          (dropPoint) => dropPoint.name !== 'Brunei' && dropPoint.name !== ''  && dropPoint.name !== 'Main Library' && dropPoint.name !== 'SRC Busstop' && dropPoint.name !== 'KSB'
         );
       } 
 
@@ -348,11 +353,11 @@ useEffect(() => {
         );
       } 
 
-      if (pickUp.name === 'Commercial Area' && dropOff.name === 'KSB') {
-        updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Main Library' && dropPoint.name !== 'Main Library' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Brunei'  && dropPoint.name !== 'Conti Busstop'
-        );
-      } 
+      // if (pickUp.name === 'Commercial Area' && dropOff.name === 'KSB') {
+      //   updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
+      //     (dropPoint) => dropPoint.name !== 'Main Library' && dropPoint.name !== 'Main Library' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Brunei'  && dropPoint.name !== 'Conti Busstop'
+      //   );
+      // } 
 
       if (pickUp.name === 'Commercial Area' && dropOff.name === 'Pentecost Busstop') {
         updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
@@ -361,7 +366,7 @@ useEffect(() => {
       } 
       if (pickUp.name === 'Commercial Area' && dropOff.name === 'Hall 7') {
         updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Main Library' && dropPoint.name !== 'Pentecost Busstop' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Brunei'  && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'KSB' && dropPoint.name !== 'Paa Joe Round About'
+          (dropPoint) => dropPoint.name !== 'Main Library' && dropPoint.name !== 'Pentecost Busstop' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Brunei'  && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'KSB' && dropPoint.name !== ''
         );
       } 
 
@@ -418,13 +423,13 @@ useEffect(() => {
 
       if (pickUp.name === 'Gaza' && dropOff.name === 'Pharmacy Busstop') {
         updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Medical Village' 
+          (dropPoint) => dropPoint.name !== '' 
         );
       } 
 
       if (pickUp.name === 'Gaza' && dropOff.name === 'Medical Village') {
         updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Pharmacy Busstop' 
+          (dropPoint) => dropPoint.name !== '' 
         );
       } 
 
@@ -436,13 +441,13 @@ useEffect(() => {
 
       if (pickUp.name === 'Pharmacy Busstop' && dropOff.name === 'Gaza') {
         updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Medical Village' 
+          (dropPoint) => dropPoint.name !== '' 
         );
       } 
 
       if (pickUp.name === 'Medical Village' && dropOff.name === 'Pharmacy Busstop') {
         updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Gaza' 
+          (dropPoint) => dropPoint.name !== '' 
         );
       } 
       
@@ -488,22 +493,22 @@ const distance = getDistance(start, end);
   const barWidth = 130
   const totalDistance = distance || 1
   const safeCovered = Math.min(distanceMade ?? 0, totalDistance)
-  console.log('safe distance', distanceMade)
-
+  // console.log('safe distance', distanceMade)
 
   
   const coverDistance = (safeCovered/totalDistance) * barWidth
   const distanceLeft = Math.max(totalDistance - safeCovered, 0);
   const dynamicDistance = (distanceLeft/totalDistance) * barWidth
 
+
 useEffect(() => {
 
     let time = 0;
 
     time = distance / (speed || 1); 
-    console.log(' to cover distance:', coverDistance);
-        console.log(' to spped:', speed);
-          console.log(' total:', totalDistance);
+    // console.log('to cover distance:', coverDistance);
+    // console.log('safe:', safeCovered);
+    // console.log('total:', totalDistance);
 
     const minutes = time / 60; 
     const fixedMinutes = Math.round(minutes);

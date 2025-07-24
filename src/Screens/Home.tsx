@@ -67,34 +67,36 @@ function Home() {
         { name: 'Hall 7', latitude: 6.679295619563862, longitude: -1.572807677030472 }
       ]
     },
-    { id: '5', name: 'Gaza', description: 'Off Campus', latitude: 6.687618867462474, longitude: -1.5570359730017378, 
+    { id: '5', name: 'Gaza', description: 'Off Campus', latitude: 6.686603046574587, longitude: -1.556854180379707, 
       dropPoints: [ 
         { name: 'Pharmacy Busstop', latitude: 6.67480379472123, longitude: -1.5663873751176354 },
         { name: 'Medical Village', latitude: 6.6800787890749245, longitude: -1.549747261104641 },
-        { name: 'Gaza', latitude: 6.687618867462474, longitude: -1.5570359730017378 }
+        { name: 'Gaza', latitude: 6.686603046574587, longitude: -1.556854180379707 },
+        // 6.686603046574587, -1.5565200861528035
       ]
     },
     { id: '6', name: 'Medical Village', description: 'Hub for student activities', latitude: 6.6800787890749245, longitude: -1.549747261104641,   
       dropPoints: [ 
         { name: 'Pharmacy Busstop', latitude: 6.67480379472123, longitude: -1.5663873751176354 },
-        { name: 'Gaza', latitude: 6.687618867462474, longitude: -1.5570359730017378 },
+        { name: 'Gaza', latitude: 6.686603046574587, longitude: -1.556854180379707 },
         { name: 'Medical Village', latitude: 6.6800787890749245, longitude: -1.549747261104641 }
       ] 
     },
     { id: '7', name: 'Pharmacy Busstop', description: 'On Campus', latitude: 6.67480379472123, longitude: -1.5663873751176354,
       dropPoints: [ 
         { name: 'Medical Village', latitude: 6.6800787890749245, longitude: -1.549747261104641 },
-        { name: 'Gaza', latitude: 6.687618867462474, longitude: -1.5570359730017378 },
+         { name: 'Gaza', latitude: 6.68650432276154, longitude: -1.556854180379707 },
         { name: 'Pharmacy Busstop', latitude: 6.67480379472123, longitude: -1.5663873751176354 }
       ] 
     },
     { id: '8', name: 'Pentecost Busstop', description: 'On Campus', latitude: 6.674545299373284, longitude: -1.5675650457295751,
       dropPoints: [ 
         // { name: 'Paa Joe Round About', latitude: 6.675187511866504, longitude: -1.570775090040308 },
-        // { name: 'Hall 7', latitude: 6.679295619563862, longitude: -1.572807677030472 },
+        { name: 'Hall 7', latitude: 6.679295619563862, longitude: -1.572807677030472 },
         { name: 'KSB', latitude: 6.669314250173885, longitude: -1.567181795001016 },
         // { name: 'Main Library', latitude: 6.675033566213408, longitude: -1.5723546778455368 },
-        { name: 'Pentecost Busstop', latitude: 6.674545299373284, longitude: -1.567565045729575 }
+        { name: 'Pentecost Busstop', latitude: 6.674545299373284, longitude: -1.567565045729575 },
+        
       ] 
     },
     { id: '9', name: 'SRC Busstop', description: 'On Campus', latitude: 6.675223889340042, longitude: -1.5678831412482812, 
