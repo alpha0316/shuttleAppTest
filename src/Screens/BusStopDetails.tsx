@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect} from 'react';
 import MapGl from '../components/MapGL';
 
 // import { FlyToInterpolator } from 'react-map-gl';
@@ -10,6 +10,23 @@ import { getDistance } from 'geolib';
 
 
 
+  interface Location {
+    id: string;
+    name: string;
+    description: string;
+    latitude: number;
+    longitude: number;
+    dropPoints: DropPoint[]; 
+  }
+
+
+  interface DropPoint {
+    name: string;
+    latitude: number;
+    longitude: number;
+  }
+
+
 
 function BusStopDetails() {
 
@@ -19,16 +36,6 @@ function BusStopDetails() {
   const { pickUp, dropOff } = state || {};
   const { closestStopName } = useClosestStop();
   const { arrived, arriveInTwo, setArriveInTwo, setArrived, closest } =useClosestBus()
-
- 
-
-  interface Coordinates {
-    latitude: number;
-    longitude: number;
-    speed?: number;
-    timestamp?: number | string;   
-  }
-
   const [startPoint, setStartPoint] = useState<Location | null>(null);
   const [speed, setSpeed] = useState<number | null>(null);
   const [time, setTime] = useState<string | number | Date | undefined>(undefined);
@@ -39,6 +46,7 @@ function BusStopDetails() {
   const [final, setFinal] = useState(true);
   const [availableBus, SetAvailableBus] = useState(true)
   const [stoppedBus, setStoppedBus] = useState(false)
+  const [closeToastModal, setCloseToastModal] = useState(false);
   // const [drivers, setDrivers] = useState<Driver[]>([]);
   // const [busRoute, setBusRoute] = useState([])
 
@@ -107,54 +115,8 @@ function BusStopDetails() {
 
 
 
-  useEffect(() => {
-    if (!time || !speed) return;
-
-    const currentTimeStamp = new Date(time).getTime()
-
-    if (previousTime !== null) {
-      const deltaTimeSeconds = (currentTimeStamp - previousTime) / 1000
-      const speedInMps = ( speed * 1000 ) / 3600
-      const distanceCovered = speedInMps * deltaTimeSeconds
-      console.log('distance', distanceCovered)
-      console.log('time', deltaTimeSeconds)
-      console.log('speed convert', speedInMps)
-      setDistanceMade(distanceCovered)
-
-    }
-    console.log('speed', speed)
-
-    setPreviousTime(currentTimeStamp)
-  }, [time,speed, previousTime])
-
-useEffect(() => {
-  if ((speed ?? 0) <= 1) {
-    setStoppedBus(true);
-  } else {
-    setStoppedBus(false);
-  }
-}, [speed]);
 
 
-  
-
-
-  interface Location {
-    id: string;
-    name: string;
-    description: string;
-    latitude: number;
-    longitude: number;
-    dropPoints: DropPoint[];
-    
-  }
-
-
-  interface DropPoint {
-    name: string;
-    latitude: number;
-    longitude: number;
-  }
 
   const locations: Location[]  = [
     { id: '1', name: 'Main Library', description: 'On Campus', latitude: 6.675033566213408, longitude: -1.5723546778455368,
@@ -190,7 +152,7 @@ useEffect(() => {
       dropPoints: [ 
         { name: 'KSB', latitude: 6.669314250173885, longitude: -1.567181795001016 },
         { name: 'Pentecost Busstop', latitude: 6.674545299373284, longitude: -1.567565045729575 },
-        { name: 'Commercial Area', latitude: 6.682751297721754, longitude: -1.5769726260262382, },
+        // { name: 'Commercial Area', latitude: 6.682751297721754, longitude: -1.5769726260262382, },
         { name: 'Hall 7', latitude: 6.679295619563862, longitude: -1.572807677030472 },
         { name: 'Paa Joe Round About', latitude: 6.675187511866504, longitude: -1.570775090040308 }
         
@@ -222,10 +184,11 @@ useEffect(() => {
       dropPoints: [ 
         { name: 'Commercial Area', latitude: 6.682751297721754, longitude: -1.5769726260262382, },
         { name: 'Brunei', latitude: 6.670465091472612, longitude: -1.5741574445526254 },
-        { name: 'KSB', latitude: 6.669314250173885, longitude: -1.567181795001016 },
+      
         { name: 'Main Library', latitude: 6.675033566213408, longitude: -1.5723546778455368 },
         { name: 'Hall 7', latitude: 6.679295619563862, longitude: -1.572807677030472 },
         { name: 'Pentecost Busstop', latitude: 6.674545299373284, longitude: -1.567565045729575 },
+          { name: 'KSB', latitude: 6.669314250173885, longitude: -1.567181795001016 },
         { name: 'Paa Joe Round About', latitude: 6.675187511866504, longitude: -1.570775090040308 }
 
       ] 
@@ -236,7 +199,7 @@ useEffect(() => {
         { name: 'Main Library', latitude: 6.675033566213408, longitude: -1.5723546778455368 },
         { name: 'Conti Busstop', latitude: 6.679644223364716, longitude: -1.572967657880401 },
         { name: 'Commercial Area', latitude: 6.682756553904525, longitude: -1.576990347851461 },
-        { name: 'SRC Busstop', latitude: 6.675223889340042, longitude: -1.5678831412482812 }
+        { name: 'SRC Busstop', latitude: 6.675223889340042, longitude: -1.5678831412482812 },
       ] 
     },
     { id: '10', name: 'KSB', description: 'Hub for student activities', latitude: 6.669314250173885, longitude: -1.567181795001016,
@@ -294,14 +257,14 @@ useEffect(() => {
       
       if (pickUp.name === 'Hall 7' && dropOff.name === 'Pentecost Busstop') {
         updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Brunei' && dropPoint.name !== ''  && dropPoint.name !== 'Main Library' && dropPoint.name !== 'SRC Busstop' && dropPoint.name !== 'KSB'
+          (dropPoint) => dropPoint.name !== 'Brunei' && dropPoint.name !== ''  && dropPoint.name !== 'Main Library' && dropPoint.name !== 'SRC Busstop' && dropPoint.name !== ''
         );
       } 
 
 
       if (pickUp.name === 'Pentecost Busstop' && dropOff.name === 'KSB') {
         updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) =>  dropPoint.name !== 'Bomso Busstop' && dropPoint.name !== 'Conti Busstop'  && dropPoint.name !== 'SRC Busstop'  && dropPoint.name !== '' && dropPoint.name !== ''  && dropPoint.name !== '' && dropPoint.name !== 'Paa Joe Round About'
+          (dropPoint) =>  dropPoint.name !== 'Bomso Busstop' && dropPoint.name !== 'Conti Busstop'  && dropPoint.name !== 'SRC Busstop'  && dropPoint.name !== 'Brunei' && dropPoint.name !== 'Main Library'  && dropPoint.name !== '' && dropPoint.name !== ''
         );
       } 
 
@@ -361,12 +324,12 @@ useEffect(() => {
 
       if (pickUp.name === 'Commercial Area' && dropOff.name === 'Pentecost Busstop') {
         updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Main Library' && dropPoint.name !== 'Main Library' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Brunei'  && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'KSB'
+          (dropPoint) => dropPoint.name !== 'Main Library' && dropPoint.name !== 'Main Library' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Brunei'  && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== ''
         );
       } 
       if (pickUp.name === 'Commercial Area' && dropOff.name === 'Hall 7') {
         updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Main Library' && dropPoint.name !== 'Pentecost Busstop' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Brunei'  && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'KSB' && dropPoint.name !== ''
+          (dropPoint) => dropPoint.name !== 'Main Library' && dropPoint.name !== '' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Brunei'  && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== '' && dropPoint.name !== ''
         );
       } 
 
@@ -464,8 +427,7 @@ useEffect(() => {
   }, [id, navigate, pickUp, dropOff]);
   
    const closeModal = () => {
-      setArriveInTwo(false)
-        setArrived(false)
+      setCloseToastModal(true)
    }
   
   const filteredDropPointsForUI = selectedLocation?.dropPoints?.filter(
@@ -489,8 +451,38 @@ const end = {
 
 const distance = getDistance(start, end);
 
+  useEffect(() => {
+    if (!time || !speed) return;
 
-  const barWidth = 130
+    const currentTimeStamp = new Date(time).getTime()
+
+    if (previousTime !== null) {
+      const deltaTimeSeconds = (currentTimeStamp - previousTime) / 1000
+      const speedInMps = ( speed * 1000 ) / 3600
+      const distanceCovered = speedInMps * deltaTimeSeconds
+      console.log('distance', distanceCovered)
+      console.log('time', deltaTimeSeconds)
+      console.log('speed convert', speedInMps)
+      setDistanceMade(distanceCovered)
+
+    }
+    console.log('speed', speed)
+
+    setPreviousTime(currentTimeStamp)
+  }, [time,speed, previousTime])
+
+
+useEffect(() => {
+  if ((speed ?? 0) <= 1) {
+    setStoppedBus(true);
+  } else {
+    setStoppedBus(false);
+  }
+}, [speed]);
+
+
+
+  const barWidth = 100
   const totalDistance = distance || 1
   const safeCovered = Math.min(distanceMade ?? 0, totalDistance)
   // console.log('safe distance', distanceMade)
@@ -499,7 +491,6 @@ const distance = getDistance(start, end);
   const coverDistance = (safeCovered/totalDistance) * barWidth
   const distanceLeft = Math.max(totalDistance - safeCovered, 0);
   const dynamicDistance = (distanceLeft/totalDistance) * barWidth
-
 
 useEffect(() => {
 
@@ -515,35 +506,78 @@ useEffect(() => {
     setTimeInMinutes(fixedMinutes);
 })
 
-const hasReachedNotified = useRef(false);
+// const hasReachedNotified = useRef(false);
+
+// useEffect(() => {
+//   const reached =
+//     closest?.driver?.coords?.latitude === startPoint?.latitude &&
+//     closest?.driver?.coords?.longitude === startPoint?.longitude;
+  
+//   if (closest?.driver?.coords?.latitude === startPoint?.latitude &&
+//     closest?.driver?.coords?.longitude === startPoint?.longitude) {
+//     setReached(true);
+//     hasReachedNotified.current = true;
+//     console.log('bus', reached);
+//     console.log('driver latude', closest)
+//     console.log('start latotitude', startPoint)
+
+
+//     // Reset state after 5 seconds
+//     const timer = setTimeout(() => {
+//       setReached(false);
+//     }, 5000);
+
+//     return () => clearTimeout(timer);
+//   }
+
+//   if (!reached) {
+//     hasReachedNotified.current = false;
+//   }
+// }, [
+//   closest?.driver?.coords?.latitude,
+//   closest?.driver?.coords?.longitude,
+//   startPoint?.latitude,
+//   startPoint?.longitude,
+// ]);
+
+// useEffect(() => {
+//       console.log('driver latude', closest?.driver?.coords.latitude)
+//     console.log('start latotitude', startPoint?.latitude)
+//   if (closest?.driver?.coords?.latitude === startPoint?.latitude){
+//     console.log('arrive',true)
+//     setReached(true);
+//   } else{
+//     console.log('nahhh', false)
+//     setReached(false);
+//   }
+// }, [closest, startPoint]);
+
+
+
+
+const BUS_STOP_RADIUS = 30; 
+
+const hasArrivedAtStop = (driverCoords: { latitude: number; longitude: number }, stopCoords: { latitude: number; longitude: number }) => {
+  const distance = getDistance(
+    { latitude: driverCoords.latitude, longitude: driverCoords.longitude },
+    { latitude: stopCoords.latitude, longitude: stopCoords.longitude }
+  );
+  return distance <= BUS_STOP_RADIUS;
+};
 
 useEffect(() => {
-  const reached =
-    closest?.driver?.coords?.latitude === startPoint?.latitude &&
-    closest?.driver?.coords?.longitude === startPoint?.longitude;
-  
-  if (reached && !hasReachedNotified.current) {
-    setReached(true);
-    hasReachedNotified.current = true;
-    console.log('bus', reached, closest?.driver?.coords?.latitude, startPoint?.latitude, closest?.driver?.coords?.longitude, startPoint?.longitude);
+  if (!closest?.driver?.coords || !startPoint) return;
 
-    // Reset state after 5 seconds
-    const timer = setTimeout(() => {
-      setReached(false);
-    }, 5000);
+  const driverCoords = closest.driver.coords;
+  const stopCoords = startPoint;
 
-    return () => clearTimeout(timer);
-  }
+  const arrived = hasArrivedAtStop(driverCoords, stopCoords);
 
-  if (!reached) {
-    hasReachedNotified.current = false;
-  }
-}, [
-  closest?.driver?.coords?.latitude,
-  closest?.driver?.coords?.longitude,
-  startPoint?.latitude,
-  startPoint?.longitude,
-]);
+  console.log(arrived ? "✅ Bus arrived at stop" : "⏳ Approaching...");
+
+  setReached(arrived);
+}, [closest, startPoint]);
+
 
 
 useEffect(() => {
@@ -1050,7 +1084,7 @@ useEffect(() => {
                   whiteSpace: 'nowrap',
                   color: reached ? 'rgba(0,0,0,1)' : 'rgba(0,0,0,0.5)',
                   }}>{dropPoint.name}</p>
-                  <p style={{
+                  {/* <p style={{
                   fontSize: 11,
                   color: reached ? 'rgba(0,0,0,1)' : 'rgba(0,0,0,0.5)',
                    textAlign: 'center',
@@ -1118,7 +1152,7 @@ useEffect(() => {
 
                     return eta.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                   })()}
-                  </p>
+                  </p> */}
 
                   </div>
                  
@@ -1828,84 +1862,74 @@ useEffect(() => {
             
       </div>
 
-      <div style={{
-          backgroundColor : 'white',
-        position : 'absolute',
-        top : arrived || arriveInTwo === true ? (isMobile ? '4vw' : '2vw') : '-28%',
-        left : isMobile ?  '2.5%' : '40vw',
-        borderRadius : 18,
-        display : 'flex',
-        flexDirection : 'column',
-        gap : 8,
-        padding : 12,
-        width : isMobile ? '95vw' : '380px',
-        maxWidth: 420,
-        minWidth: isMobile ? 'auto' : 320,
-        transition: '0.5s ease',
+      {!closeToastModal && (
+        <div style={{
+            backgroundColor : 'white',
+            position : 'absolute',
+            top : reached === true || arriveInTwo === true ? (isMobile ? '4vw' : '2vw') : '-28%',
+            left : isMobile ?  '2.5%' : '40vw',
+            borderRadius : 18,
+            display : 'flex',
+            flexDirection : 'column',
+            gap : 8,
+            padding : 12,
+            width : isMobile ? '95vw' : '380px',
+            maxWidth: 420,
+            minWidth: isMobile ? 'auto' : 320,
+            transition: '0.5s ease',
           }}>
-        <div style={{
-          display : 'flex',
-          alignItems : 'center',
-          justifyContent : 'space-between'
-        }}>
           <div style={{
-          display : 'flex',
-          alignItems : 'center',
-          gap : 12,
-        }}>
-           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-        <path d="M19.3399 14.49L18.3399 12.83C18.1299 12.46 17.9399 11.76 17.9399 11.35V8.82C17.9399 6.47 16.5599 4.44 14.5699 3.49C14.0499 2.57 13.0899 2 11.9899 2C10.8999 2 9.91994 2.59 9.39994 3.52C7.44994 4.49 6.09994 6.5 6.09994 8.82V11.35C6.09994 11.76 5.90994 12.46 5.69994 12.82L4.68994 14.49C4.28994 15.16 4.19994 15.9 4.44994 16.58C4.68994 17.25 5.25994 17.77 5.99994 18.02C7.93994 18.68 9.97994 19 12.0199 19C14.0599 19 16.0999 18.68 18.0399 18.03C18.7399 17.8 19.2799 17.27 19.5399 16.58C19.7999 15.89 19.7299 15.13 19.3399 14.49Z" fill="#4DB448"/>
-        <path d="M14.8299 20.01C14.4099 21.17 13.2999 22 11.9999 22C11.2099 22 10.4299 21.68 9.87993 21.11C9.55993 20.81 9.31993 20.41 9.17993 20C9.30993 20.02 9.43993 20.03 9.57993 20.05C9.80993 20.08 10.0499 20.11 10.2899 20.13C10.8599 20.18 11.4399 20.21 12.0199 20.21C12.5899 20.21 13.1599 20.18 13.7199 20.13C13.9299 20.11 14.1399 20.1 14.3399 20.07C14.4999 20.05 14.6599 20.03 14.8299 20.01Z" fill="#4DB448"/>
-          </svg>
-        <p className='text-[16px] font-bold m-0'>
-          KNUST   
-        <span className = 'text-[16px] text-[#34A853] font-bold'> Shuttle<span style={{ fontWeight: '400', color: '#FFCE31' }}>App</span></span>
-          </p>
-
+            display : 'flex',
+            alignItems : 'center',
+            justifyContent : 'space-between'
+          }}>
+            <div style={{
+              display : 'flex',
+              alignItems : 'center',
+              gap : 12,
+            }}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M19.3399 14.49L18.3399 12.83C18.1299 12.46 17.9399 11.76 17.9399 11.35V8.82C17.9399 6.47 16.5599 4.44 14.5699 3.49C14.0499 2.57 13.0899 2 11.9899 2C10.8999 2 9.91994 2.59 9.39994 3.52C7.44994 4.49 6.09994 6.5 6.09994 8.82V11.35C6.09994 11.76 5.90994 12.46 5.69994 12.82L4.68994 14.49C4.28994 15.16 4.19994 15.9 4.44994 16.58C4.68994 17.25 5.25994 17.77 5.99994 18.02C7.93994 18.68 9.97994 19 12.0199 19C14.0599 19 16.0999 18.68 18.0399 18.03C18.7399 17.8 19.2799 17.27 19.5399 16.58C19.7999 15.89 19.7299 15.13 19.3399 14.49Z" fill="#4DB448"/>
+                <path d="M14.8299 20.01C14.4099 21.17 13.2999 22 11.9999 22C11.2099 22 10.4299 21.68 9.87993 21.11C9.55993 20.81 9.31993 20.41 9.17993 20C9.30993 20.02 9.43993 20.03 9.57993 20.05C9.80993 20.08 10.0499 20.11 10.2899 20.13C10.8599 20.18 11.4399 20.21 12.0199 20.21C12.5899 20.21 13.1599 20.18 13.7199 20.13C13.9299 20.11 14.1399 20.1 14.3399 20.07C14.4999 20.05 14.6599 20.03 14.8299 20.01Z" fill="#4DB448"/>
+              </svg>
+              <p className='text-[16px] font-bold m-0'>
+                KNUST   
+                <span className = 'text-[16px] text-[#34A853] font-bold'> Shuttle<span style={{ fontWeight: '400', color: '#FFCE31' }}>App</span></span>
+              </p>
+            </div>
+            <svg onClick={closeModal} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M4.26659 12.6667L3.33325 11.7334L7.06659 8.00004L3.33325 4.26671L4.26659 3.33337L7.99992 7.06671L11.7333 3.33337L12.6666 4.26671L8.93325 8.00004L12.6666 11.7334L11.7333 12.6667L7.99992 8.93337L4.26659 12.6667Z" fill="#1D1B20"/>
+            </svg>
           </div>
-
-         <svg onClick={closeModal} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-        <path d="M4.26659 12.6667L3.33325 11.7334L7.06659 8.00004L3.33325 4.26671L4.26659 3.33337L7.99992 7.06671L11.7333 3.33337L12.6666 4.26671L8.93325 8.00004L12.6666 11.7334L11.7333 12.6667L7.99992 8.93337L4.26659 12.6667Z" fill="#1D1B20"/>
-          </svg>
+          <div style={{
+            display : 'flex',
+            padding : 12,
+            borderRadius : 12,
+            backgroundColor : '#fafafa',
+            zIndex : 1000
+          }}>
+            {reached === true ? (
+              <p style={{ color: 'rgba(0,0,0,0.6)' }}>
+                Your shuttle has arrived at <span style={{ fontWeight: 'bold', color: '#000' }}>
+                  {startPoint?.name || "your pickup point"}
+                </span>! <br /> Please proceed to board
+              </p>
+            ) : final ? (
+              <p style={{ color: 'rgba(0,0,0,0.6)' }}>
+                🏁 The shuttle is arriving at your drop-off point: <span style={{ fontWeight: 'bold', color: '#000' }}>
+                  {dropOff?.name || "your destination"}
+                </span>. Please prepare to alight.
+              </p>
+            ) : (
+              <p style={{ color: 'rgba(0,0,0,0.6)' }}>
+                👋 Hey there! The shuttle will arrive at <span style={{ fontWeight: 'bold', color: '#000' }}>
+                  {startPoint?.name || "your pickup point"}
+                </span> in less than 2 minutes!
+              </p>
+            )}
+          </div>
         </div>
-
-        <div style={{
-          display : 'flex',
-          padding : 12,
-          borderRadius : 12,
-          backgroundColor : '#fafafa',
-          zIndex : 1000
-        }}>
-
-     {reached === true ? (
-        <p style={{ color: 'rgba(0,0,0,0.6)' }}>
-          Your shuttle has arrived at <span style={{ fontWeight: 'bold', color: '#000' }}>
-            {startPoint?.name || "your pickup point"}
-          </span>! <br /> Please proceed to board
-        </p>
-      ) : final ? (
-        <p style={{ color: 'rgba(0,0,0,0.6)' }}>
-          🏁 The shuttle is arriving at your drop-off point: <span style={{ fontWeight: 'bold', color: '#000' }}>
-            {dropOff?.name || "your destination"}
-          </span>. Please prepare to alight.
-        </p>
-      ) : (
-        <p style={{ color: 'rgba(0,0,0,0.6)' }}>
-          👋 Hey there! The shuttle will arrive at <span style={{ fontWeight: 'bold', color: '#000' }}>
-            {startPoint?.name || "your pickup point"}
-          </span> in less than 2 minutes!
-        </p>
       )}
-
-
- 
-
-          
-
-         {/* final */}
-        </div>
-
-      </div>
 
     </div>
   );

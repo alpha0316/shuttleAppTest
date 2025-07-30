@@ -59,12 +59,14 @@ function Home() {
         { name: 'Commerical Area', latitude: 6.682751297721754, longitude: -1.5769726260262382, },
       ]
     },
+
     { id: '4', name: 'Hall 7', description: 'Hub for student activities', latitude: 6.679295619563862, longitude: -1.572807677030472,
       dropPoints: [ 
-        { name: 'Pentecost Busstop', latitude: 6.674545299373284, longitude: -1.567565045729575 },
         { name: 'KSB', latitude: 6.669314250173885, longitude: -1.567181795001016 },
-        { name: 'Paa Joe Round About', latitude: 6.678596454119355, longitude: -1.5709606375024159 },
-        { name: 'Hall 7', latitude: 6.679295619563862, longitude: -1.572807677030472 }
+        { name: 'Pentecost Busstop', latitude: 6.674545299373284, longitude: -1.567565045729575 },
+        // { name: 'Commercial Area', latitude: 6.682751297721754, longitude: -1.5769726260262382, },
+        { name: 'Hall 7', latitude: 6.679295619563862, longitude: -1.572807677030472 },
+        { name: 'Paa Joe Round About', latitude: 6.675187511866504, longitude: -1.570775090040308 }      
       ]
     },
     { id: '5', name: 'Gaza', description: 'Off Campus', latitude: 6.686603046574587, longitude: -1.556854180379707, 
@@ -91,8 +93,8 @@ function Home() {
     },
     { id: '8', name: 'Pentecost Busstop', description: 'On Campus', latitude: 6.674545299373284, longitude: -1.5675650457295751,
       dropPoints: [ 
-        // { name: 'Paa Joe Round About', latitude: 6.675187511866504, longitude: -1.570775090040308 },
-        { name: 'Hall 7', latitude: 6.679295619563862, longitude: -1.572807677030472 },
+        { name: 'Paa Joe Round About', latitude: 6.675187511866504, longitude: -1.570775090040308 },
+        // { name: 'Hall 7', latitude: 6.679295619563862, longitude: -1.572807677030472 },
         { name: 'KSB', latitude: 6.669314250173885, longitude: -1.567181795001016 },
         // { name: 'Main Library', latitude: 6.675033566213408, longitude: -1.5723546778455368 },
         { name: 'Pentecost Busstop', latitude: 6.674545299373284, longitude: -1.567565045729575 },

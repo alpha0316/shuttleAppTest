@@ -403,7 +403,7 @@ useEffect(() => {
     setViewState(prevState => ({
       ...prevState,
       longitude: closest.driver.coords.longitude,
-      latitude: closest.driver.coords.latitude,
+      latitude: isMobile ? closest.driver.coords.latitude - 0.00065 : closest.driver.coords.latitude,
       zoom: SELECTEDBUS_ZOOM,
     }));
     setTransitionOptions({ transitionDuration: TRANSITION_DURATION });
@@ -888,7 +888,7 @@ const renderBusMarkers = () => {
         latitude={bus.coords.latitude}
       >
         <div style={{    
-         transform: `rotate(${(bus.coords.heading || 0) - 90 }deg)`, 
+         transform: `rotate(${(bus.coords.heading || 0)  }deg)`, 
          transition: 'transform 0.3s ease',}}>
           <BusIcon />
         </div>
@@ -1044,5 +1044,4 @@ const renderBusMarkers = () => {
 }
 
 export default MapGL;
-
 
