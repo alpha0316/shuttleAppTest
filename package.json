@@ -12,6 +12,7 @@
   "dependencies": {
     "@mapbox/search-js-react": "^1.0.0-beta.25",
     "@react-google-maps/api": "^2.20.5",
+    "@react-spring/web": "^10.0.1",
     "@tailwindcss/vite": "^4.0.17",
     "flatlist-react": "^1.5.14",
     "geolib": "^3.3.4",

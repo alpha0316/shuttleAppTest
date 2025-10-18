@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, } from 'react';
-import Map, { Marker, Source, Layer, GeolocateControl, ViewState as MapViewState } from 'react-map-gl';
+import Map, { Marker, Source, Layer, GeolocateControl, ViewState as MapViewState, MapRef } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { solveTSP } from './../components/solveTSP'; 
 import { haversineDistance } from './../../utils/distance'
@@ -116,6 +116,30 @@ const [viewState, setViewState] = useState<MapViewState>({
 
 
 
+  /// flyto()
+  const mapRef = useRef<MapRef | null>(null);
+  const flyTo = (longitude: number, latitude: number, zoom: number) => {
+    if (mapRef.current) {
+      mapRef.current.flyTo({
+        center: [longitude, latitude],
+        zoom,
+        speed: 1.2,
+        curve: 1.5,
+        easing: (t) => t,
+      });
+    }
+  };
+
+  useEffect(() => {
+  if (selectedBus.length > 0 && closest?.driver) {
+    const bus = closest.driver;
+    flyTo(bus.coords.longitude, bus.coords.latitude, SELECTEDBUS_ZOOM);
+  }
+}, [closest?.driver, selectedBus]);
+
+
+
+
 //// here is where I join the bus routes from the drivers/drivers to websocket data
 useEffect(() => {
   if (Array.isArray(shuttles) && shuttles.length > 0) {
@@ -183,9 +207,6 @@ useEffect(() => {
 
   }
 }, [shuttles, busRoute]);
-
-
-
 
  
   const [closestDropPoint, setClosestDropPoint] = useState<{
@@ -375,6 +396,8 @@ const getClosestBuses = (
 
       else {
         console.log(false)
+        setArrived(false)
+        setArriveInTwo(false)
       }
     } 
     
@@ -403,7 +426,7 @@ useEffect(() => {
     setViewState(prevState => ({
       ...prevState,
       longitude: closest.driver.coords.longitude,
-      latitude: isMobile ? closest.driver.coords.latitude - 0.00065 : closest.driver.coords.latitude,
+      latitude: isMobile ? closest.driver.coords.latitude - 0.00065 : closest.driver.coords.latitude ,
       zoom: SELECTEDBUS_ZOOM,
     }));
     setTransitionOptions({ transitionDuration: TRANSITION_DURATION });
