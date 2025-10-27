@@ -19,7 +19,7 @@ interface Location {
   dropPoints: DropPoint[];
 }
 
-function Home() {
+function TrackOrder() {
   const isMobile = useMediaQuery('(max-width: 768px)');
   const navigate = useNavigate();
 
@@ -151,4 +151,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default TrackOrder;
