@@ -647,7 +647,7 @@ function Home() {
         </div>
 
         <section
-        onClick={() => navigate('/TrackOrder')}
+        onClick={() => navigate('/Tracker')}
         className='flex items-start w-full gap-2 border-1 border-neutral-200 p-3 rounded-[16px] bg-neutral-50 mt-2 hover:bg-neutral-200 cursor-pointer hover:border-neutral-400'>
           <p>📦</p>
           <main className='flex flex-col gap-1'>
