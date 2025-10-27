@@ -4,23 +4,10 @@ import "./index.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./Screens/Home";
 import BusStopDetails from './Screens/BusStopDetails'
-import TrackOrder from './Screens/trackOrder'
+import TrackOrder from './Screens/TrackOrder'
 import { ClosestStopProvider } from "./Screens/ClosestStopContext";
 import { ClosestBusProvider  } from './Screens/useClosestBus';
 // import { createBrowserRouter } from "react-router-dom";
-
-// const router = createBrowserRouter([
-//   {
-//     path : "/",
-//     element : Home()
-//   },
-//   {
-//     path : '/Home',
-//     element : Home()
-//   }
-// ])
-
-// export {router}
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 
