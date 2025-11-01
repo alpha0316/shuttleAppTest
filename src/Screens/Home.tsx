@@ -157,11 +157,14 @@ function Home() {
   const [pickUpDetails, setpickUpDetail] = useState<Location | null>(null)
   const [inputFocused, setInputFocused] = useState(false);
   const [dropDown, setDropDown] = useState(true)
+  const [closeTracker, setCloseTracker] =useState(false)
 
 
   // const [closestStopName] = useState< string | null> (null)
 
   // console.log(closestStopName)
+
+
 
 
   const handleStartPointClick = (location: Location) => {
@@ -646,21 +649,27 @@ function Home() {
 
         </div>
 
-        <section
-        onClick={() => navigate('/Tracker')}
-        className='flex items-start w-full gap-2 border-1 border-neutral-200 p-3 rounded-[16px] bg-neutral-50 mt-2 hover:bg-neutral-200 cursor-pointer hover:border-neutral-400'>
-          <p>📦</p>
-          <main className='flex flex-col gap-1'>
-            <p className='m-0 text-[14px] font-medium'>Track Your Orders</p>
-            <p className='m-0 text-[12px] font-medium text-neutral-500'>Kindly enter your phone number to track your order</p>
-          </main>
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <g opacity="0.5">
-              <path d="M4.26634 12.6667L3.33301 11.7334L7.06634 8.00004L3.33301 4.26671L4.26634 3.33337L7.99967 7.06671L11.733 3.33337L12.6663 4.26671L8.93301 8.00004L12.6663 11.7334L11.733 12.6667L7.99967 8.93337L4.26634 12.6667Z" fill="#1D1B20" />
-            </g>
-          </svg>
-
-        </section>
+         {!closeTracker && !pickUp && (
+          <section
+            onClick={() => navigate('/Tracker')}
+            className='flex items-start w-full gap-2 border-1 border-neutral-200 p-3 rounded-[16px] bg-neutral-50 mt-2 hover:bg-neutral-200 cursor-pointer hover:border-neutral-400'>
+            <p>📦</p>
+            <main className='flex flex-col gap-1'>
+              <p className='m-0 text-[14px] font-medium'>Track Your Orders</p>
+              <p className='m-0 text-[12px] font-medium text-neutral-500'>Kindly enter your phone number to track your order</p>
+            </main>
+            <svg 
+              onClick={(e) => {
+                e.stopPropagation();
+                setCloseTracker(true);
+              }}
+              xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <g opacity="0.5">
+                <path d="M4.26634 12.6667L3.33301 11.7334L7.06634 8.00004L3.33301 4.26671L4.26634 3.33337L7.99967 7.06671L11.733 3.33337L12.6663 4.26671L8.93301 8.00004L12.6663 11.7334L11.733 12.6667L7.99967 8.93337L4.26634 12.6667Z" fill="#1D1B20" />
+              </g>
+            </svg>
+          </section>
+        )}
 
         <div className='flex flex-col gap-3'>
           <LocationList searchQuery={searchQuery}
