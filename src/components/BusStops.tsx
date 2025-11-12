@@ -1,23 +1,15 @@
 import React from 'react';
 
-type DropPoint = {
-    name: string;
-};
+
 
 interface BusStopsProps {
     isMobile?: boolean;
 }
 
-const staticDropPoints: DropPoint[] = [
-    { name: 'Main Gate' },
-    { name: 'Library' },
-    { name: 'Science Block' },
-    { name: 'Hostel A' },
-    { name: 'Sports Complex' },
-];
 
-const BusStops: React.FC<BusStopsProps> = ({ isMobile = true }) => {
-    const currentStopIndex = 2; // highlight this stop as the "current stop"
+
+const BusStops: React.FC<BusStopsProps> = () => {
+
 
     return (
         <section

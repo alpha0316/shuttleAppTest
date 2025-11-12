@@ -20,8 +20,8 @@ root.render(
       <Router>
         <Routes>
           <Route path="/" element={<Auth />} />
-          <Route path="/Home" element={<Home />} />
           <Route path="/OTP" element={<OTP />} />
+          <Route path="/Home" element={<Home />} />
           <Route path="/BusStopDetails/:id" element={<BusStopDetails />} />
           <Route path="/Tracker" element={<Tracker />} />
         </Routes>
