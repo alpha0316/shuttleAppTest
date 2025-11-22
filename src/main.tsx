@@ -1,35 +1,113 @@
-// import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./Screens/Home";
-import BusStopDetails from './Screens/BusStopDetails'
-import Tracker from './Screens/Tracker'
+import BusStopDetails from './Screens/BusStopDetails';
+import Tracker from './Screens/Tracker';
 import { ClosestStopProvider } from "./Screens/ClosestStopContext";
 import { ClosestBusProvider } from './Screens/useClosestBus';
 import Auth from "./Screens/Auth";
 import OTP from "./Screens/OTP";
 
+// Authentication helper functions
+const isAuthenticated = (): boolean => {
+  const token = localStorage.getItem('authToken');
+  const userData = localStorage.getItem('userData');
+  
+  // Check if both token and user data exist
+  if (!token || !userData) {
+    return false;
+  }
+
+  try {
+    // Optionally: Check if token is expired (if your tokens have expiration)
+    
+    // You can add more validation here if needed
+    // For example, check token expiration if it's a JWT
+    
+    return true;
+  } catch (error) {
+    console.error('Error parsing user data:', error);
+    return false;
+  }
+};
+
+// Protected Route Component - redirects to auth if not logged in
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  if (!isAuthenticated()) {
+    return <Navigate to="/" replace />;
+  }
+  return <>{children}</>;
+};
+
+// Public Route Component - redirects to home if already logged in
+const PublicRoute = ({ children }: { children: React.ReactNode }) => {
+  if (isAuthenticated()) {
+    return <Navigate to="/Home" replace />;
+  }
+  return <>{children}</>;
+};
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 
 root.render(
-
-  <ClosestBusProvider >
+  <ClosestBusProvider>
     <ClosestStopProvider>
       <Router>
         <Routes>
-          <Route path="/" element={<Auth />} />
-          <Route path="/OTP" element={<OTP />} />
-          <Route path="/Home" element={<Home />} />
-          <Route path="/BusStopDetails/:id" element={<BusStopDetails />} />
-          <Route path="/Tracker" element={<Tracker />} />
+          {/* Public routes - redirect to Home if already authenticated */}
+          <Route 
+            path="/" 
+            element={
+              <PublicRoute>
+                <Auth />
+              </PublicRoute>
+            } 
+          />
+          <Route 
+            path="/OTP" 
+            element={
+              <PublicRoute>
+                <OTP />
+              </PublicRoute>
+            } 
+          />
+
+          {/* Protected routes - require authentication */}
+          <Route 
+            path="/Home" 
+            element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/BusStopDetails/:id" 
+            element={
+              <ProtectedRoute>
+                <BusStopDetails />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/Tracker" 
+            element={
+              <ProtectedRoute>
+                <Tracker />
+              </ProtectedRoute>
+            } 
+          />
+
+          {/* Catch all - redirect to appropriate page */}
+          <Route 
+            path="*" 
+            element={
+              isAuthenticated() ? <Navigate to="/Home" replace /> : <Navigate to="/" replace />
+            } 
+          />
         </Routes>
       </Router>
-
     </ClosestStopProvider>
-  </ClosestBusProvider >
-
-
-
+  </ClosestBusProvider>
 );

@@ -1,20 +1,41 @@
 import { KeyboardEvent, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import PrimaryButton from '../components/PrimaryButton';
 import BusStops from '../components/BusStops';
 
 function OTP() {
+    const location = useLocation();
 
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [resendCooldown, setResendCooldown] = useState(0);
+    const [successMessage, setSuccessMessage] = useState('');
     const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
-    const phoneNumber = '0551234567'; // This would come from previous step
+    const phoneNumber = location.state?.phoneNumber ||
+        sessionStorage.getItem('registrationPhone') ||
+        'none';
 
+    const firstName = location.state?.firstName ||
+        sessionStorage.getItem('registrationName')?.split(' ')[0] ||
+        '';
+
+
+    const BASE_URL = 'https://shuttle-backend-0.onrender.com';
 
     const navigate = useNavigate();
+    // const location = useLocation();
 
-    const handleOtpChange = (index: number, value: string) => {
-        // Only allow numbers
-        if (value && !/^\d+$/.test(value)) return;
+    
+
+
+     const handleOtpChange = (index: number, value: string) => {
+        // Clear error when user starts typing
+        if (error) setError('');
+        if (successMessage) setSuccessMessage('');
+
+        // Only allow single digit numbers
+        if (value && !/^\d$/.test(value)) return;
 
         const newOtp = [...otp];
         newOtp[index] = value;
@@ -26,33 +47,159 @@ function OTP() {
         }
     };
 
-    const handleKeyDown = (index: number, e: KeyboardEvent<HTMLInputElement>) => {
+   const handleKeyDown = (index: number, e: KeyboardEvent<HTMLInputElement>) => {
         // Handle backspace
-        if (e.key === 'Backspace' && !otp[index] && index > 0) {
+        if (e.key === 'Backspace') {
+            if (!otp[index] && index > 0) {
+                // Move to previous input if current is empty
+                inputRefs.current[index - 1]?.focus();
+            } else {
+                // Clear current input
+                const newOtp = [...otp];
+                newOtp[index] = '';
+                setOtp(newOtp);
+            }
+        }
+        // Handle arrow keys for navigation
+        else if (e.key === 'ArrowLeft' && index > 0) {
             inputRefs.current[index - 1]?.focus();
+        } else if (e.key === 'ArrowRight' && index < 5) {
+            inputRefs.current[index + 1]?.focus();
         }
     };
 
-    const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+      const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
         e.preventDefault();
-        const pastedData = e.clipboardData.getData('text').slice(0, 6);
-        if (!/^\d+$/.test(pastedData)) return;
-    
+        const pastedData = e.clipboardData.getData('text').trim().slice(0, 6);
+        
+        // Only allow numeric paste
+        if (!/^\d+$/.test(pastedData)) {
+            setError('Please paste only numbers');
+            return;
+        }
+
         const newOtp = [...otp];
         pastedData.split('').forEach((char, index) => {
             if (index < 6) newOtp[index] = char;
         });
         setOtp(newOtp);
-    
-        // Focus last filled input or next empty one
+
+        // Focus last filled input
         const nextIndex = Math.min(pastedData.length, 5);
         inputRefs.current[nextIndex]?.focus();
+
+        // Clear any errors
+        setError('');
     };
 
-    const handleSubmit = (e: { preventDefault: () => void; }) => {
+
+
+   const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('OTP submitted:', otp.join(''));
-        navigate('/Home');
+
+        const otpCode = otp.join('');
+        
+        // Validate OTP is complete
+        if (otpCode.length !== 6) {
+            setError('Please enter all 6 digits');
+            return;
+        }
+
+        setIsLoading(true);
+        setError('');
+
+        try {
+            const response = await fetch(`${BASE_URL}/api/auth/user/register/verify`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    phoneNumber: phoneNumber,
+                    otp: otpCode,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Store user data and token
+                if (data.data) {
+                    localStorage.setItem('userData', JSON.stringify(data.data));
+                    if (data.data.token) {
+                        localStorage.setItem('authToken', data.data.token);
+                    }
+                }
+
+                // Clear session storage
+                sessionStorage.removeItem('registrationPhone');
+                sessionStorage.removeItem('registrationName');
+
+                // Show success message briefly before navigation
+                setSuccessMessage('Verification successful! Redirecting...');
+                
+                setTimeout(() => {
+                    navigate('/Home', { replace: true });
+                }, 1500);
+            } else {
+                // Handle specific error cases
+                if (response.status === 400 || response.status === 401) {
+                    setError(data.message || 'Invalid OTP. Please try again.');
+                    // Clear OTP fields on error
+                    setOtp(['', '', '', '', '', '']);
+                    inputRefs.current[0]?.focus();
+                } else if (response.status === 404) {
+                    setError('Registration session expired. Please start over.');
+                    setTimeout(() => navigate('/auth'), 2000);
+                } else {
+                    setError(data.message || 'Verification failed. Please try again.');
+                }
+            }
+        } catch (error) {
+            console.error('Verification error:', error);
+            setError('Unable to connect to the server. Please check your internet connection.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+     const handleResend = async () => {
+        if (resendCooldown > 0) return;
+
+        setIsLoading(true);
+        setError('');
+        setSuccessMessage('');
+
+        try {
+            const response = await fetch(`${BASE_URL}/api/auth/user/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    firstName: firstName,
+                    lastName: location.state?.lastName || '',
+                    phoneNumber: phoneNumber,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                setSuccessMessage('OTP resent successfully!');
+                setResendCooldown(60); // 60 second cooldown
+                // Clear OTP fields
+                setOtp(['', '', '', '', '', '']);
+                inputRefs.current[0]?.focus();
+            } else {
+                setError(data.message || 'Failed to resend OTP. Please try again.');
+            }
+        } catch (error) {
+            console.error('Resend error:', error);
+            setError('Unable to resend OTP. Please check your internet connection.');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const isOtpComplete = otp.every((digit) => digit !== '');
@@ -80,43 +227,93 @@ function OTP() {
                         </header>
 
                         {/* OTP Form */}
-                        <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-full mt-2">
+                       <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-full mt-2">
                             {/* OTP Input Fields */}
-                            <div className="flex gap-2 justify-between">
-                                {otp.map((digit, index) => (
-                                    <input
-                                        key={index}
-                                        ref={(el) => (inputRefs.current[index] = el)}
-                                        type="text"
-                                        inputMode="numeric"
-                                        maxLength={1}
-                                        value={digit}
-                                        onChange={(e) => handleOtpChange(index, e.target.value)}
-                                        onKeyDown={(e) => handleKeyDown(index, e)}
-                                        onPaste={handlePaste}
-                                        className="w-12 h-14 md:w-14 md:h-16 text-center text-xl font-semibold border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition-all"
-                                        required
-                                    />
-                                ))}
+                            <div className="flex flex-col gap-3">
+                                <div className="flex gap-2 justify-between">
+                                    {otp.map((digit, index) => (
+                                        <input
+                                            key={index}
+                                            ref={(el) => (inputRefs.current[index] = el)}
+                                            type="text"
+                                            inputMode="numeric"
+                                            maxLength={1}
+                                            value={digit}
+                                            onChange={(e) => handleOtpChange(index, e.target.value)}
+                                            onKeyDown={(e) => handleKeyDown(index, e)}
+                                            onPaste={handlePaste}
+                                            className={`w-12 h-14 md:w-14 md:h-16 text-center text-xl font-semibold border-2 rounded-lg focus:outline-none transition-all ${
+                                                error
+                                                    ? 'border-red-500 focus:ring-2 focus:ring-red-500 bg-red-50'
+                                                    : successMessage
+                                                    ? 'border-green-600 focus:ring-2 focus:ring-green-600 bg-green-50'
+                                                    : digit
+                                                    ? 'border-green-600 focus:ring-2 focus:ring-green-600'
+                                                    : 'border-gray-300 focus:ring-2 focus:ring-green-600 focus:border-green-600'
+                                            }`}
+                                            disabled={isLoading}
+                                            required
+                                            autoComplete="off"
+                                        />
+                                    ))}
+                                </div>
+
+                                {/* Error Message */}
+                                {error && (
+                                    <div className="flex items-center gap-2 text-red-500 text-sm">
+                                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                                        </svg>
+                                        <span>{error}</span>
+                                    </div>
+                                )}
+
+                                {/* Success Message */}
+                                {successMessage && (
+                                    <div className="flex items-center gap-2 text-green-600 text-sm">
+                                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                        </svg>
+                                        <span>{successMessage}</span>
+                                    </div>
+                                )}
                             </div>
 
                             {/* Resend Code */}
                             <div className="flex items-center justify-center gap-1 text-sm">
                                 <span className="text-black/60">Didn't receive the code?</span>
-                                <button
-                                    type="button"
-                                    className="text-green-600 font-medium hover:underline"
-                                >
-                                    Resend
-                                </button>
+                                {resendCooldown > 0 ? (
+                                    <span className="text-black/40 font-medium">
+                                        Resend in {resendCooldown}s
+                                    </span>
+                                ) : (
+                                    <button
+                                        type="button"
+                                        onClick={handleResend}
+                                        disabled={isLoading}
+                                        className="text-green-600 font-medium hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        Resend
+                                    </button>
+                                )}
                             </div>
 
                             {/* Submit Button */}
-                            <PrimaryButton
-                                type="submit"
-                                label="Verify & Continue"
-                                disabled={!isOtpComplete}
-                            />
+                            {isLoading ? (
+                                <div className="flex items-center justify-center gap-2 py-3 text-black/60">
+                                    <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                    </svg>
+                                    <span>Verifying...</span>
+                                </div>
+                            ) : (
+                                <PrimaryButton
+                                    type="submit"
+                                    label="Verify & Continue"
+                                    disabled={!isOtpComplete || isLoading}
+                                />
+                            )}
                         </form>
 
                         {/* Back Link */}

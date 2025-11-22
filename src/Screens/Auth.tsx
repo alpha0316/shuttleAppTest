@@ -10,20 +10,199 @@ function Auth() {
     phone: '',
   });
 
+  
+
+  type FormKeys = keyof typeof formData;
+  const [errors, setErrors] = useState<Partial<Record<FormKeys, string>>>({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [touched, setTouched] = useState<Partial<Record<FormKeys, boolean>>>({});
+
+  const BASE_URL = 'https://shuttle-backend-0.onrender.com';
+
+
   const navigate = useNavigate();
 
-  const handleChange = (e: { target: { name: any; value: any; }; }) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+  const validateField = (name: string, value: string) => {
+    switch (name) {
+      case 'firstName':
+        if (!value.trim()) {
+          return 'First name is required';
+        }
+        if (value.trim().length < 2) {
+          return 'First name must be at least 2 characters';
+        }
+        if (!/^[a-zA-Z\s'-]+$/.test(value)) {
+          return 'First name can only contain letters, spaces, hyphens, and apostrophes';
+        }
+        return '';
+
+      case 'lastName':
+        if (!value.trim()) {
+          return 'Last name is required';
+        }
+        if (value.trim().length < 2) {
+          return 'Last name must be at least 2 characters';
+        }
+        if (!/^[a-zA-Z\s'-]+$/.test(value)) {
+          return 'Last name can only contain letters, spaces, hyphens, and apostrophes';
+        }
+        return '';
+
+      case 'phone':
+        if (!value) {
+          return 'Phone number is required';
+        }
+        // Remove any non-digit characters for validation
+        const cleanPhone = value.replace(/\D/g, '');
+        if (cleanPhone.length !== 10) {
+          return 'Phone number must be exactly 10 digits';
+        }
+        if (!/^0\d{9}$/.test(cleanPhone)) {
+          return 'Phone number must start with 0 (e.g., 0551234567)';
+        }
+        return '';
+
+      default:
+        return '';
+    }
   };
 
-  const handleSubmit = (e: { preventDefault: () => void; }) => {
-    e.preventDefault();
-    console.log('Form submitted:', formData);
-    navigate('/OTP');
+  const validateForm = () => {
+    const newErrors: { [key in keyof typeof formData]?: string } = {};
+    (Object.keys(formData) as (keyof typeof formData)[]).forEach((key) => {
+      const error = validateField(key, formData[key]);
+      if (error) {
+        newErrors[key] = error;
+      }
+    });
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
+
+
+    const handleChange = (e: { target: { name: string; value: string; }; }) => {
+    const { name, value } = e.target;
+    const key = name as FormKeys;
+    
+    // For phone, only allow digits
+    if (name === 'phone') {
+      const cleanValue = value.replace(/\D/g, '');
+      setFormData({
+        ...formData,
+        [name]: cleanValue,
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
+
+    
+
+    // Clear error when user starts typing
+    if (touched[key] && errors[key]) {
+      const error = validateField(name, value);
+      setErrors({
+        ...errors,
+        [key]: error,
+      });
+    }
+  };
+
+   const handleBlur = (e: { target: { name: string; value: string; }; }) => {
+    const { name, value } = e.target;
+    const key = name as FormKeys;
+    setTouched({
+      ...touched,
+      [key]: true,
+    });
+
+    const error = validateField(name, value);
+    if (error) {
+      setErrors({
+        ...errors,
+        [key]: error,
+      });
+    } else {
+      const newErrors = { ...errors };
+      delete newErrors[key];
+      setErrors(newErrors);
+    }
+  };
+
+  
+
+  const handleSubmit = async (e: { preventDefault: () => void; }) => {
+    e.preventDefault();
+    
+    // Mark all fields as touched
+    setTouched({
+      firstName: true,
+      lastName: true,
+      phone: true,
+    });
+
+    // Validate form
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const response = await fetch(`${BASE_URL}/api/auth/user/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          firstName: formData.firstName.trim(),
+          lastName: formData.lastName.trim(),
+          phoneNumber: formData.phone,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Store phone number for OTP verification
+        sessionStorage.setItem('registrationPhone', formData.phone);
+        sessionStorage.setItem('registrationName', `${formData.firstName} ${formData.lastName}`);
+        
+        // Navigate to OTP verification
+        navigate('/OTP', { 
+          state: { 
+            phoneNumber: formData.phone,
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+          }
+        });
+      } else {
+        // Handle specific error cases
+        if (response.status === 409) {
+          setErrors({
+            phone: 'This phone number is already registered',
+          });
+        } else {
+          alert(data.message || 'Registration failed. Please try again.');
+        }
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      alert('Unable to connect to the server. Please check your internet connection and try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  //  const isFormValid = 
+  //   formData.firstName.trim() !== '' && 
+  //   formData.lastName.trim() !== '' && 
+  //   formData.phone !== '' &&
+  //   Object.keys(errors).length === 0;
+
+
 
   // Check if all fields are filled
   const isFormComplete = Object.values(formData).every((field) => field.trim() !== '');
@@ -49,23 +228,33 @@ function Auth() {
 
             {/* Form */}
             <form
-              onSubmit={handleSubmit}
+               onSubmit={handleSubmit}
               className="flex flex-col gap-4 w-full mt-2"
+              noValidate
             >
               <div className="flex flex-col gap-1">
                 <label htmlFor="firstName" className="text-sm font-medium text-black/70">
                   First Name
                 </label>
-                <input
+               <input
                   id="firstName"
                   type="text"
                   name="firstName"
                   value={formData.firstName}
                   onChange={handleChange}
+                  onBlur={handleBlur}
                   placeholder="Enter your first name"
-                  className="border border-gray-300 rounded-lg px-4 py-3 lg:py-2 focus:outline-none focus:ring-2 focus:ring-green-600"
-                  required
+                  className={`border rounded-lg px-4 py-3 lg:py-2 focus:outline-none focus:ring-2 transition-all ${
+                    errors.firstName && touched.firstName
+                      ? 'border-red-500 focus:ring-red-500 bg-red-50'
+                      : 'border-gray-300 focus:ring-green-600'
+                  }`}
+                  disabled={isLoading}
+                  autoComplete="given-name"
                 />
+                {errors.firstName && touched.firstName && (
+                  <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>
+                )}
               </div>
 
               <div className="flex flex-col gap-1">
