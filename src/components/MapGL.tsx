@@ -19,12 +19,16 @@ import mqtt, { Packet } from 'mqtt';
 
 
 
-const MAPBOX_ACCESS_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN || 'pk.eyJ1IjoidGhlbG9jYWxnb2RkIiwiYSI6ImNtMm9ocHFhYTBmczQya3NnczhoampiZ3gifQ.lPNutwk6XRi_kH_1R1ebiw';
+// Replace this line in MapGL.tsx:
 
-// Add error handling for token
-if (!MAPBOX_ACCESS_TOKEN || MAPBOX_ACCESS_TOKEN.includes('pk.eyJ1IjoidGhlbG9jYWxnb2RkIiwiYSI6ImNtMm9ocHFhYTBmczQya3NnczhoampiZ3gifQ.lPNutwk6XRi_kH_1R1ebiw')) {
-  console.error('Mapbox token is missing or invalid');
-}
+
+// With this:
+
+
+// OR if you want to use environment variables properly:
+const MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN || 
+                           import.meta.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN || 
+                           'pk.eyJ1IjoidGhlbG9jYWxnb2RkIiwiYSI6ImNtMm9ocHFhYTBmczQya3NnczhoampiZ3gifQ.lPNutwk6XRi_kH_1R1ebiw';
 
 
 interface Coordinates {

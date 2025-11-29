@@ -2,7 +2,7 @@
 {
   "headers": [
     {
-      "source": "/(.*)",
+      "source": "/(.*)","destination": "/" ,
       "headers": [
         {
           "key": "Content-Security-Policy",
@@ -12,3 +12,5 @@
     }
   ]
 }
+  
+
