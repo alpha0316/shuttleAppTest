@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PrimaryButton from '../components/PrimaryButton';
 
-
 function Auth() {
   const [formData, setFormData] = useState({
     firstName: '',
@@ -124,6 +123,8 @@ function Auth() {
   // Function to handle login for existing users
   const handleExistingUserLogin = async (phoneNumber: string) => {
     try {
+      console.log('🔄 Initiating login for existing user:', phoneNumber);
+      
       const response = await fetch(`${BASE_URL}/api/auth/user/login`, {
         method: 'POST',
         headers: {
@@ -135,28 +136,31 @@ function Auth() {
       });
 
       const data = await response.json();
+      console.log('📱 Login response:', data);
 
       if (response.ok) {
         // Store phone number for OTP verification
         sessionStorage.setItem('loginPhone', phoneNumber);
-        sessionStorage.setItem('isLogin', 'true'); // Flag to indicate this is a login flow
+        sessionStorage.setItem('isLogin', 'true');
+        
+        console.log('✅ Login OTP sent, navigating to OTP page');
         
         // Navigate to OTP verification page
         navigate('/OTP', { 
           state: { 
             phoneNumber: phoneNumber,
-            isLogin: true, // Pass flag to OTP page
+            isLogin: true,
             message: 'Welcome back! Please verify your phone number.'
           }
         });
         
         return true;
       } else {
-        console.error('Login initiation failed:', data);
+        console.error('❌ Login initiation failed:', data);
         return false;
       }
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('❌ Login error:', error);
       return false;
     }
   };
@@ -173,29 +177,48 @@ function Auth() {
 
     // Validate form
     if (!validateForm()) {
+      console.log('❌ Form validation failed');
       return;
     }
 
     setIsLoading(true);
 
+    // Prepare request body
+    const requestBody = {
+      firstName: formData.firstName.trim(),
+      lastName: formData.lastName.trim(),
+      phoneNumber: formData.phone, // Make sure this is a 10-digit string starting with 0
+    };
+
+    console.log('📤 Sending registration request:', requestBody);
+
     try {
-      // Try to register the user
       const response = await fetch(`${BASE_URL}/api/auth/user/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          firstName: formData.firstName.trim(),
-          lastName: formData.lastName.trim(),
-          phoneNumber: formData.phone,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
-      const data = await response.json();
+      console.log('📥 Response status:', response.status);
+
+      // Try to parse response
+      let data;
+      try {
+        data = await response.json();
+        console.log('📥 Response data:', data);
+      } catch (parseError) {
+        console.error('❌ Failed to parse response:', parseError);
+        const text = await response.text();
+        console.log('📄 Raw response:', text);
+        throw new Error('Invalid response from server');
+      }
 
       if (response.ok) {
         // New user registration - OTP sent
+        console.log('✅ Registration successful, OTP sent');
+        
         sessionStorage.setItem('registrationPhone', formData.phone);
         sessionStorage.setItem('registrationName', `${formData.firstName} ${formData.lastName}`);
         sessionStorage.setItem('isLogin', 'false');
@@ -209,24 +232,41 @@ function Auth() {
             message: 'An OTP has been sent to your phone number.'
           }
         });
-      } else if (response.status === 409) {
+      } else if (response.status === 400) {
         // User already exists - initiate login flow
-        console.log('⚠️ User already exists. Initiating login flow...');
+        console.log('⚠️ User already exists (409). Initiating login flow...');
         
         const loginSuccess = await handleExistingUserLogin(formData.phone);
         
         if (!loginSuccess) {
-          // If login initiation fails, show error
           setErrors({
             phone: 'Unable to send OTP. Please try again.',
           });
         }
+      } else if (response.status === 400) {
+        // Bad Request - show validation errors
+        console.error('❌ 400 Bad Request:', data);
+        
+        if (data.errors && Array.isArray(data.errors)) {
+          // Handle validation errors array
+          const fieldErrors: Partial<Record<FormKeys, string>> = {};
+          data.errors.forEach((err: any) => {
+            if (err.path) {
+              fieldErrors[err.path as FormKeys] = err.msg || err.message;
+            }
+          });
+          setErrors(fieldErrors);
+        } else {
+          // Generic error message
+          alert(data.message || 'Invalid input. Please check your details and try again.');
+        }
       } else {
         // Other errors
+        console.error('❌ Unexpected error:', response.status, data);
         alert(data.message || 'Registration failed. Please try again.');
       }
     } catch (error) {
-      console.error('Registration error:', error);
+      console.error('❌ Registration error:', error);
       alert('Unable to connect to the server. Please check your internet connection and try again.');
     } finally {
       setIsLoading(false);
@@ -352,9 +392,6 @@ function Auth() {
       {/* Right Section - Hidden on mobile */}
       <section className="hidden lg:flex w-1/2 h-full bg-neutral-50 items-center justify-center">
         {/* Your existing right section content remains unchanged */}
-        <main className='flex flex-col items-center justify-center gap-6 w-[55%]'>
-          {/* ... Rest of your right section JSX ... */}
-        </main>
       </section>
     </div>
   );
