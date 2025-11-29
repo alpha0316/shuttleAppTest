@@ -19,7 +19,12 @@ import mqtt, { Packet } from 'mqtt';
 
 
 
-const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoidGhlbG9jYWxnb2RkIiwiYSI6ImNtMm9ocHFhYTBmczQya3NnczhoampiZ3gifQ.lPNutwk6XRi_kH_1R1ebiw';
+const MAPBOX_ACCESS_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN || 'pk.eyJ1IjoidGhlbG9jYWxnb2RkIiwiYSI6ImNtMm9ocHFhYTBmczQya3NnczhoampiZ3gifQ.lPNutwk6XRi_kH_1R1ebiw';
+
+// Add error handling for token
+if (!MAPBOX_ACCESS_TOKEN || MAPBOX_ACCESS_TOKEN.includes('pk.eyJ1IjoidGhlbG9jYWxnb2RkIiwiYSI6ImNtMm9ocHFhYTBmczQya3NnczhoampiZ3gifQ.lPNutwk6XRi_kH_1R1ebiw')) {
+  console.error('Mapbox token is missing or invalid');
+}
 
 
 interface Coordinates {
@@ -124,8 +129,15 @@ function MapGL({
   const isMobile = useMediaQuery('(max-width: 768px)');
 
   const shuttles = useShuttleSocket();
+  // const [mapError, setMapError] = useState(false);
+  // const [mapLoading, setMapLoading] = useState(true);
 
-
+  useEffect(() => {
+    if (!MAPBOX_ACCESS_TOKEN || MAPBOX_ACCESS_TOKEN.includes('your-token')) {
+      console.error('Mapbox token is invalid');
+      setMapError(true);
+    }
+  }, []);
 
 
 
