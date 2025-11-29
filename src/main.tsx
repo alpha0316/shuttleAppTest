@@ -9,8 +9,20 @@ import { ClosestBusProvider } from './Screens/useClosestBus';
 import Auth from "./Screens/Auth";
 import OTP from "./Screens/OTP";
 
+// ===========================
+// 🚨 TEMPORARY: BYPASS AUTH
+// ===========================
+// Set this to true to skip authentication
+const BYPASS_AUTH = true;
+
 // Authentication helper functions
 const isAuthenticated = (): boolean => {
+  // 🚨 TEMPORARY: Always return true when bypassing auth
+  if (BYPASS_AUTH) {
+    console.log('⚠️ AUTH BYPASS ACTIVE - Skipping authentication check');
+    return true;
+  }
+
   const token = localStorage.getItem('authToken');
   const userData = localStorage.getItem('userData');
   
@@ -21,10 +33,7 @@ const isAuthenticated = (): boolean => {
 
   try {
     // Optionally: Check if token is expired (if your tokens have expiration)
-    
     // You can add more validation here if needed
-    // For example, check token expiration if it's a JWT
-    
     return true;
   } catch (error) {
     console.error('Error parsing user data:', error);
@@ -59,9 +68,11 @@ root.render(
           <Route 
             path="/" 
             element={
-              <PublicRoute>
-                <Auth />
-              </PublicRoute>
+              BYPASS_AUTH ? <Navigate to="/Home" replace /> : (
+                <PublicRoute>
+                  <Auth />
+                </PublicRoute>
+              )
             } 
           />
           <Route 
@@ -111,3 +122,7 @@ root.render(
     </ClosestStopProvider>
   </ClosestBusProvider>
 );
+
+// ===========================
+// 🚨 REMEMBER TO SET BYPASS_AUTH = false WHEN AUTH IS FIXED!
+// ===========================

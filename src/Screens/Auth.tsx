@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PrimaryButton from '../components/PrimaryButton';
 
+
 function Auth() {
   const [formData, setFormData] = useState({
     firstName: '',
@@ -20,40 +21,22 @@ function Auth() {
   const validateField = (name: string, value: string) => {
     switch (name) {
       case 'firstName':
-        if (!value.trim()) {
-          return 'First name is required';
-        }
-        if (value.trim().length < 2) {
-          return 'First name must be at least 2 characters';
-        }
-        if (!/^[a-zA-Z\s'-]+$/.test(value)) {
-          return 'First name can only contain letters, spaces, hyphens, and apostrophes';
-        }
+        if (!value.trim()) return 'First name is required';
+        if (value.trim().length < 2) return 'First name must be at least 2 characters';
+        if (!/^[a-zA-Z\s'-]+$/.test(value)) return 'First name can only contain letters, spaces, hyphens, and apostrophes';
         return '';
 
       case 'lastName':
-        if (!value.trim()) {
-          return 'Last name is required';
-        }
-        if (value.trim().length < 2) {
-          return 'Last name must be at least 2 characters';
-        }
-        if (!/^[a-zA-Z\s'-]+$/.test(value)) {
-          return 'Last name can only contain letters, spaces, hyphens, and apostrophes';
-        }
+        if (!value.trim()) return 'Last name is required';
+        if (value.trim().length < 2) return 'Last name must be at least 2 characters';
+        if (!/^[a-zA-Z\s'-]+$/.test(value)) return 'Last name can only contain letters, spaces, hyphens, and apostrophes';
         return '';
 
       case 'phone':
-        if (!value) {
-          return 'Phone number is required';
-        }
+        if (!value) return 'Phone number is required';
         const cleanPhone = value.replace(/\D/g, '');
-        if (cleanPhone.length !== 10) {
-          return 'Phone number must be exactly 10 digits';
-        }
-        if (!/^0\d{9}$/.test(cleanPhone)) {
-          return 'Phone number must start with 0 (e.g., 0551234567)';
-        }
+        if (cleanPhone.length !== 10) return 'Phone number must be exactly 10 digits';
+        if (!/^0\d{9}$/.test(cleanPhone)) return 'Phone number must start with 0 (e.g., 0551234567)';
         return '';
 
       default:
@@ -65,9 +48,7 @@ function Auth() {
     const newErrors: { [key in keyof typeof formData]?: string } = {};
     (Object.keys(formData) as (keyof typeof formData)[]).forEach((key) => {
       const error = validateField(key, formData[key]);
-      if (error) {
-        newErrors[key] = error;
-      }
+      if (error) newErrors[key] = error;
     });
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -79,40 +60,25 @@ function Auth() {
     
     if (name === 'phone') {
       const cleanValue = value.replace(/\D/g, '');
-      setFormData({
-        ...formData,
-        [name]: cleanValue,
-      });
+      setFormData({ ...formData, [name]: cleanValue });
     } else {
-      setFormData({
-        ...formData,
-        [name]: value,
-      });
+      setFormData({ ...formData, [name]: value });
     }
 
     if (touched[key] && errors[key]) {
       const error = validateField(name, value);
-      setErrors({
-        ...errors,
-        [key]: error,
-      });
+      setErrors({ ...errors, [key]: error });
     }
   };
 
   const handleBlur = (e: { target: { name: string; value: string; }; }) => {
     const { name, value } = e.target;
     const key = name as FormKeys;
-    setTouched({
-      ...touched,
-      [key]: true,
-    });
+    setTouched({ ...touched, [key]: true });
 
     const error = validateField(name, value);
     if (error) {
-      setErrors({
-        ...errors,
-        [key]: error,
-      });
+      setErrors({ ...errors, [key]: error });
     } else {
       const newErrors = { ...errors };
       delete newErrors[key];
@@ -124,6 +90,7 @@ function Auth() {
   const handleExistingUserLogin = async (phoneNumber: string) => {
     try {
       console.log('🔄 Initiating login for existing user:', phoneNumber);
+      console.log('📤 Calling POST /api/auth/user/login');
       
       const response = await fetch(`${BASE_URL}/api/auth/user/login`, {
         method: 'POST',
@@ -135,32 +102,47 @@ function Auth() {
         }),
       });
 
-      const data = await response.json();
-      console.log('📱 Login response:', data);
+      console.log('📥 Login API response status:', response.status);
+
+      let data;
+      try {
+        data = await response.json();
+        console.log('📥 Login API response data:', data);
+      } catch (e) {
+        console.error('❌ Failed to parse login response');
+        return false;
+      }
 
       if (response.ok) {
+        // Check if OTP was actually sent
+        console.log('✅ Login API call successful');
+        console.log('📨 OTP should be sent to:', phoneNumber);
+        
         // Store phone number for OTP verification
         sessionStorage.setItem('loginPhone', phoneNumber);
         sessionStorage.setItem('isLogin', 'true');
         
-        console.log('✅ Login OTP sent, navigating to OTP page');
+        // Show confirmation to user
+        alert(`OTP has been sent to ${phoneNumber}. Please check your messages.`);
         
         // Navigate to OTP verification page
         navigate('/OTP', { 
           state: { 
             phoneNumber: phoneNumber,
             isLogin: true,
-            message: 'Welcome back! Please verify your phone number.'
+            message: `Welcome back! An OTP has been sent to ${phoneNumber}`
           }
         });
         
         return true;
       } else {
-        console.error('❌ Login initiation failed:', data);
+        console.error('❌ Login API call failed:', response.status, data);
+        alert(data.message || 'Failed to send OTP. Please try again.');
         return false;
       }
     } catch (error) {
       console.error('❌ Login error:', error);
+      alert('Network error. Please check your connection and try again.');
       return false;
     }
   };
@@ -168,14 +150,12 @@ function Auth() {
   const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     
-    // Mark all fields as touched
     setTouched({
       firstName: true,
       lastName: true,
       phone: true,
     });
 
-    // Validate form
     if (!validateForm()) {
       console.log('❌ Form validation failed');
       return;
@@ -183,11 +163,10 @@ function Auth() {
 
     setIsLoading(true);
 
-    // Prepare request body
     const requestBody = {
       firstName: formData.firstName.trim(),
       lastName: formData.lastName.trim(),
-      phoneNumber: formData.phone, // Make sure this is a 10-digit string starting with 0
+      phoneNumber: formData.phone,
     };
 
     console.log('📤 Sending registration request:', requestBody);
@@ -201,17 +180,14 @@ function Auth() {
         body: JSON.stringify(requestBody),
       });
 
-      console.log('📥 Response status:', response.status);
+      console.log('📥 Registration response status:', response.status);
 
-      // Try to parse response
       let data;
       try {
         data = await response.json();
-        console.log('📥 Response data:', data);
+        console.log('📥 Registration response data:', data);
       } catch (parseError) {
-        console.error('❌ Failed to parse response:', parseError);
-        const text = await response.text();
-        console.log('📄 Raw response:', text);
+        console.error('❌ Failed to parse response');
         throw new Error('Invalid response from server');
       }
 
@@ -223,32 +199,42 @@ function Auth() {
         sessionStorage.setItem('registrationName', `${formData.firstName} ${formData.lastName}`);
         sessionStorage.setItem('isLogin', 'false');
         
+        alert(`OTP has been sent to ${formData.phone}`);
+        
         navigate('/OTP', { 
           state: { 
             phoneNumber: formData.phone,
             firstName: formData.firstName,
             lastName: formData.lastName,
             isLogin: false,
-            message: 'An OTP has been sent to your phone number.'
+            message: `An OTP has been sent to ${formData.phone}`
           }
         });
-      } else if (response.status === 400) {
+      } else if (
+        response.status === 409 || 
+        (response.status === 400 && data.message?.toLowerCase().includes('user already exists'))
+      ) {
         // User already exists - initiate login flow
-        console.log('⚠️ User already exists (409). Initiating login flow...');
+        console.log('⚠️ User already exists. Initiating login flow...');
+        console.log('📱 Phone number:', formData.phone);
         
+        // Don't set loading to false yet - keep it true while we process login
         const loginSuccess = await handleExistingUserLogin(formData.phone);
         
         if (!loginSuccess) {
           setErrors({
             phone: 'Unable to send OTP. Please try again.',
           });
+          setIsLoading(false);
         }
+        // Don't set isLoading to false here if login was successful
+        // because we're navigating away
+        return;
       } else if (response.status === 400) {
         // Bad Request - show validation errors
         console.error('❌ 400 Bad Request:', data);
         
         if (data.errors && Array.isArray(data.errors)) {
-          // Handle validation errors array
           const fieldErrors: Partial<Record<FormKeys, string>> = {};
           data.errors.forEach((err: any) => {
             if (err.path) {
@@ -257,7 +243,6 @@ function Auth() {
           });
           setErrors(fieldErrors);
         } else {
-          // Generic error message
           alert(data.message || 'Invalid input. Please check your details and try again.');
         }
       } else {
@@ -273,33 +258,24 @@ function Auth() {
     }
   };
 
-  // Check if all fields are filled
   const isFormComplete = Object.values(formData).every((field) => field.trim() !== '');
 
   return (
     <div className="flex flex-col lg:flex-row h-screen w-screen m-0 p-0 overflow-hidden bg-white">
-      {/* Left Section - Auth Form */}
       <section className="w-full bg-red lg:w-1/2 flex items-start justify-center bg-white py-8 lg:py-0 lg:items-center md:mb-36">
         <main className="flex flex-col items-start justify-center gap-8 lg:gap-24 w-[90%] md:w-[70%] lg:w-[55%] max-w-md">
-          {/* Logo */}
           <p className="text-black text-xl font-bold">
             <span className="text-green-600 font-bold">Shuttle</span>
             <span className="text-amber-400 font-normal">App</span>
           </p>
 
-          {/* Header */}
           <section className='w-full gap-6 flex flex-col'>
             <header className="flex flex-col justify-start items-start gap-1 w-full">
               <p className="text-black text-2xl font-bold">Let's get you started!</p>
               <p className="text-black/60 text-sm font-normal">Enter your details to continue</p>
             </header>
 
-            {/* Form */}
-            <form
-              onSubmit={handleSubmit}
-              className="flex flex-col gap-4 w-full mt-2"
-              noValidate
-            >
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full mt-2" noValidate>
               <div className="flex flex-col gap-1">
                 <label htmlFor="firstName" className="text-sm font-medium text-black/70">
                   First Name
@@ -375,7 +351,6 @@ function Auth() {
                 )}
               </div>
 
-              {/* Custom Primary Button */}
               <PrimaryButton
                 type="submit"
                 label={isLoading ? "Processing..." : "Continue"}
@@ -389,9 +364,8 @@ function Auth() {
         </main>
       </section>
 
-      {/* Right Section - Hidden on mobile */}
       <section className="hidden lg:flex w-1/2 h-full bg-neutral-50 items-center justify-center">
-        {/* Your existing right section content remains unchanged */}
+        {/* Your existing right section content */}
       </section>
     </div>
   );
