@@ -308,7 +308,6 @@ export const useShuttleSocket = (
   useEffect(() => {
     if (!autoConnect) return;
 
-    const socket = initializeSocket();
 
     return () => {
       log('🧹 Cleaning up socket');
