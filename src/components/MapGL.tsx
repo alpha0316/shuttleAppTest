@@ -1074,7 +1074,9 @@ function MapGL({
 
 
   useEffect(() => {
-    const brokerUrl = 'ws://35.181.168.87:9001';
+    const brokerUrl = import.meta.env.PROD 
+  ? 'wss://35.181.168.87:9001'  // Production (HTTPS)
+  : 'ws://35.181.168.87:9001';   // Development (HTTP)
     const options = {
       username: 'admin',
       password: 'lEUmas@12',
