@@ -8,8 +8,6 @@ import { useClosestBus } from '../Screens/useClosestBus'
 import { useShuttleSocket } from './../../hooks/useShuttleSocket'
 // import { io, Socket } from 'socket.io-client';
 import useMediaQuery from '../components/useMediaQuery';
-
-
 // import { ViewportProps } from 'react-map-gl';
 
 import mqtt, { Packet } from 'mqtt';
@@ -19,16 +17,7 @@ import mqtt, { Packet } from 'mqtt';
 
 
 
-// Replace this line in MapGL.tsx:
-
-
-// With this:
-
-
-// OR if you want to use environment variables properly:
-const MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN || 
-                           import.meta.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN || 
-                           'pk.eyJ1IjoidGhlbG9jYWxnb2RkIiwiYSI6ImNtMm9ocHFhYTBmczQya3NnczhoampiZ3gifQ.lPNutwk6XRi_kH_1R1ebiw';
+const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoidGhlbG9jYWxnb2RkIiwiYSI6ImNtMm9ocHFhYTBmczQya3NnczhoampiZ3gifQ.lPNutwk6XRi_kH_1R1ebiw';
 
 
 interface Coordinates {
@@ -133,15 +122,8 @@ function MapGL({
   const isMobile = useMediaQuery('(max-width: 768px)');
 
   const shuttles = useShuttleSocket();
-  // const [mapError, setMapError] = useState(false);
-  // const [mapLoading, setMapLoading] = useState(true);
 
-  useEffect(() => {
-    if (!MAPBOX_ACCESS_TOKEN || MAPBOX_ACCESS_TOKEN.includes('your-token')) {
-      console.error('Mapbox token is invalid');
-      setMapError(true);
-    }
-  }, []);
+
 
 
 
@@ -187,7 +169,6 @@ function MapGL({
 
 
   const [latestCoord] = useState<{ lat: number; lng: number; heading?: number; speed?: number; ignition?: any; timestamp?: number } | null>(null);
-
 
 
 
@@ -1183,33 +1164,15 @@ function MapGL({
 
 
 
-  function setMapLoading(_arg0: boolean) {
-    throw new Error('Function not implemented.');
-  }
-
-  function setMapError(_arg0: boolean) {
-    throw new Error('Function not implemented.');
-  }
-
   return (
     <Map
-    mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
-  {...viewState}
-  style={{ width: '100vw', height: '100vh', position: 'absolute' }}
-  mapStyle="mapbox://styles/mapbox/streets-v11"
-  {...transitionOptions}
-  onMove={handleViewStateChange}
-  onLoad={() => {
-    setMapLoading(false);
-    setMapError(false);
-  }}
-  onError={(e) => {
-    console.error('Map error:', e);
-    setMapError(true);
-    setMapLoading(false);
-  }}
->
-
+      mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
+      {...viewState}
+      style={{ width: '100vw', height: '100vh', position: 'absolute' }}
+      mapStyle="mapbox://styles/mapbox/streets-v11"
+      {...transitionOptions}
+      onMove={handleViewStateChange}
+    >
 
       {isHomepage && selectedLocation && (
         <Marker longitude={selectedLocation.longitude} latitude={selectedLocation.latitude}>
