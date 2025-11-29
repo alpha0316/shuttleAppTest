@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import ErrorBoundary from '../components/ErrorBoundary';
 // import useGeolocation from '../../hooks/useGeolocation'
 
+
 interface DropPoint {
   name: string;
   latitude: number;
@@ -157,7 +158,8 @@ function Home() {
   const [pickUpDetails, setpickUpDetail] = useState<Location | null>(null)
   const [inputFocused, setInputFocused] = useState(false);
   const [dropDown, setDropDown] = useState(true)
-  const [closeTracker, setCloseTracker] =useState(false)
+  const [closeTracker, setCloseTracker] = useState(false)
+
 
 
   // const [closestStopName] = useState< string | null> (null)
@@ -436,6 +438,10 @@ function Home() {
     );
   };
 
+
+
+
+
   return (
     <div className='flex h-100vh w-100vw m-0 p-0 overflow-hidden '>
       {/* flex h-100vh w-100vw m-0 p-0 overflow-hidden */}
@@ -473,6 +479,8 @@ function Home() {
             Welcome to KNUST
             <span className='text-[20px] text-[#34A853] font-bold'> Shuttle<span style={{ fontWeight: '400', color: '#FFCE31' }}>App</span></span>
           </p>
+
+       
 
           {!pickUp && (
             dropDown ?
@@ -649,7 +657,7 @@ function Home() {
 
         </div>
 
-         {!closeTracker && !pickUp && (
+        {!closeTracker && !pickUp && (
           <section
             onClick={() => navigate('/Tracker')}
             className='flex items-start w-full gap-2 border-1 border-neutral-200 p-3 rounded-[16px] bg-neutral-50 mt-2 hover:bg-neutral-200 cursor-pointer hover:border-neutral-400'>
@@ -658,7 +666,7 @@ function Home() {
               <p className='m-0 text-[14px] font-medium'>Track Your Orders</p>
               <p className='m-0 text-[12px] font-medium text-neutral-500'>Kindly enter your phone number to track your order</p>
             </main>
-            <svg 
+            <svg
               onClick={(e) => {
                 e.stopPropagation();
                 setCloseTracker(true);
@@ -681,6 +689,8 @@ function Home() {
             isMobile={isMobile} />
         </div>
       </div>
+
+
 
       <ErrorBoundary fallback={<div className="map-error">Map loading failed. Please refresh.</div>}>
         <MapGl
