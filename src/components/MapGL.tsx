@@ -1074,9 +1074,10 @@ function MapGL({
 
 
   useEffect(() => {
-    const brokerUrl = import.meta.env.PROD 
-  ? 'wss://35.181.168.87:9001'  // Production (HTTPS)
-  : 'ws://35.181.168.87:9001';   // Development (HTTP)
+  //   const brokerUrl = import.meta.env.PROD 
+  // ? 'wss://35.181.168.87:9001'  // Production (HTTPS)
+  // : 'ws://35.181.168.87:9001';   // Development (HTTP)
+  const brokerUrl = "wss://35-181-168-87.sslip.io:9001";
     const options = {
       username: 'admin',
       password: 'lEUmas@12',
