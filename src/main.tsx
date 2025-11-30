@@ -13,7 +13,7 @@ import OTP from "./Screens/OTP";
 // 🚨 TEMPORARY: BYPASS AUTH
 // ===========================
 // Set this to true to skip authentication
-const BYPASS_AUTH = true;
+const BYPASS_AUTH = false;
 
 // Authentication helper functions
 const isAuthenticated = (): boolean => {
