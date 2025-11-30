@@ -9,6 +9,9 @@ import { useShuttleSocket } from './../../hooks/useShuttleSocket'
 // import { io, Socket } from 'socket.io-client';
 import useMediaQuery from '../components/useMediaQuery';
 // import { ViewportProps } from 'react-map-gl';
+import { locationsss } from '../../data/locations';
+import useMQTTBuses from '../../hooks/useMQTTBuses';
+import { AnimatedMQTTBus } from '../components/AnimatedMQTTBus';
 
 import mqtt, { Packet } from 'mqtt';
 
@@ -17,8 +20,8 @@ import mqtt, { Packet } from 'mqtt';
 
 
 
-const MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || 
-  process.env.NEXT_PUBLIC_MAPBOX_TOKEN || 
+const MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN ||
+  process.env.NEXT_PUBLIC_MAPBOX_TOKEN ||
   'pk.eyJ1IjoidGhlbG9jYWxnb2RkIiwiYSI6ImNtMm9ocHFhYTBmczQya3NnczhoampiZ3gifQ.lPNutwk6XRi_kH_1R1ebiw';
 
 
@@ -453,11 +456,6 @@ function MapGL({
 
 
 
-  useEffect(() => {
-    // console.log("🟢 userCoords updated:", userCoords);
-  }, [userCoords]);
-
-
   function getDistanceMeters(lat1: number, lon1: number, lat2: number, lon2: number) {
     const R = 6371e3; // meters
     const toRad = (v: number) => (v * Math.PI) / 180;
@@ -474,7 +472,7 @@ function MapGL({
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   }
 
-  function getNearestStop(userCoords: { latitude: any; longitude: any; }, locations: { dropPoints: any[]; id: any; }[], radius = 50) {
+  function getNearestStop(userCoords: { latitude: any; longitude: any; }, locations: { dropPoints: any[]; id: any; }[], radius = 1000) {
     if (!userCoords) return null;
 
     let nearest = null;
@@ -508,7 +506,7 @@ function MapGL({
   // 🔄 run logic whenever userCoords changes
   useEffect(() => {
     if (userCoords) {
-      const stopInfo = getNearestStop(userCoords, locations, 50);
+      const stopInfo = getNearestStop(userCoords, locationsss, 100);
 
       console.log("🛑 Nearest Bus Stop Info:", stopInfo);
     } else {
@@ -518,7 +516,9 @@ function MapGL({
 
 
 
-
+  useEffect(() => {
+    console.log('my location', userCoords)
+  }, [locations]);
 
 
 
@@ -1046,40 +1046,18 @@ function MapGL({
 
 
 
-
-
-
-
-  //  useEffect(() => {
-  //     console.log('📍 Total coordinates collected:', deviceCoords.length);
-  //     if (latestCoord) {
-  //       console.log('📍 Latest positionnn:', latestCoord);
-  //     }
-  //   }, [deviceCoords, latestCoord]);
-
-  //   const TrackerIcon = () => (
-  //     <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
-  //       <circle cx="24" cy="24" r="20" fill="#FF5722" fillOpacity="0.3"/>
-  //       <circle cx="24" cy="24" r="12" fill="#FF5722" fillOpacity="0.6"/>
-  //       <circle cx="24" cy="24" r="6" fill="#FF5722"/>
-  //       <circle cx="24" cy="24" r="3" fill="white"/>
-  //     </svg>
-  //   );
-
-
   const [gpsData, setGpsData] = useState<PartialGpsData | null>(null);
   const [connectionStatus, setConnectionStatus] = useState('Disconnected');
   const [] = useState([]);
   const [positionHistory, setPositionHistory] = useState<PositionHistory[]>([]);
-
-
+  const { devices, updateDevice, setSelectedDeviceId } = useMQTTBuses();
 
 
   useEffect(() => {
-  //   const brokerUrl = import.meta.env.PROD 
-  // ? 'wss://35.181.168.87:9001'  // Production (HTTPS)
-  // : 'ws://35.181.168.87:9001';   // Development (HTTP)
-  const brokerUrl = "wss://35-181-168-87.sslip.io:9001";
+    //   const brokerUrl = import.meta.env.PROD 
+    // ? 'wss://35.181.168.87:9001'  // Production (HTTPS)
+    // : 'ws://35.181.168.87:9001';   // Development (HTTP)
+    const brokerUrl = "wss://35-181-168-87.sslip.io:9001";
     const options = {
       username: 'admin',
       password: 'lEUmas@12',
@@ -1112,6 +1090,7 @@ function MapGL({
         const data = JSON.parse(message.toString());
         setGpsData(data);
         const { latitude, longitude } = data.position;
+        updateDevice(data);
 
         setPositionHistory(prev => {
           const newHistory = [...prev, {
@@ -1277,7 +1256,7 @@ function MapGL({
 
 
       {/* GPS Tracker Marker */}
-      {gpsData && gpsData.position && (
+      {/* {gpsData && gpsData.position && (
         <Marker
           longitude={gpsData.position.longitude}
           latitude={gpsData.position.latitude}
@@ -1290,23 +1269,25 @@ function MapGL({
             filter: gpsData.position.valid ? 'none' : 'grayscale(0.7) opacity(0.7)'
           }}>
             <BusIcon />
-
-            {/* Status indicator */}
-            {!gpsData.position.valid && (
-              <div style={{
-                position: 'absolute',
-                top: -5,
-                right: -5,
-                width: 12,
-                height: 12,
-                borderRadius: '50%',
-                backgroundColor: '#FF5722',
-                border: '2px solid white'
-              }} />
-            )}
           </div>
         </Marker>
-      )}
+      )} */}
+
+      {Object.values(devices).map((device) => (
+        <AnimatedMQTTBus
+          key={device.deviceId}
+          deviceId={device.deviceId}
+          latitude={device.position.latitude}
+          longitude={device.position.longitude}
+          heading={device.position.course}
+          speed={device.position.speed}
+          valid={device.position.valid}
+          onClick={() => {
+            console.log('🚌 Bus clicked:', device.deviceId);
+            setSelectedDeviceId(device.deviceId);
+          }}
+        />
+      ))}
 
       {/* Position History Trail */}
       {positionHistory.length > 0 && (
