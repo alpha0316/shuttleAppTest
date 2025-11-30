@@ -93,6 +93,7 @@ interface DropPoint {
 }
 
 interface UserData {
+  firstName: any;
   user: {
     firstName?: string;
     // add other user properties as needed
@@ -186,8 +187,9 @@ function MapGL({
     if (userDataString) {
       try {
         const userData = JSON.parse(userDataString) as UserData;
-        console.log('User First Initial:', userData.user?.firstName?.charAt(0));
-        setUserInitial(userData.user?.firstName?.charAt(0) || null);
+        // console.log('User First Initial:', userData?.firstName?.charAt(0));
+        setUserInitial(userData.firstName?.charAt(0) || null);
+        // console.log('ess',userInitial )
       } catch (error) {
         console.error('Error parsing user data:', error);
         setUserInitial(null);
