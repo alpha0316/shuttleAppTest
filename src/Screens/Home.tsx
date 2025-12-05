@@ -297,7 +297,7 @@ function Home() {
             cursor: 'pointer',
             backgroundColor: selectedLocation?.id === location.id 
               ? '#F0F8FF' 
-              : '#f4f4f4',
+              : '#fAfAfA',
             transition: 'all 0.2s ease-in-out',
             transform: 'translateY(0)',
           }}
