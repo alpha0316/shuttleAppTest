@@ -72,7 +72,7 @@ interface DropPoint {
   name: string;
 }
 
-// Add these interfaces with your existing interfaces at the top
+
 interface PositionHistory {
   latitude: number;
   longitude: number;
@@ -1237,8 +1237,6 @@ function MapGL({
             <BusIcon />
           </div>
         </Marker>
-
-
       )}
 
 

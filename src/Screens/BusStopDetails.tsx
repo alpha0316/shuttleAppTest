@@ -8,6 +8,7 @@ import { useClosestStop, } from "./../Screens/ClosestStopContext";
 import { useClosestBus } from './useClosestBus';
 import { getDistance } from 'geolib';
 import { useShuttleSocket } from './../../hooks/useShuttleSocket'
+import { locationsss } from '../../data/locations';
 
 
 
@@ -378,329 +379,63 @@ function BusStopDetails() {
   }, [closest?.driver?.coords])
 
 
-
-
-
-
-  const locations: Location[] = [
-    {
-      id: '1', name: 'Main Library', description: 'On Campus', latitude: 6.675033566213408, longitude: -1.5723546778455368,
-      dropPoints: [
-        { name: 'KSB', latitude: 6.669314250173885, longitude: -1.567181795001016 },
-        { name: 'Pentecost Busstop', latitude: 6.674545299373284, longitude: -1.5675650457295751 },
-        { name: 'SRC Busstop', latitude: 6.675223889340042, longitude: -1.5678831412482812 },
-        { name: 'Brunei', latitude: 6.670465091472612, longitude: -1.5741574445526254 },
-        { name: 'Main Library', latitude: 6.675033566213408, longitude: -1.5723546778455368 },
-      ]
-    },
-    {
-      id: '2', name: 'Brunei', description: 'Hub for student activities', latitude: 6.670465091472612, longitude: -1.5741574445526254,
-      dropPoints: [
-        { name: 'KSB', latitude: 6.669314250173885, longitude: -1.567181795001016 },
-        { name: 'SRC Busstop', latitude: 6.675223889340042, longitude: -1.5678831412482812 },
-        { name: 'Pentecost Busstop', latitude: 6.674545299373284, longitude: -1.567565045729575 },
-        { name: 'Main Library', latitude: 6.675033566213408, longitude: -1.5723546778455368 },
-        { name: 'Brunei', latitude: 6.670465091472612, longitude: -1.5741574445526254 }
-      ]
-    },
-    {
-      id: '3', name: 'Commercial Area', description: 'On Campus', latitude: 6.682751297721754, longitude: -1.5769726260262382,
-      dropPoints: [
-        { name: 'KSB', latitude: 6.669314250173885, longitude: -1.567181795001016 },
-        { name: 'Pentecost Busstop', latitude: 6.674545299373284, longitude: -1.5675650457295751 },
-        { name: 'SRC Busstop', latitude: 6.675223889340042, longitude: -1.5678831412482812 },
-        { name: 'Conti Busstop', latitude: 6.679644223364716, longitude: -1.572967657880401 },
-        { name: 'Hall 7', latitude: 6.679295619563862, longitude: -1.572807677030472 },
-        { name: 'Commerical Area', latitude: 6.682751297721754, longitude: -1.5769726260262382, },
-      ]
-    },
-
-    {
-      id: '4', name: 'Hall 7', description: 'Hub for student activities', latitude: 6.679295619563862, longitude: -1.572807677030472,
-      dropPoints: [
-        { name: 'KSB', latitude: 6.669314250173885, longitude: -1.567181795001016 },
-        { name: 'Pentecost Busstop', latitude: 6.674545299373284, longitude: -1.567565045729575 },
-        // { name: 'Commercial Area', latitude: 6.682751297721754, longitude: -1.5769726260262382, },
-        { name: 'Hall 7', latitude: 6.679295619563862, longitude: -1.572807677030472 },
-        { name: 'Paa Joe Round About', latitude: 6.675187511866504, longitude: -1.570775090040308 }
-
-      ]
-    },
-    {
-      id: '5', name: 'Gaza', description: 'Off Campus', latitude: 6.686603046574587, longitude: -1.556854180379707,
-      dropPoints: [
-        { name: 'Pharmacy Busstop', latitude: 6.67480379472123, longitude: -1.5663873751176354 },
-        { name: 'Medical Village', latitude: 6.6800787890749245, longitude: -1.549747261104641 },
-        { name: 'Gaza', latitude: 6.686603046574587, longitude: -1.556854180379707 },
-        // 6.686603046574587, -1.5565200861528035
-      ]
-    },
-    {
-      id: '6', name: 'Medical Village', description: 'Hub for student activities', latitude: 6.6800787890749245, longitude: -1.549747261104641,
-      dropPoints: [
-        { name: 'Gaza', latitude: 6.686603046574587, longitude: -1.556854180379707 },
-        { name: 'Pharmacy Busstop', latitude: 6.67480379472123, longitude: -1.5663873751176354 },
-        { name: 'Medical Village', latitude: 6.6800787890749245, longitude: -1.549747261104641 }
-      ]
-    },
-    {
-      id: '7', name: 'Pharmacy Busstop', description: 'On Campus', latitude: 6.67480379472123, longitude: -1.5663873751176354,
-      dropPoints: [
-        { name: 'Medical Village', latitude: 6.6800787890749245, longitude: -1.549747261104641 },
-        { name: 'Gaza', latitude: 6.686603046574587, longitude: -1.556854180379707 },
-        { name: 'Pharmacy Busstop', latitude: 6.67480379472123, longitude: -1.5663873751176354 }
-      ]
-    },
-    {
-      id: '8', name: 'Pentecost Busstop', description: 'On Campus', latitude: 6.674545299373284, longitude: -1.5675650457295751,
-      dropPoints: [
-        { name: 'Commercial Area', latitude: 6.682751297721754, longitude: -1.5769726260262382, },
-        { name: 'Brunei', latitude: 6.670465091472612, longitude: -1.5741574445526254 },
-
-        { name: 'Main Library', latitude: 6.675033566213408, longitude: -1.5723546778455368 },
-        { name: 'Hall 7', latitude: 6.679295619563862, longitude: -1.572807677030472 },
-        { name: 'Pentecost Busstop', latitude: 6.674545299373284, longitude: -1.567565045729575 },
-        { name: 'KSB', latitude: 6.669314250173885, longitude: -1.567181795001016 },
-        { name: 'Paa Joe Round About', latitude: 6.675187511866504, longitude: -1.570775090040308 }
-
-      ]
-    },
-    {
-      id: '9', name: 'SRC Busstop', description: 'On Campus', latitude: 6.675223889340042, longitude: -1.5678831412482812,
-      dropPoints: [
-        { name: 'Brunei', latitude: 6.670465091472612, longitude: -1.5741574445526254 },
-        { name: 'Main Library', latitude: 6.675033566213408, longitude: -1.5723546778455368 },
-        { name: 'Conti Busstop', latitude: 6.679644223364716, longitude: -1.572967657880401 },
-        { name: 'Commercial Area', latitude: 6.682756553904525, longitude: -1.576990347851461 },
-        { name: 'SRC Busstop', latitude: 6.675223889340042, longitude: -1.5678831412482812 },
-        { name: 'KSB', latitude: 6.669314250173885, longitude: -1.567181795001016 },
-      ]
-    },
-    {
-      id: '10', name: 'KSB', description: 'Hub for student activities', latitude: 6.669314250173885, longitude: -1.567181795001016,
-      dropPoints: [
-        { name: 'Brunei', latitude: 6.670465091472612, longitude: -1.5741574445526254 },
-        { name: 'Main Library', latitude: 6.675033566213408, longitude: -1.5723546778455368 },
-        { name: 'Commercial Area', latitude: 6.682756553904525, longitude: -1.576990347851461 },
-        { name: 'Hall 7', latitude: 6.679295619563862, longitude: -1.572807677030472 },
-        { name: 'Conti Busstop', latitude: 6.679644223364716, longitude: -1.572967657880401 },
-        { name: 'SRC Busstop', latitude: 6.675223889340042, longitude: -1.5678831412482812 },
-        { name: 'Pentecost Busstop', latitude: 6.674545299373284, longitude: -1.567565045729575 },
-        { name: 'KSB', latitude: 6.669314250173885, longitude: -1.567181795001016 },
-        { name: 'Paa Joe Round About', latitude: 6.675187511866504, longitude: -1.570775090040308 }
-      ]
-    },
-    {
-      id: '11', name: 'Conti Busstop', description: 'Hub for student activities', latitude: 6.679644223364716, longitude: -1.572967657880401,
-      dropPoints: [
-        // { name: 'SRC Busstop', latitude: 6.675223889340042, longitude: -1.5678831412482812 },
-        { name: 'Commercial Area', latitude: 6.682756553904525, longitude: -1.576990347851461 },
-        { name: 'Conti Busstop', latitude: 6.679644223364716, longitude: -1.572967657880401 }
-      ]
-    },
-  ];
-
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
 
-  useEffect(() => {
-    const selectedBusStop = locations.find((location) => location.id === id);
 
-    if (selectedBusStop) {
-      let updatedBusStop = { ...selectedBusStop };
+useEffect(() => {
+  const selectedBusStop = locationsss.find((location) => location.id === id);
 
-      if (pickUp.name === 'Main Library' && dropOff.name === 'Brunei') {
-        updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== '' && dropPoint.name !== 'SRC Busstop' && dropPoint.name !== '' && dropPoint.name !== 'Hall 7' && dropPoint.name !== 'Commercial Area' && dropPoint.name !== 'Conti Busstop'
-        );
-      }
-      if (pickUp.name === 'Main Library' && dropOff.name === 'KSB') {
-        updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Commercial Area' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'SRC Busstop' && dropPoint.name !== 'Hall 7' && dropPoint.name !== 'Commercial Area'
-        );
-      }
-      if (pickUp.name === 'Main Library' && dropOff.name === 'Pentecost Busstop') {
-        updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Brunei' && dropPoint.name !== 'Commercial Area' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'KSB' && dropPoint.name !== 'Hall 7'
-        );
-      }
-
-      if (pickUp.name === 'Hall 7' && dropOff.name === 'KSB') {
-        updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Brunei' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Main Library' && dropPoint.name !== 'Pentecost Busstop'
-        );
-      }
-
-
-      if (pickUp.name === 'Hall 7' && dropOff.name === 'Pentecost Busstop') {
-        updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Brunei' && dropPoint.name !== '' && dropPoint.name !== 'Main Library' && dropPoint.name !== 'SRC Busstop' && dropPoint.name !== ''
-        );
-      }
-
-
-      if (pickUp.name === 'Pentecost Busstop' && dropOff.name === 'KSB') {
-        updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Bomso Busstop' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'SRC Busstop' && dropPoint.name !== 'Brunei' && dropPoint.name !== 'Main Library' && dropPoint.name !== '' && dropPoint.name !== ''
-        );
-      }
-
-      if (pickUp.name === 'Brunei' && dropOff.name === 'KSB') {
-        updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Bomso Busstop' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Commercial Area' && dropPoint.name !== 'SRC Busstop' && dropPoint.name !== 'Hall 7'
-        );
-      }
-
-      if (pickUp.name === 'Brunei' && dropOff.name === 'Pentecost Busstop') {
-        updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'KSB' && dropPoint.name !== 'Bomso Busstop' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Commercial Area' && dropPoint.name !== 'SRC Busstop' && dropPoint.name !== 'Hall 7'
-        );
-      }
-
-      if (pickUp.name === 'SRC Busstop' && dropOff.name === 'Main Library') {
-        updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== '' && dropPoint.name !== 'Bomso Busstop' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== '' && dropPoint.name !== 'Pentecost Busstop'
-        );
-      }
-
-      if (pickUp.name === 'Main Library' && dropOff.name === 'SRC Busstop') {
-        updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Brunei' && dropPoint.name !== 'Bomso Busstop' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'KSB' && dropPoint.name !== 'Pentecost Busstop'
-        );
-      }
-
-      if (pickUp.name === 'SRC Busstop' && dropOff.name === 'KSB') {
-        updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Brunei' && dropPoint.name !== 'Bomso Busstop' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Main Library' && dropPoint.name !== 'Pentecost Busstop' && dropPoint.name !== 'Hall 7'
-        );
-      }
-
-      if (pickUp.name === 'Brunei' && dropOff.name === 'Main Library') {
-        updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== '' && dropPoint.name !== 'Bomso Busstop' && dropPoint.name !== '' && dropPoint.name !== 'Commercial Area' && dropPoint.name !== 'SRC Busstop' && dropPoint.name !== 'Hall 7'
-        );
-      }
-
-      if (pickUp.name === 'SRC Busstop' && dropOff.name === 'Brunei') {
-        updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== '' && dropPoint.name !== 'Bomso Busstop' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'KSB' && dropPoint.name !== 'Pentecost Busstop'
-        );
-      }
-
-      if (pickUp.name === 'Commercial Area' && dropOff.name === 'KSB') {
-        updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Brunei' && dropPoint.name !== 'Main Library' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'SRC Busstop'
-        );
-      }
-
-      // if (pickUp.name === 'Commercial Area' && dropOff.name === 'KSB') {
-      //   updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-      //     (dropPoint) => dropPoint.name !== 'Main Library' && dropPoint.name !== 'Main Library' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Brunei'  && dropPoint.name !== 'Conti Busstop'
-      //   );
-      // } 
-
-      if (pickUp.name === 'Commercial Area' && dropOff.name === 'Pentecost Busstop') {
-        updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Main Library' && dropPoint.name !== 'Main Library' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Brunei' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== ''
-        );
-      }
-      if (pickUp.name === 'Commercial Area' && dropOff.name === 'Hall 7') {
-        updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Main Library' && dropPoint.name !== '' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Brunei' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== '' && dropPoint.name !== ''
-        );
-      }
-
-      if (pickUp.name === 'Conti Busstop' && dropOff.name === 'Commercial Area') {
-        updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'KSB' && dropPoint.name !== 'Pentecost Busstop' && dropPoint.name !== 'SRC Busstop' && dropPoint.name !== '' && dropPoint.name !== 'KSB' && dropPoint.name !== 'Hall 7'
-        );
-      }
-
-      if (pickUp.name === 'SRC Busstop' && dropOff.name === 'Conti Busstop') {
-        updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Commerical Area' && dropPoint.name !== 'Bomso Busstop' && dropPoint.name !== '' && dropPoint.name !== 'Pentecost Busstop' && dropPoint.name !== '' && dropPoint.name !== 'Hall 7'
-        );
-      }
-
-      if (pickUp.name === 'SRC Busstop' && dropOff.name === 'Commercial Area') {
-        updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== '' && dropPoint.name !== 'Bomso Busstop' && dropPoint.name !== '' && dropPoint.name !== 'Pentecost Busstop' && dropPoint.name !== '' && dropPoint.name !== 'Hall 7'
-        );
-      }
-
-      if (pickUp.name === 'Brunei' && dropOff.name === 'KSB') {
-        updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Commercial Area' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Commercial Area' && dropPoint.name !== 'SRC Busstop' && dropPoint.name !== 'Hall 7'
-        );
-      }
-
-
-      if (pickUp.name === 'SRC Busstop' && dropOff.name === 'Commercial Area') {
-        updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Pentecost Busstop' && dropPoint.name !== 'KSB' && dropPoint.name !== 'Commercial Area'
-        );
-      }
-
-
-      if (pickUp.name === 'KSB' && dropOff.name === 'Commercial Area') {
-        updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Main Library' && dropPoint.name !== 'Bomso Busstop' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Pentecost Busstop' && dropPoint.name !== ''
-        );
-      }
-
-      if (pickUp.name === 'KSB' && dropOff.name === 'SRC Busstop') {
-        updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Main Library' && dropPoint.name !== 'Commercial Area' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Pentecost Busstop' && dropPoint.name !== 'Brunei'
-        );
-      }
-
-      if (pickUp.name === 'Commercial Area' && dropOff.name === 'KSB') {
-        updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Main Library' && dropPoint.name !== 'Bomso Busstop' && dropPoint.name !== 'Conti Busstop' && dropPoint.name !== 'Brunei' && dropPoint.name !== 'Brunei'
-        );
-      }
-
-
-      if (pickUp.name === 'Gaza' && dropOff.name === 'Pharmacy Busstop') {
-        updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== ''
-        );
-      }
-
-      if (pickUp.name === 'Gaza' && dropOff.name === 'Medical Village') {
-        updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== ''
-        );
-      }
-
-      if (pickUp.name === 'Pharmacy Busstop' && dropOff.name === 'Medical Village') {
-        updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== 'Gaza'
-        );
-      }
-
-      if (pickUp.name === 'Pharmacy Busstop' && dropOff.name === 'Gaza') {
-        updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== ''
-        );
-      }
-
-      if (pickUp.name === 'Medical Village' && dropOff.name === 'Pharmacy Busstop') {
-        updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
-          (dropPoint) => dropPoint.name !== ''
-        );
-      }
-
-
-      // console.log('yes',startPoint)
-      setStartPoint(state.pickUp)
-      // setBusStop(updatedBusStop);
-      setSelectedLocation(updatedBusStop);
-      // console.log(arrived);
-    } else {
-      console.error('Bus stop not found');
-      navigate('/');
+  if (selectedBusStop) {
+    // Define route configurations with proper typing
+    interface RouteConfigs {
+      [key: string]: string[];
     }
-  }, [id, navigate, pickUp, dropOff]);
+
+    const routeConfigs: RouteConfigs = {
+      'Main Library->Brunei': ['', 'SRC Busstop', 'Hall 7', 'Commercial Area', 'Conti Busstop'],
+      'Main Library->KSB': ['Commercial Area', 'Conti Busstop', 'SRC Busstop', 'Hall 7'],
+      'Main Library->Pentecost Busstop': ['Brunei', 'Commercial Area', 'Conti Busstop', 'KSB', 'Hall 7'],
+      'Hall 7->KSB': ['Brunei', 'Conti Busstop', 'Main Library', 'Pentecost Busstop'],
+      'Hall 7->Pentecost Busstop': ['Brunei', 'Main Library', 'SRC Busstop'],
+      'Pentecost Busstop->KSB': ['Bomso Busstop', 'Conti Busstop', 'SRC Busstop', 'Brunei', 'Main Library'],
+      'Brunei->KSB': ['Conti Busstop', 'Bomso Busstop', 'Commercial Area', 'SRC Busstop', 'Hall 7'],
+      'Brunei->Pentecost Busstop': ['KSB', 'Bomso Busstop', 'Conti Busstop', 'Commercial Area', 'SRC Busstop', 'Hall 7'],
+      'SRC Busstop->Main Library': ['', 'Bomso Busstop', 'Conti Busstop', 'Pentecost Busstop'],
+      'Main Library->SRC Busstop': ['Brunei', 'Bomso Busstop', 'Conti Busstop', 'KSB', 'Pentecost Busstop'],
+      'SRC Busstop->KSB': ['Brunei', 'Bomso Busstop', 'Conti Busstop', 'Main Library', 'Pentecost Busstop', 'Hall 7'],
+      'Brunei->Main Library': ['', 'Bomso Busstop', 'Commercial Area', 'SRC Busstop', 'Hall 7'],
+      'SRC Busstop->Brunei': ['', 'Bomso Busstop', 'Conti Busstop', 'KSB', 'Pentecost Busstop'],
+      'Commercial Area->KSB': ['Brunei', 'Main Library', 'Conti Busstop', 'SRC Busstop'],
+      'Commercial Area->Pentecost Busstop': ['Main Library', 'Conti Busstop', 'Brunei'],
+      'Commercial Area->Hall 7': ['Main Library', 'Conti Busstop', 'Brunei'],
+      'Conti Busstop->Commercial Area': ['KSB', 'Pentecost Busstop', 'SRC Busstop', 'Hall 7'],
+      'SRC Busstop->Conti Busstop': ['Commercial Area', 'Bomso Busstop', 'Pentecost Busstop', 'Hall 7'],
+      'SRC Busstop->Commercial Area': ['Pentecost Busstop', 'KSB', 'Commercial Area'],
+      'KSB->Commercial Area': ['Main Library', 'Bomso Busstop', 'Conti Busstop', 'Pentecost Busstop'],
+      'KSB->SRC Busstop': ['Main Library', 'Commercial Area', 'Conti Busstop', 'Pentecost Busstop', 'Brunei'],
+      'Gaza->Pharmacy Busstop': [''],
+      'Gaza->Medical Village': [''],
+      'Pharmacy Busstop->Medical Village': ['Gaza'],
+      'Pharmacy Busstop->Gaza': [''],
+      'Medical Village->Pharmacy Busstop': ['']
+    };
+
+    const routeKey = `${pickUp.name}->${dropOff.name}`;
+    const excludedPoints = routeConfigs[routeKey] || []; // Use empty array as default
+    
+    let updatedBusStop = { ...selectedBusStop };
+    
+    updatedBusStop.dropPoints = updatedBusStop.dropPoints.filter(
+      (dropPoint) => !excludedPoints.includes(dropPoint.name)
+    );
+    
+    setStartPoint(pickUp);
+    setSelectedLocation(updatedBusStop);
+  } else {
+    console.error('Bus stop not found');
+    navigate('/');
+  }
+}, [id, navigate, pickUp, dropOff, locationsss]);
 
   const closeModal = () => {
     setCloseToastModal(true)
@@ -894,14 +629,14 @@ function BusStopDetails() {
     }
 
     // Optional: Check ALL locations (not just current route)
-    for (const location of locations) {
+    for (const location of locationsss) {
       if (hasArrivedAtStop(driverCoords, location)) {
         return { isAtStop: true, stopName: location.name };
       }
     }
 
     return { isAtStop: false, stopName: null };
-  }, [closest?.driver?.coords, selectedLocation, startPoint, locations]);
+  }, [closest?.driver?.coords, selectedLocation, startPoint, locationsss]);
 
   useEffect(() => {
     if (isAtAnyStop.isAtStop) {
