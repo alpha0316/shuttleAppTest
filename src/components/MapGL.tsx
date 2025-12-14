@@ -1051,6 +1051,7 @@ function MapGL({
   const [] = useState([]);
   const [positionHistory, setPositionHistory] = useState<PositionHistory[]>([]);
   const { devices, updateDevice, setSelectedDeviceId } = useMQTTBuses();
+  const [mapLoaded, setMapLoaded] = useState(false);
 
 
   useEffect(() => {
@@ -1066,6 +1067,8 @@ function MapGL({
       connectTimeout: 5000,
       clientId: 'web_client_' + Math.random().toString(16).substr(2, 8)
     };
+
+    if (!mapLoaded) return;
 
     console.log('🔧 Attempting MQTT connection to:', brokerUrl);
 
@@ -1087,6 +1090,12 @@ function MapGL({
     client.on('message', (topic, message) => {
       console.log(`📨 Message on ${topic}:`, message.toString());
       try {
+
+        let lastUpdate = 0;
+
+        const now = Date.now();
+        if (now - lastUpdate < 500) return; // 2 updates/sec max
+        lastUpdate = now;
         const data = JSON.parse(message.toString());
         setGpsData(data);
         const { latitude, longitude } = data.position;
@@ -1141,7 +1150,8 @@ function MapGL({
         client.end();
       }
     };
-  }, []);
+  }, [mapLoaded]);
+
 
 
 
@@ -1158,6 +1168,7 @@ function MapGL({
       mapStyle="mapbox://styles/mapbox/streets-v11"
       {...transitionOptions}
       onMove={handleViewStateChange}
+      onLoad={() => setMapLoaded(true)}
     >
 
       {isHomepage && selectedLocation && (

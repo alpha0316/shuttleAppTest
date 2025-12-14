@@ -1,11 +1,16 @@
 import { useState, useEffect } from 'react';
-import MapGl from '../components/MapGL';
+// import MapGl from '../components/MapGL';
 // import { FlyToInterpolator } from 'react-map-gl';
 import useMediaQuery from '../components/useMediaQuery';
 import { useNavigate } from 'react-router-dom';
-import ErrorBoundary from '../components/ErrorBoundary';
+// import ErrorBoundary from '../components/ErrorBoundary';
 // import useGeolocation from '../../hooks/useGeolocation'
 import { locationsss } from '../../data/locations';
+
+import { lazy, Suspense } from 'react';
+
+const MapGl = lazy(() => import('../components/MapGL'));
+
 
 
 interface DropPoint {
@@ -45,7 +50,7 @@ function Home() {
   const [pickUpDetails, setpickUpDetail] = useState<Location | null>(null)
   const [inputFocused, setInputFocused] = useState(false);
   const [dropDown, setDropDown] = useState(true)
-  const [closeTracker, setCloseTracker] = useState(false)
+
 
 
 
@@ -193,179 +198,190 @@ function Home() {
 
   }) => {
     return (
-     <div className="flex flex-col py-3 pr-3 border-t-1 border-neutral-200 gap-3 overflow-y-auto max-h-[40vh] md:max-h-[calc(80vh-220px)] w-[360px]">
-  {filteredLocations.length === 0 ? (
-    <p>No Bus stop found. Select closest bus stop</p>
-  ) : (
-    isSelectingDropOff ?
-      filteredLocations.map((location) => (
-        <div
-          key={location.id}
-          style={{
-            borderRadius: 16,
-            border: selectedLocation?.id === location.id 
-              ? '1px solid rgba(0,0,0,0.5)' 
-              : '1px solid rgba(0,0,0,0.1)',
-            display: 'flex',
-            padding: 12,
-            alignItems: 'center',
-            gap: 16,
-            width: '100%',
-            justifyContent: 'flex-start',
-            cursor: 'pointer',
-            backgroundColor: selectedLocation?.id === location.id 
-              ? '#F0F8FF' 
-              : '#f4f4f4',
-            transition: 'all 0.2s ease-in-out',
-            transform: 'translateY(0)',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = selectedLocation?.id === location.id 
-              ? '#E0F0FF' 
-              : '#e8e8e8';
-            e.currentTarget.style.transform = 'translateY(-2px)';
-            e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = selectedLocation?.id === location.id 
-              ? '#F0F8FF' 
-              : '#f4f4f4';
-            e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = 'none';
-          }}
-          onMouseDown={(e) => {
-            e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
-          }}
-          onMouseUp={(e) => {
-            e.currentTarget.style.transform = 'translateY(-2px)';
-            e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
-          }}
-          onClick={() => handleDropOffPointClick(location)}
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 36 36" fill="none">
-            <g clipPath="url(#clip0_629_5804)">
-              <path d="M31 8H23V10H31V31H23V33H33V10C33 9.46957 32.7893 8.96086 32.4142 8.58579C32.0391 8.21071 31.5304 8 31 8Z" fill="black" fillOpacity="0.6" />
-              <path d="M19.88 3H6.12C5.55774 3 5.01851 3.22336 4.62093 3.62093C4.22336 4.01851 4 4.55774 4 5.12V33H22V5.12C22 4.55774 21.7766 4.01851 21.3791 3.62093C20.9815 3.22336 20.4423 3 19.88 3ZM20 31H17V28H9V31H6V5.12C6 5.10424 6.0031 5.08864 6.00913 5.07408C6.01516 5.05952 6.024 5.04629 6.03515 5.03515C6.04629 5.024 6.05952 5.01516 6.07408 5.00913C6.08864 5.0031 6.10424 5 6.12 5H19.88C19.8958 5 19.9114 5.0031 19.9259 5.00913C19.9405 5.01516 19.9537 5.024 19.9649 5.03515C19.976 5.04629 19.9848 5.05952 19.9909 5.07408C19.9969 5.08864 20 5.10424 20 5.12V31Z" fill="black" fillOpacity="0.6" />
-              <path d="M8 8H10V10H8V8Z" fill="black" fillOpacity="0.6" />
-              <path d="M12 8H14V10H12V8Z" fill="black" fillOpacity="0.6" />
-              <path d="M16 8H18V10H16V8Z" fill="black" fillOpacity="0.6" />
-              <path d="M8 13H10V15H8V13Z" fill="black" fillOpacity="0.6" />
-              <path d="M12 13H14V15H12V13Z" fill="black" fillOpacity="0.6" />
-              <path d="M16 13H18V15H16V13Z" fill="black" fillOpacity="0.6" />
-              <path d="M8 18H10V20H8V18Z" fill="black" fillOpacity="0.6" />
-              <path d="M12 18H14V20H12V18Z" fill="black" fillOpacity="0.6" />
-              <path d="M16 18H18V20H16V18Z" fill="black" fillOpacity="0.6" />
-              <path d="M8 23H10V25H8V23Z" fill="black" fillOpacity="0.6" />
-              <path d="M12 23H14V25H12V23Z" fill="black" fillOpacity="0.6" />
-              <path d="M16 23H18V25H16V23Z" fill="black" fillOpacity="0.6" />
-              <path d="M23 13H25V15H23V13Z" fill="black" fillOpacity="0.6" />
-              <path d="M27 13H29V15H27V13Z" fill="black" fillOpacity="0.6" />
-              <path d="M23 18H25V20H23V18Z" fill="black" fillOpacity="0.6" />
-              <path d="M27 18H29V20H27V18Z" fill="black" fillOpacity="0.6" />
-              <path d="M23 23H25V25H23V23Z" fill="black" fillOpacity="0.6" />
-              <path d="M27 23H29V25H27V23Z" fill="black" fillOpacity="0.6" />
-            </g>
-            <defs>
-              <clipPath id="clip0_629_5804">
-                <rect width="36" height="36" fill="white" />
-              </clipPath>
-            </defs>
-          </svg>
+      <div className="flex flex-col py-3 pr-3 border-t-1 border-neutral-200 gap-3 overflow-y-auto max-h-[40vh] md:max-h-[calc(80vh-220px)] w-[360px]">
+        {filteredLocations.length === 0 ? (
+          <p>No Bus stop found. Select closest bus stop</p>
+        ) : (
+          isSelectingDropOff ?
+            filteredLocations.map((location) => (
+              <div
+                key={location.id}
+                style={{
+                  borderRadius: 16,
+                  border: selectedLocation?.id === location.id
+                    ? '1px solid rgba(0,0,0,0.5)'
+                    : '1px solid rgba(0,0,0,0.1)',
+                  display: 'flex',
+                  padding: 12,
+                  alignItems: 'center',
+                  gap: 16,
+                  width: '100%',
+                  justifyContent: 'flex-start',
+                  cursor: 'pointer',
+                  backgroundColor: selectedLocation?.id === location.id
+                    ? '#F0F8FF'
+                    : '#f4f4f4',
+                  transition: 'all 0.2s ease-in-out',
+                  transform: 'translateY(0)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = selectedLocation?.id === location.id
+                    ? '#E0F0FF'
+                    : '#e8e8e8';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = selectedLocation?.id === location.id
+                    ? '#F0F8FF'
+                    : '#f4f4f4';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+                onMouseDown={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+                }}
+                onMouseUp={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+                }}
+                onClick={() => handleDropOffPointClick(location)}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 36 36" fill="none">
+                  <g clipPath="url(#clip0_629_5804)">
+                    <path d="M31 8H23V10H31V31H23V33H33V10C33 9.46957 32.7893 8.96086 32.4142 8.58579C32.0391 8.21071 31.5304 8 31 8Z" fill="black" fillOpacity="0.6" />
+                    <path d="M19.88 3H6.12C5.55774 3 5.01851 3.22336 4.62093 3.62093C4.22336 4.01851 4 4.55774 4 5.12V33H22V5.12C22 4.55774 21.7766 4.01851 21.3791 3.62093C20.9815 3.22336 20.4423 3 19.88 3ZM20 31H17V28H9V31H6V5.12C6 5.10424 6.0031 5.08864 6.00913 5.07408C6.01516 5.05952 6.024 5.04629 6.03515 5.03515C6.04629 5.024 6.05952 5.01516 6.07408 5.00913C6.08864 5.0031 6.10424 5 6.12 5H19.88C19.8958 5 19.9114 5.0031 19.9259 5.00913C19.9405 5.01516 19.9537 5.024 19.9649 5.03515C19.976 5.04629 19.9848 5.05952 19.9909 5.07408C19.9969 5.08864 20 5.10424 20 5.12V31Z" fill="black" fillOpacity="0.6" />
+                    <path d="M8 8H10V10H8V8Z" fill="black" fillOpacity="0.6" />
+                    <path d="M12 8H14V10H12V8Z" fill="black" fillOpacity="0.6" />
+                    <path d="M16 8H18V10H16V8Z" fill="black" fillOpacity="0.6" />
+                    <path d="M8 13H10V15H8V13Z" fill="black" fillOpacity="0.6" />
+                    <path d="M12 13H14V15H12V13Z" fill="black" fillOpacity="0.6" />
+                    <path d="M16 13H18V15H16V13Z" fill="black" fillOpacity="0.6" />
+                    <path d="M8 18H10V20H8V18Z" fill="black" fillOpacity="0.6" />
+                    <path d="M12 18H14V20H12V18Z" fill="black" fillOpacity="0.6" />
+                    <path d="M16 18H18V20H16V18Z" fill="black" fillOpacity="0.6" />
+                    <path d="M8 23H10V25H8V23Z" fill="black" fillOpacity="0.6" />
+                    <path d="M12 23H14V25H12V23Z" fill="black" fillOpacity="0.6" />
+                    <path d="M16 23H18V25H16V23Z" fill="black" fillOpacity="0.6" />
+                    <path d="M23 13H25V15H23V13Z" fill="black" fillOpacity="0.6" />
+                    <path d="M27 13H29V15H27V13Z" fill="black" fillOpacity="0.6" />
+                    <path d="M23 18H25V20H23V18Z" fill="black" fillOpacity="0.6" />
+                    <path d="M27 18H29V20H27V18Z" fill="black" fillOpacity="0.6" />
+                    <path d="M23 23H25V25H23V23Z" fill="black" fillOpacity="0.6" />
+                    <path d="M27 23H29V25H27V23Z" fill="black" fillOpacity="0.6" />
+                  </g>
+                  <defs>
+                    <clipPath id="clip0_629_5804">
+                      <rect width="36" height="36" fill="white" />
+                    </clipPath>
+                  </defs>
+                </svg>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <p style={{ fontSize: 14, margin: 0 }}>{location.name}</p>
-            <p style={{ fontSize: 12, margin: 0, color: 'rgba(0,0,0,0.6)' }}>{location.description}</p>
-          </div>
-        </div>
-      ))
-      :
-      filteredLocations.map((location) => (
-        <div
-          key={location.id}
-          style={{
-            borderRadius: 16,
-            border: selectedLocation?.id === location.id 
-              ? '1px solid rgba(0,0,0,0.5)' 
-              : '1px solid rgba(0,0,0,0.1)',
-            display: 'flex',
-            padding: 12,
-            alignItems: 'center',
-            gap: 16,
-            width: '100%',
-            justifyContent: 'flex-start',
-            cursor: 'pointer',
-            backgroundColor: selectedLocation?.id === location.id 
-              ? '#F0F8FF' 
-              : '#fAfAfA',
-            transition: 'all 0.2s ease-in-out',
-            transform: 'translateY(0)',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = selectedLocation?.id === location.id 
-              ? '#E0F0FF' 
-              : '#e8e8e8';
-            e.currentTarget.style.transform = 'translateY(-2px)';
-            // e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = selectedLocation?.id === location.id 
-              ? '#F0F8FF' 
-              : '#f4f4f4';
-            e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = 'none';
-          }}
-          onMouseDown={(e) => {
-            e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
-          }}
-          onMouseUp={(e) => {
-            e.currentTarget.style.transform = 'translateY(-2px)';
-            // e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
-          }}
-          onClick={() => handleStartPointClick(location)}
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 36 36" fill="none">
-            <g clipPath="url(#clip0_629_5804)">
-              <path d="M31 8H23V10H31V31H23V33H33V10C33 9.46957 32.7893 8.96086 32.4142 8.58579C32.0391 8.21071 31.5304 8 31 8Z" fill="black" fillOpacity="0.6" />
-              <path d="M19.88 3H6.12C5.55774 3 5.01851 3.22336 4.62093 3.62093C4.22336 4.01851 4 4.55774 4 5.12V33H22V5.12C22 4.55774 21.7766 4.01851 21.3791 3.62093C20.9815 3.22336 20.4423 3 19.88 3ZM20 31H17V28H9V31H6V5.12C6 5.10424 6.0031 5.08864 6.00913 5.07408C6.01516 5.05952 6.024 5.04629 6.03515 5.03515C6.04629 5.024 6.05952 5.01516 6.07408 5.00913C6.08864 5.0031 6.10424 5 6.12 5H19.88C19.8958 5 19.9114 5.0031 19.9259 5.00913C19.9405 5.01516 19.9537 5.024 19.9649 5.03515C19.976 5.04629 19.9848 5.05952 19.9909 5.07408C19.9969 5.08864 20 5.10424 20 5.12V31Z" fill="black" fillOpacity="0.6" />
-              <path d="M8 8H10V10H8V8Z" fill="black" fillOpacity="0.6" />
-              <path d="M12 8H14V10H12V8Z" fill="black" fillOpacity="0.6" />
-              <path d="M16 8H18V10H16V8Z" fill="black" fillOpacity="0.6" />
-              <path d="M8 13H10V15H8V13Z" fill="black" fillOpacity="0.6" />
-              <path d="M12 13H14V15H12V13Z" fill="black" fillOpacity="0.6" />
-              <path d="M16 13H18V15H16V13Z" fill="black" fillOpacity="0.6" />
-              <path d="M8 18H10V20H8V18Z" fill="black" fillOpacity="0.6" />
-              <path d="M12 18H14V20H12V18Z" fill="black" fillOpacity="0.6" />
-              <path d="M16 18H18V20H16V18Z" fill="black" fillOpacity="0.6" />
-              <path d="M8 23H10V25H8V23Z" fill="black" fillOpacity="0.6" />
-              <path d="M12 23H14V25H12V23Z" fill="black" fillOpacity="0.6" />
-              <path d="M16 23H18V25H16V23Z" fill="black" fillOpacity="0.6" />
-              <path d="M23 13H25V15H23V13Z" fill="black" fillOpacity="0.6" />
-              <path d="M27 13H29V15H27V13Z" fill="black" fillOpacity="0.6" />
-              <path d="M23 18H25V20H23V18Z" fill="black" fillOpacity="0.6" />
-              <path d="M27 18H29V20H27V18Z" fill="black" fillOpacity="0.6" />
-              <path d="M23 23H25V25H23V23Z" fill="black" fillOpacity="0.6" />
-              <path d="M27 23H29V25H27V23Z" fill="black" fillOpacity="0.6" />
-            </g>
-            <defs>
-              <clipPath id="clip0_629_5804">
-                <rect width="36" height="36" fill="white" />
-              </clipPath>
-            </defs>
-          </svg>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <p style={{ fontSize: 14, margin: 0 }}>{location.name}</p>
+                  <p style={{ fontSize: 12, margin: 0, color: 'rgba(0,0,0,0.6)' }}>{location.description}</p>
+                </div>
+              </div>
+            ))
+            :
+            filteredLocations.map((location) => (
+              <div
+                key={location.id}
+                style={{
+                  borderRadius: 16,
+                  border: selectedLocation?.id === location.id
+                    ? '1px solid rgba(0,0,0,0.5)'
+                    : '1px solid rgba(0,0,0,0.1)',
+                  display: 'flex',
+                  padding: 12,
+                  alignItems: 'center',
+                  gap: 16,
+                  width: '100%',
+                  justifyContent: 'flex-start',
+                  cursor: 'pointer',
+                  backgroundColor: selectedLocation?.id === location.id
+                    ? '#F0F8FF'
+                    : '#f4f4f4',
+                  transition: 'all 0.2s ease-in-out',
+                  transform: 'translateY(0)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = selectedLocation?.id === location.id
+                    ? '#E0F0FF'
+                    : '#e8e8e8';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  // e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = selectedLocation?.id === location.id
+                    ? '#F0F8FF'
+                    : '#f4f4f4';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+                onMouseDown={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+                }}
+                onMouseUp={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  // e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+                }}
+                onClick={() => handleStartPointClick(location)}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 36 36" fill="none">
+                  <g clipPath="url(#clip0_629_5804)">
+                    <path d="M31 8H23V10H31V31H23V33H33V10C33 9.46957 32.7893 8.96086 32.4142 8.58579C32.0391 8.21071 31.5304 8 31 8Z" fill="black" fillOpacity="0.6" />
+                    <path d="M19.88 3H6.12C5.55774 3 5.01851 3.22336 4.62093 3.62093C4.22336 4.01851 4 4.55774 4 5.12V33H22V5.12C22 4.55774 21.7766 4.01851 21.3791 3.62093C20.9815 3.22336 20.4423 3 19.88 3ZM20 31H17V28H9V31H6V5.12C6 5.10424 6.0031 5.08864 6.00913 5.07408C6.01516 5.05952 6.024 5.04629 6.03515 5.03515C6.04629 5.024 6.05952 5.01516 6.07408 5.00913C6.08864 5.0031 6.10424 5 6.12 5H19.88C19.8958 5 19.9114 5.0031 19.9259 5.00913C19.9405 5.01516 19.9537 5.024 19.9649 5.03515C19.976 5.04629 19.9848 5.05952 19.9909 5.07408C19.9969 5.08864 20 5.10424 20 5.12V31Z" fill="black" fillOpacity="0.6" />
+                    <path d="M8 8H10V10H8V8Z" fill="black" fillOpacity="0.6" />
+                    <path d="M12 8H14V10H12V8Z" fill="black" fillOpacity="0.6" />
+                    <path d="M16 8H18V10H16V8Z" fill="black" fillOpacity="0.6" />
+                    <path d="M8 13H10V15H8V13Z" fill="black" fillOpacity="0.6" />
+                    <path d="M12 13H14V15H12V13Z" fill="black" fillOpacity="0.6" />
+                    <path d="M16 13H18V15H16V13Z" fill="black" fillOpacity="0.6" />
+                    <path d="M8 18H10V20H8V18Z" fill="black" fillOpacity="0.6" />
+                    <path d="M12 18H14V20H12V18Z" fill="black" fillOpacity="0.6" />
+                    <path d="M16 18H18V20H16V18Z" fill="black" fillOpacity="0.6" />
+                    <path d="M8 23H10V25H8V23Z" fill="black" fillOpacity="0.6" />
+                    <path d="M12 23H14V25H12V23Z" fill="black" fillOpacity="0.6" />
+                    <path d="M16 23H18V25H16V23Z" fill="black" fillOpacity="0.6" />
+                    <path d="M23 13H25V15H23V13Z" fill="black" fillOpacity="0.6" />
+                    <path d="M27 13H29V15H27V13Z" fill="black" fillOpacity="0.6" />
+                    <path d="M23 18H25V20H23V18Z" fill="black" fillOpacity="0.6" />
+                    <path d="M27 18H29V20H27V18Z" fill="black" fillOpacity="0.6" />
+                    <path d="M23 23H25V25H23V23Z" fill="black" fillOpacity="0.6" />
+                    <path d="M27 23H29V25H27V23Z" fill="black" fillOpacity="0.6" />
+                  </g>
+                  <defs>
+                    <clipPath id="clip0_629_5804">
+                      <rect width="36" height="36" fill="white" />
+                    </clipPath>
+                  </defs>
+                </svg>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <p style={{ fontSize: 14, margin: 0 }}>{location.name}</p>
-            <p style={{ fontSize: 12, margin: 0, color: 'rgba(0,0,0,0.6)' }}>{location.description}</p>
-          </div>
-        </div>
-      ))
-  )}
-</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <p style={{ fontSize: 14, margin: 0 }}>{location.name}</p>
+                  <p style={{ fontSize: 12, margin: 0, color: 'rgba(0,0,0,0.6)' }}>{location.description}</p>
+                </div>
+              </div>
+            ))
+        )}
+      </div>
     );
   };
 
+  function MapSkeleton() {
+    return (
+      <div style={{
+        width: '100vw',
+        height: '100vh',
+        background: '#f3f3f3'
+      }}>
+        Loading map…
+      </div>
+    );
+  }
 
 
 
@@ -408,7 +424,7 @@ function Home() {
             <span className='text-[20px] text-[#34A853] font-bold'> Shuttle<span style={{ fontWeight: '400', color: '#FFCE31' }}>App</span></span>
           </p>
 
-       
+
 
           {!pickUp && (
             dropDown ?
@@ -585,27 +601,7 @@ function Home() {
 
         </div>
 
-        {!closeTracker && !pickUp && (
-          <section
-            onClick={() => navigate('/Tracker')}
-            className='flex items-start w-full gap-2 border-1 border-neutral-200 p-3 rounded-[16px] bg-neutral-50 mt-2 hover:bg-neutral-200 cursor-pointer hover:border-neutral-400'>
-            <p>📦</p>
-            <main className='flex flex-col gap-1'>
-              <p className='m-0 text-[14px] font-medium'>Track Your Orders</p>
-              <p className='m-0 text-[12px] font-medium text-neutral-500'>Kindly enter your phone number to track your order</p>
-            </main>
-            <svg
-              onClick={(e) => {
-                e.stopPropagation();
-                setCloseTracker(true);
-              }}
-              xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <g opacity="0.5">
-                <path d="M4.26634 12.6667L3.33301 11.7334L7.06634 8.00004L3.33301 4.26671L4.26634 3.33337L7.99967 7.06671L11.733 3.33337L12.6663 4.26671L8.93301 8.00004L12.6663 11.7334L11.733 12.6667L7.99967 8.93337L4.26634 12.6667Z" fill="#1D1B20" />
-              </g>
-            </svg>
-          </section>
-        )}
+     
 
         <div className='flex flex-col gap-3'>
           <LocationList searchQuery={searchQuery}
@@ -619,8 +615,7 @@ function Home() {
       </div>
 
 
-
-      <ErrorBoundary fallback={<div className="map-error">Map loading failed. Please refresh.</div>}>
+      <Suspense fallback={<MapSkeleton />}>
         <MapGl
           isHomepage={true}
           selectedLocation={
@@ -655,7 +650,8 @@ function Home() {
               : null
           }
         />
-      </ErrorBoundary>
+      </Suspense>
+
 
 
 

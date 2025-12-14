@@ -22,16 +22,19 @@ export const locationsss: Location[] = [
       { name: 'Brunei', latitude: 6.670465091472612, longitude: -1.5741574445526254 },
       { name: 'Main Library', latitude: 6.675033566213408, longitude: -1.5723546778455368 },
       { name: 'Pentecost Busstop', latitude: 6.674545299373284, longitude: -1.5675650457295751 },
-      { name: 'SRC Busstop', latitude: 6.675223889340042, longitude: -1.5678831412482812 },
+      // { name: 'SRC Busstop', latitude: 6.675223889340042, longitude: -1.5678831412482812 },
       { name: 'KSB', latitude: 6.669314250173885, longitude: -1.567181795001016 },
+      { name: 'Paa Joe Round About', latitude: 6.675187511866504, longitude: -1.570775090040308 }
+
     ]
   },
   {
     id: '2', name: 'Brunei', description: 'Hub for student activities', latitude: 6.670465091472612, longitude: -1.5741574445526254,
     dropPoints: [
-      // { name: 'SRC Busstop', latitude: 6.675223889340042, longitude: -1.5678831412482812 },
+
       { name: 'Brunei', latitude: 6.670465091472612, longitude: -1.5741574445526254 },
       { name: 'Main Library', latitude: 6.675033566213408, longitude: -1.5723546778455368 },
+      // { name: 'SRC Busstop', latitude: 6.675223889340042, longitude: -1.5678831412482812 },
       { name: 'Pentecost Busstop', latitude: 6.674545299373284, longitude: -1.567565045729575 },
       { name: 'KSB', latitude: 6.669314250173885, longitude: -1.567181795001016 },
 
@@ -46,6 +49,8 @@ export const locationsss: Location[] = [
       // { name: 'SRC Busstop', latitude: 6.675223889340042, longitude: -1.5678831412482812 },
       // { name: 'Conti Busstop', latitude: 6.679644223364716, longitude: -1.572967657880401 },
       { name: 'Commerical Area', latitude: 6.682751297721754, longitude: -1.5769726260262382, },
+      { name: 'Paa Joe Round About', latitude: 6.675187511866504, longitude: -1.570775090040308 }
+
     ]
   },
 
@@ -104,7 +109,8 @@ export const locationsss: Location[] = [
       { name: 'Main Library', latitude: 6.675033566213408, longitude: -1.5723546778455368 },
       { name: 'Conti Busstop', latitude: 6.679644223364716, longitude: -1.572967657880401 },
       { name: 'Commercial Area', latitude: 6.682756553904525, longitude: -1.576990347851461 },
-      { name: 'SRC Busstop', latitude: 6.675223889340042, longitude: -1.5678831412482812 }
+      { name: 'SRC Busstop', latitude: 6.675223889340042, longitude: -1.5678831412482812 },
+      { name: 'Paa Joe Round About', latitude: 6.675187511866504, longitude: -1.570775090040308 }
     ]
   },
   {
@@ -119,15 +125,17 @@ export const locationsss: Location[] = [
       { name: 'SRC Busstop', latitude: 6.675223889340042, longitude: -1.5678831412482812 },
       { name: 'Conti Busstop', latitude: 6.679644223364716, longitude: -1.572967657880401 },
       { name: 'KSB', latitude: 6.669314250173885, longitude: -1.567181795001016 },
-      // { name: 'Paa Joe Round About', latitude: 6.675187511866504, longitude: -1.570775090040308 }
+      { name: 'Paa Joe Round About', latitude: 6.675187511866504, longitude: -1.570775090040308 }
     ]
   },
   {
     id: '11', name: 'Conti Busstop', description: 'Hub for student activities', latitude: 6.679644223364716, longitude: -1.572967657880401,
     dropPoints: [
-      // { name: 'SRC Busstop', latitude: 6.675223889340042, longitude: -1.5678831412482812 },
+      { name: 'SRC Busstop', latitude: 6.675223889340042, longitude: -1.5678831412482812 },
       { name: 'Commercial Area', latitude: 6.682756553904525, longitude: -1.576990347851461 },
-      { name: 'Conti Busstop', latitude: 6.679644223364716, longitude: -1.572967657880401 }
+      { name: 'Conti Busstop', latitude: 6.679644223364716, longitude: -1.572967657880401 },
+      { name: 'Paa Joe Round About', latitude: 6.675187511866504, longitude: -1.570775090040308 }
+
     ]
   },
 ];

@@ -3,7 +3,6 @@ import "./index.css";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./Screens/Home";
 import BusStopDetails from './Screens/BusStopDetails';
-import Tracker from './Screens/Tracker';
 import { ClosestStopProvider } from "./Screens/ClosestStopContext";
 import { ClosestBusProvider } from './Screens/useClosestBus';
 import Auth from "./Screens/Auth";
@@ -101,14 +100,7 @@ root.render(
               </ProtectedRoute>
             } 
           />
-          <Route 
-            path="/Tracker" 
-            element={
-              <ProtectedRoute>
-                <Tracker />
-              </ProtectedRoute>
-            } 
-          />
+    
 
           {/* Catch all - redirect to appropriate page */}
           <Route 
